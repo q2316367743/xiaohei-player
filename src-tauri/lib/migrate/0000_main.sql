@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS video
     created_at       INTEGER NOT NULL DEFAULT 0,
     updated_at       INTEGER NOT NULL DEFAULT 0,
     file_path        TEXT    NOT NULL DEFAULT '' UNIQUE, -- 当前绝对文件路径 (UNIQUE 约束防止同一路径重复插入，但允许 Hash 相同路径不同？需业务逻辑控制)
+    screenshot_path  TEXT    NOT NULL DEFAULT '',
+    sprite_path      TEXT    NOT NULL DEFAULT '',
+    vtt_path         TEXT    NOT NULL DEFAULT '',
     file_name        TEXT    NOT NULL DEFAULT '',        -- 文件名 (带扩展名)
     file_size        INTEGER NOT NULL DEFAULT 0,         -- 文件大小 (字节)
     duration_ms      INTEGER NOT NULL DEFAULT 0,         -- 视频时长 (毫秒)
@@ -29,9 +32,9 @@ CREATE TABLE IF NOT EXISTS video
 );
 
 -- 创建常用查询索引
-CREATE INDEX IF NOT EXISTS idx_videos_title ON video(title);
-CREATE INDEX IF NOT EXISTS idx_videos_last_played ON video(last_played_at DESC);
-CREATE INDEX IF NOT EXISTS idx_videos_file_path ON video(file_path);
+CREATE INDEX IF NOT EXISTS idx_videos_title ON video (title);
+CREATE INDEX IF NOT EXISTS idx_videos_last_played ON video (last_played_at DESC);
+CREATE INDEX IF NOT EXISTS idx_videos_file_path ON video (file_path);
 
 CREATE TABLE IF NOT EXISTS actor
 (
@@ -47,7 +50,7 @@ CREATE TABLE IF NOT EXISTS actor
     photo_path    TEXT    NOT NULL DEFAULT ''         -- 头像本地路径
 );
 
-CREATE INDEX IF NOT EXISTS idx_actors_name ON actor(name);
+CREATE INDEX IF NOT EXISTS idx_actors_name ON actor (name);
 
 CREATE TABLE IF NOT EXISTS studio
 (
@@ -61,7 +64,7 @@ CREATE TABLE IF NOT EXISTS studio
     logo_path    TEXT    NOT NULL DEFAULT ''         -- Logo 本地路径
 );
 
-CREATE INDEX IF NOT EXISTS idx_studios_name ON studio(name);
+CREATE INDEX IF NOT EXISTS idx_studios_name ON studio (name);
 
 CREATE TABLE IF NOT EXISTS video_actor
 (
@@ -77,8 +80,8 @@ CREATE TABLE IF NOT EXISTS video_actor
     FOREIGN KEY (actor_id) REFERENCES actor (id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_video_actors_actor ON video_actor(actor_id);
-CREATE INDEX IF NOT EXISTS idx_video_actors_video ON video_actor(video_id);
+CREATE INDEX IF NOT EXISTS idx_video_actors_actor ON video_actor (actor_id);
+CREATE INDEX IF NOT EXISTS idx_video_actors_video ON video_actor (video_id);
 
 CREATE TABLE IF NOT EXISTS video_studio
 (
@@ -93,7 +96,7 @@ CREATE TABLE IF NOT EXISTS video_studio
     FOREIGN KEY (studio_id) REFERENCES studio (id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_video_studios_studio ON video_studio(studio_id);
+CREATE INDEX IF NOT EXISTS idx_video_studios_studio ON video_studio (studio_id);
 
 CREATE TABLE IF NOT EXISTS tag
 (
@@ -115,4 +118,4 @@ CREATE TABLE IF NOT EXISTS video_tag
     FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_video_tags_tag ON video_tag(tag_id);
+CREATE INDEX IF NOT EXISTS idx_video_tags_tag ON video_tag (tag_id);

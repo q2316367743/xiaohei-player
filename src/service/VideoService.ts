@@ -16,6 +16,14 @@ export async function getAllVideos() {
   return await useSql().query<Video>('video').eq('is_deleted', 0).list();
 }
 
+export async function getVideoById(id: string) {
+  const videos = await useSql().query<Video>('video')
+    .eq('id', id)
+    .eq('is_deleted', 0)
+    .list();
+  return videos.length > 0 ? videos[0] : null;
+}
+
 export async function deleteVideo(id: string) {
   await useSql().mapper<Video>('video').updateById(id, {is_deleted: 1});
 }

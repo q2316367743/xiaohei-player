@@ -1,10 +1,21 @@
 import {invoke} from "@tauri-apps/api/core";
+import {mkdir} from '@tauri-apps/plugin-fs';
+import {dirname} from "@tauri-apps/api/path";
 
 function execFfmepgCommand(ffmpeg: string, args: Array<string>) {
   return invoke<string>("ffmpeg_command", {
     cmd: ffmpeg,
     args
   });
+}
+
+async function ensureDir(filePath: string) {
+  const dir = await dirname(filePath);
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch {
+    // 目录可能已存在，忽略错误
+  }
 }
 
 /**
@@ -17,6 +28,8 @@ export async function generateVtt(ffmpeg: string, path: string, prefix: string) 
   const sprite = prefix + "_sprite.jpg";
   const thumbs = prefix + "_thumbs.vtt";
   
+  await ensureDir(sprite);
+  
   await execFfmepgCommand(ffmpeg, [
     "-i",
     path,
@@ -24,6 +37,8 @@ export async function generateVtt(ffmpeg: string, path: string, prefix: string) 
     "fps=1/5,scale=320:-1:flags=lanczos,tile=9x9",
     "-q:v",
     "2",
+    "-frames:v",
+    "1",
     "-y",
     sprite
   ]);
@@ -36,10 +51,19 @@ export async function generateVtt(ffmpeg: string, path: string, prefix: string) 
  * @param ffmpeg ffmpeg 路径
  * @param path 视频路径
  * @param preview 预览图路径
+ * @param durationMs 视频时长（毫秒），如果为 0 则自动获取
  */
-export async function generatePreview(ffmpeg: string, path: string, preview: string) {
-  const durationStr = await getVideoDuration(ffmpeg, path);
-  const duration = parseFloat(durationStr) / 1000;
+export async function generatePreview(ffmpeg: string, path: string, preview: string, durationMs?: number) {
+  let duration = 0;
+  if (durationMs && durationMs > 0) {
+    duration = durationMs / 1000;
+  } else {
+    const durationStr = await getVideoDuration(ffmpeg, path);
+    duration = parseFloat(durationStr) / 1000;
+  }
+  
+  await ensureDir(preview);
+  
   const segmentDuration = duration / 5;
   
   const filterComplex = [];

@@ -2,6 +2,9 @@ import type {BaseEntity} from "@/entity/BaseEntity.ts";
 
 export interface VideoCore {
   file_path: string;        // 当前绝对文件路径
+  screenshot_path: string;  // 预览视频文件路径
+  sprite_path: string;      // 分割文件路径
+  vtt_path: string;         // vtt文件路径
   file_name: string;        // 文件名 (带扩展名)
   file_size: number;        // 文件大小 (字节)
   duration_ms: number;      // 视频时长 (毫秒)

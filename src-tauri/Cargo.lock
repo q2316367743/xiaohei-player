@@ -7349,6 +7349,7 @@ dependencies = [
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "tauri-plugin-velesdb",
+ "tokio",
 ]
 
 [[package]]
