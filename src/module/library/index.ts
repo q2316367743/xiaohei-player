@@ -62,12 +62,13 @@ async function processVideoFile(
 
   const vttPrefixPath = await join(vttPrefixDir, hash);
   const screenshot = await join(screenshotDir, hash + '.mp4');
-  
+
   const fileStat = await stat(filePath);
   let duration_ms = 0;
-  
+  logDebug("获取视频时长:", fileName);
+
   try {
-    const durationMs = await getVideoDuration(system.ffmpegPath, filePath);
+    const durationMs = await getVideoDuration(system.ffprobePath, filePath);
     duration_ms = Number(durationMs);
     logDebug("获取视频时长成功:", fileName, duration_ms, "ms");
   } catch (e) {
@@ -79,7 +80,7 @@ async function processVideoFile(
 
   try {
     logDebug("生成字幕文件:", vttPrefixPath);
-    const vtt = await generateVtt(system.ffmpegPath, filePath, vttPrefixPath);
+    const vtt = await generateVtt(system.ffmpegPath, system.ffprobePath, filePath, vttPrefixPath);
     sprite = vtt.sprite;
     thumbs = vtt.thumbs
   } catch (e) {
@@ -89,7 +90,7 @@ async function processVideoFile(
 
   try {
     logDebug("生成预览视频:", screenshot);
-    await generatePreview(system.ffmpegPath, filePath, screenshot, duration_ms);
+    await generatePreview(system.ffmpegPath, system.ffprobePath, filePath, screenshot, duration_ms);
   } catch (e) {
     logError("生成预览视频失败，跳过:", fileName, e);
     return;
@@ -159,11 +160,11 @@ export async function scanLibrary(
     const fileName = filePath.split('/').pop() || filePath;
     try {
       await processVideoFile(filePath, fileName, system, onProgress, vttPrefixDir, screenshotDir);
-      processedCount++;
-      onProgress(processedCount, foundFiles.size, `正在处理: ${fileName}`);
     } catch (e) {
       logError("处理视频文件出错:", filePath, e);
     }
+    processedCount++;
+    onProgress(processedCount, foundFiles.size, `正在处理: ${fileName}`);
   }
 
   onProgress(foundFiles.size, foundFiles.size, "正在清理已删除的视频...");

@@ -5,9 +5,6 @@
         v-for="video in videos"
         :key="video.id"
         :video="video"
-        :is-hovered="hoveredVideoId === video.id"
-        @mouseenter="handleMouseEnter(video)"
-        @mouseleave="handleMouseLeave"
       />
     </div>
     
@@ -20,11 +17,10 @@
 import {ref, onMounted} from 'vue';
 import {getAllVideos} from '@/service/VideoService.ts';
 import type {Video} from '@/entity/domain/Video.ts';
-import VideoCard from '@/components/VideoCard.vue';
+import VideoCard from './VideoCard.vue';
 
 const videos = ref<Video[]>([]);
 const loading = ref(true);
-const hoveredVideoId = ref<string | null>(null);
 
 onMounted(async () => {
   await loadVideos();
@@ -40,20 +36,10 @@ async function loadVideos() {
     loading.value = false;
   }
 }
-
-function handleMouseEnter(video: Video) {
-  hoveredVideoId.value = video.id;
-}
-
-function handleMouseLeave() {
-  hoveredVideoId.value = null;
-}
 </script>
 
 <style scoped lang="less">
 .scene-page {
-  padding: 16px;
-  min-height: calc(100vh - 64px);
 }
 
 .video-grid {
