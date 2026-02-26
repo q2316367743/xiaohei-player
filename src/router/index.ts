@@ -71,7 +71,7 @@ export const router = createRouter({
         {
           name: "系统",
           path: 'system',
-          component: () => import('@/pages/setting/system/index.vue'),
+          component: () => import('@/pages/setting/system/SettingSystem.vue'),
         },
         {
           name: "插件",

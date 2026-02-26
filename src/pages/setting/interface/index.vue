@@ -1,5 +1,5 @@
 <template>
-  <t-card>
+  <t-card size="small">
     <sub-title title="基本设定" />
     <t-card>
       <t-list size="small" split>

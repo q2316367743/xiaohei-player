@@ -1,5 +1,5 @@
 <template>
-  <t-card>
+  <t-card size="small">
     <sub-title title="任务队列"/>
     <t-card>
       目前没有任务在运行

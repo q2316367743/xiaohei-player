@@ -4,6 +4,7 @@ import {cloneDeep} from "es-toolkit";
 import type {UnlistenFn} from "@tauri-apps/api/event";
 import {getTaskSetting, type TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import {getLibrarySetting, type LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
+import {getSystemSetting, type SystemSetting} from "@/entity/setting/SystemSetting.ts";
 
 
 class StoreWrapper {
@@ -96,12 +97,29 @@ export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
       return acc;
     }, {} as Record<string, any>);
 
+    const deepMerge = (target: any, source: any): any => {
+      if (typeof source !== 'object' || source === null || Array.isArray(source)) {
+        return source;
+      }
+      if (typeof target !== 'object' || target === null || Array.isArray(target)) {
+        return source;
+      }
+      const result = { ...target };
+      for (const key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          result[key] = deepMerge(result[key], source[key]);
+        }
+      }
+      return result;
+    };
+
     Object.entries(this.defaultValue).forEach(([key, value]) => {
-      // 获取的
       const v = target[key] as any;
       if (typeof v === 'undefined' || v === null) {
         r[key] = value;
-      }else {
+      } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        r[key] = deepMerge(v, value);
+      } else {
         r[key] = v;
       }
     });
@@ -134,8 +152,11 @@ export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
 
 const taskSettingStore = new StoreEntry<TaskSetting>("task", getTaskSetting());
 const librarySettingStore = new StoreEntry<LibrarySetting>("task", getLibrarySetting());
+const systemSettingStore = new StoreEntry<SystemSetting>("task", getSystemSetting());
 
 // 任务设置
 export const useTaskSettingStore = () => taskSettingStore;
 // 收藏库设置
 export const useLibrarySettingStore = () => librarySettingStore;
+// 系统设置
+export const useSystemSettingStore = () => systemSettingStore;

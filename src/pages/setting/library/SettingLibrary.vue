@@ -1,12 +1,12 @@
 <template>
-  <t-card>
+  <t-card size="small">
     <sub-title title="收藏库">
       <template #action>
         <t-button class="mt-8px" @click="addLibraryItemAdd()">新增目录</t-button>
       </template>
     </sub-title>
     <t-card>
-      <t-table :columns="columns" :data="data.items">
+      <t-table :columns="columns" :data="data.items" row-key="path">
       </t-table>
     </t-card>
     <sub-title title="媒体的文件拓展名"/>

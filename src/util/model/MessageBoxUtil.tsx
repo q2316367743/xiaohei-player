@@ -1,4 +1,5 @@
 import {DialogPlugin, FormItem, Input, Paragraph, TagInput} from "tdesign-vue-next";
+import XhFileSelect from "@/components/xiaohei/XhFileSelect.vue";
 
 export default {
   confirm(
@@ -160,6 +161,34 @@ export default {
         cancelBtn: cancelButtonText,
         default: () => <FormItem labelAlign={'top'} help={content}>
           <TagInput v-model={value.value} />
+        </FormItem>,
+        onConfirm: () => {
+          dp.destroy();
+          resolve(value.value)
+        },
+      })
+    });
+  },
+
+  executablePathPrompt(content: string | undefined, title: string, config?: {
+    inputValue: string,
+    confirmButtonText?: string;
+    cancelButtonText?: string;
+  }): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const {
+        inputValue = '',
+        confirmButtonText = "确认",
+        cancelButtonText = "取消",
+      } = config || {};
+
+      const value = ref<string>(inputValue);
+      const dp = DialogPlugin({
+        header: title,
+        confirmBtn: confirmButtonText,
+        cancelBtn: cancelButtonText,
+        default: () => <FormItem labelAlign={'top'} help={content}>
+          <XhFileSelect v-model={value.value}/>
         </FormItem>,
         onConfirm: () => {
           dp.destroy();
