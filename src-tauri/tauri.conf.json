@@ -1,0 +1,70 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "小黑影音",
+  "version": "1.0.0",
+  "identifier": "xyz.esion.xiaoheiplayer",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5124",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "小黑影音",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 1200,
+        "minHeight": 800
+      }
+    ],
+    "security": {
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$APPDATA/**/*",
+          "**/*"
+        ]
+      },
+      "csp": null
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "createUpdaterArtifacts": true,
+    "resources": [
+      "lib/**/*"
+    ],
+    "category": "Entertainment",
+    "macOS": {
+      "entitlements": "./Entitlements.plist",
+      "files": {
+        "embedded.provisionprofile": "/Users/esion/Documents/workspace/xiaohei-player/src-tauri/mac_installer.cer"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "dangerousInsecureTransportProtocol": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVEMDRDRkNEOTNENkVBNTYKUldSVzZ0YVR6YzhFN1FXemdoQ3daTWp1U3BNeHIyRlIrZTdaTXJxODNWeUFvZ2pLVzZGbkY2dzAK",
+      "endpoints": [
+        "https://github.com/q2316367743/omni-player/releases/latest/download/latest.json",
+        "https://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=QNvZIeOs3vczr-8gwyhlgg&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}

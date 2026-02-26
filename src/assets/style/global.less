@@ -1,0 +1,39 @@
+@import "./theme.css";
+@import 'custom.less';
+@import 'vue3-context-menu.css';
+@import "dialog";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'JetBrains Mono', 'LXGW WenKai', serif;
+}
+
+/*滚动条整体部分*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  transition: background-color 0.3s;
+  background-color: var(--td-scroll-track-color);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 0 solid transparent;
+  background-clip: content-box;
+  background-color: var(--td-scrollbar-color);
+  border-radius: 11px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--td-scrollbar-hover-color);
+}
+
+.no-padding {
+  .t-drawer__body {
+    padding: 0 !important;
+  }
+
+  .t-tabs {
+    background-color: transparent !important;
+  }
+}

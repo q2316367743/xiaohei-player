@@ -1,0 +1,611 @@
+:root {
+  --vue-scroll-rect-scrollbar-thumb-color: rgba(122, 122, 122, .3);
+  --vue-scroll-rect-scrollbar-thumb-color-light: rgba(122, 122, 122, .5);
+  --vue-scroll-rect-scrollbar-thumb-color-pressed: rgba(112, 112, 112, .2);
+  --vue-scroll-rect-scrollbar-thumb-radius: 5px;
+  --vue-scroll-rect-scrollbar-thumb-margin: 0px;
+  --vue-scroll-rect-scrollbar-size: 8px
+}
+
+#mx-menu-default-container {
+  z-index: 5501 !important;
+}
+
+.vue-scroll-rect {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden
+}
+
+.vue-scroll-rect > .scroll-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none
+}
+
+.vue-scroll-rect > .scroll-content::-webkit-scrollbar {
+  width: 0;
+  height: 0
+}
+
+.vue-scroll-rect > .scroll-content::-ms-scrollbar {
+  width: 0;
+  height: 0
+}
+
+.vue-scroll-rect > .scroll-content.both {
+  overflow: scroll
+}
+
+.vue-scroll-rect > .scroll-content.horizontal {
+  overflow-x: scroll
+}
+
+.vue-scroll-rect > .scroll-content.vertical {
+  overflow-y: scroll
+}
+
+.vue-scroll-rect:hover > .scrollbar {
+  opacity: 1;
+  transition: opacity .1s
+}
+
+.vue-scroll-rect.always-show-scrollbar > .scrollbar, .vue-scroll-rect .dragging > .scrollbar {
+  opacity: 1
+}
+
+.vue-scroll-rect.background-clickable > .scrollbar {
+  pointer-events: all
+}
+
+.vue-scroll-rect > .scrollbar {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 1.5s;
+  pointer-events: none
+}
+
+.vue-scroll-rect > .scrollbar:hover {
+  opacity: 1
+}
+
+.vue-scroll-rect > .scrollbar .thumb {
+  position: absolute;
+  background-color: var(--vue-scroll-rect-scrollbar-thumb-color);
+  border-radius: var(--vue-scroll-rect-scrollbar-thumb-radius);
+  pointer-events: all
+}
+
+.vue-scroll-rect > .scrollbar .thumb:hover {
+  background-color: var(--vue-scroll-rect-scrollbar-thumb-color-light)
+}
+
+.vue-scroll-rect > .scrollbar .thumb:active {
+  background-color: var(--vue-scroll-rect-scrollbar-thumb-color-pressed)
+}
+
+.vue-scroll-rect > .scrollbar.horizontal {
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: var(--vue-scroll-rect-scrollbar-size)
+}
+
+.vue-scroll-rect > .scrollbar.horizontal .thumb {
+  top: var(--vue-scroll-rect-scrollbar-thumb-margin);
+  bottom: var(--vue-scroll-rect-scrollbar-thumb-margin)
+}
+
+.vue-scroll-rect > .scrollbar.vertical {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--vue-scroll-rect-scrollbar-size)
+}
+
+.vue-scroll-rect > .scrollbar.vertical .thumb {
+  left: var(--vue-scroll-rect-scrollbar-thumb-margin);
+  right: var(--vue-scroll-rect-scrollbar-thumb-margin)
+}
+
+:root {
+  --mx-menu-backgroud: #fff9f5;
+  --mx-menu-hover-backgroud: #fff5f0;
+  --mx-menu-active-backgroud: #ffd5cc;
+  --mx-menu-open-backgroud: #ffebe8;
+  --mx-menu-open-hover-backgroud: #ffebe8;
+  --mx-menu-divider: #d7ccc8;
+  --mx-menu-text: #5d4037;
+  --mx-menu-hover-text: #5d4037;
+  --mx-menu-active-text: #bf360c;
+  --mx-menu-open-text: #5d4037;
+  --mx-menu-open-hover-text: #5d4037;
+  --mx-menu-disabled-text: #bcaaa4;
+  --mx-menu-icon-size: 16px;
+  --mx-menu-shadow-color: rgba(93, 64, 55, 0.15);
+  --mx-menu-backgroud-radius: 12px;
+  --mx-menu-scrollbar-thumb-color: rgba(93, 64, 55, 0.2);
+  --mx-menu-scrollbar-thumb-color-light: rgba(93, 64, 55, 0.3);
+  --mx-menu-scrollbar-thumb-color-pressed: rgba(93, 64, 55, 0.1);
+  --mx-menu-shortcut-backgroud: #f5f0ee;
+  --mx-menu-shortcut-backgroud-hover: #ffebe8;
+  --mx-menu-shortcut-backgroud-active: #ffd5cc;
+  --mx-menu-shortcut-backgroud-open: #f5f0ee;
+  --mx-menu-shortcut-backgroud-disabled: #f5f0ee;
+  --mx-menu-shortcut-text: #8d6e63;
+  --mx-menu-shortcut-text-hover: #e64a19;
+  --mx-menu-shortcut-text-active: #bf360c;
+  --mx-menu-shortcut-text-open: #8d6e63;
+  --mx-menu-shortcut-text-disabled: #bcaaa4;
+  --mx-menu-placeholder-width: 24px
+}
+
+.mx-context-menu {
+  z-index: 5501;
+  pointer-events: all;
+  display: inline-block;
+  overflow: visible;
+  position: absolute;
+  background-color: var(--mx-menu-backgroud);
+  border-radius: var(--mx-menu-backgroud-radius);
+  padding: 12px 0;
+  box-shadow: 0 10px 40px 10px var(--mx-menu-shadow-color);
+  opacity: 1;
+  transition: opacity .2s ease-in-out;
+  --vue-scroll-rect-scrollbar-thumb-color: var(--mx-menu-scrollbar-thumb-color);
+  --vue-scroll-rect-scrollbar-thumb-color-light: var(--mx-menu-scrollbar-thumb-color-light);
+  --vue-scroll-rect-scrollbar-thumb-color-pressed: var(--mx-menu-scrollbar-thumb-color-pressed)
+}
+
+.mx-context-menu-items {
+  position: relative;
+  overflow: visible
+}
+
+.mx-context-menu-scroll {
+  overscroll-behavior: contain
+}
+
+.mx-context-menu-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 3px 8px;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: visible;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--mx-menu-text)
+}
+
+.mx-context-menu-item .mx-right-arrow, .mx-context-menu-item .mx-checked-mark {
+  fill: var(--mx-menu-text)
+}
+
+.mx-context-menu-item:hover {
+  background-color: var(--mx-menu-hover-backgroud);
+  color: var(--mx-menu-hover-text)
+}
+
+.mx-context-menu-item:hover .mx-right-arrow, .mx-context-menu-item:hover .mx-checked-mark {
+  fill: var(--mx-menu-hover-text)
+}
+
+.mx-context-menu-item:hover .mx-shortcut {
+  background-color: var(--mx-menu-shortcut-backgroud-hover);
+  color: var(--mx-menu-shortcut-text-hover)
+}
+
+.mx-context-menu-item:active {
+  background-color: var(--mx-menu-active-backgroud);
+  color: var(--mx-menu-active-text)
+}
+
+.mx-context-menu-item:active .mx-right-arrow, .mx-context-menu-item:active .mx-checked-mark {
+  fill: var(--mx-menu-active-text)
+}
+
+.mx-context-menu-item:active .mx-shortcut {
+  background-color: var(--mx-menu-shortcut-backgroud-active);
+  color: var(--mx-menu-shortcut-text-active)
+}
+
+.mx-context-menu-item.open {
+  background-color: var(--mx-menu-open-backgroud);
+  color: var(--mx-menu-open-text)
+}
+
+.mx-context-menu-item.open:hover {
+  background-color: var(--mx-menu-open-hover-backgroud);
+  color: var(--mx-menu-open-hover-text)
+}
+
+.mx-context-menu-item.open .mx-right-arrow, .mx-context-menu-item.open .mx-checked-mark {
+  fill: var(--mx-menu-open-text)
+}
+
+.mx-context-menu-item.open .mx-shortcut {
+  background-color: var(--mx-menu-shortcut-backgroud-open);
+  color: var(--mx-menu-shortcut-text-open)
+}
+
+.mx-context-menu-item.keyboard-focus {
+  background-color: var(--mx-menu-active-backgroud)
+}
+
+.mx-context-menu-item.disabled {
+  color: var(--mx-menu-disabled-text);
+  cursor: not-allowed
+}
+
+.mx-context-menu-item.disabled:hover, .mx-context-menu-item.disabled:active {
+  background-color: transparent
+}
+
+.mx-context-menu-item.disabled .mx-right-arrow, .mx-context-menu-item.disabled .mx-checked-mark {
+  fill: var(--mx-menu-disabled-text)
+}
+
+.mx-context-menu-item.disabled .mx-shortcut {
+  background-color: var(--mx-menu-shortcut-backgroud-disabled);
+  color: var(--mx-menu-shortcut-text-second)
+}
+
+.mx-context-menu-item .mx-item-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 100%
+}
+
+.mx-context-menu-item .mx-icon-placeholder {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: auto;
+  overflow: hidden
+}
+
+.mx-context-menu-item .mx-icon-placeholder.preserve-width {
+  width: var(--mx-menu-placeholder-width)
+}
+
+.mx-context-menu-item .icon {
+  display: inline-block;
+  font-size: var(--mx-menu-icon-size)
+}
+
+.mx-context-menu-item .icon.svg {
+  width: var(--mx-menu-icon-size);
+  height: var(--mx-menu-icon-size)
+}
+
+.mx-context-menu-item .label {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-inline-end: 16px
+}
+
+.mx-context-menu-item-wrapper {
+  position: relative
+}
+
+.mx-context-menu-item-sperator {
+  display: block;
+  padding: 5px 0;
+  background-color: var(--mx-menu-backgroud)
+}
+
+.mx-context-menu-item-sperator:after {
+  display: block;
+  content: "";
+  background-color: var(--mx-menu-divider);
+  height: 1px
+}
+
+.mx-right-arrow {
+  width: 14px;
+  height: 14px
+}
+
+.mx-checked-mark {
+  width: var(--mx-menu-icon-size);
+  height: var(--mx-menu-icon-size)
+}
+
+.mx-shortcut {
+  position: relative;
+  justify-self: flex-end;
+  font-size: 11.5px;
+  padding: 2px 4px;
+  background-color: var(--mx-menu-shortcut-backgroud);
+  color: var(--mx-menu-shortcut-text)
+}
+
+.mx-menu-bar.dark, .mx-context-menu.dark {
+  --mx-menu-backgroud: #1e293b;
+  --mx-menu-hover-backgroud: #334155;
+  --mx-menu-active-backgroud: #475569;
+  --mx-menu-open-backgroud: #334155;
+  --mx-menu-open-hover-backgroud: #334155;
+  --mx-menu-divider: rgba(148, 163, 184, 0.25);
+  --mx-menu-text: rgba(248, 250, 252, 0.95);
+  --mx-menu-hover-text: rgba(248, 250, 252, 0.95);
+  --mx-menu-active-text: #818cf8;
+  --mx-menu-open-text: rgba(248, 250, 252, 0.95);
+  --mx-menu-open-hover-text: rgba(248, 250, 252, 0.95);
+  --mx-menu-disabled-text: rgba(248, 250, 252, 0.45);
+  --mx-menu-shadow-color: rgba(99, 102, 241, 0.25);
+  --mx-menu-scrollbar-thumb-color: rgba(255, 255, 255, 0.2);
+  --mx-menu-scrollbar-thumb-color-light: rgba(255, 255, 255, 0.4);
+  --mx-menu-scrollbar-thumb-color-pressed: rgba(255, 255, 255, 0.1);
+  --mx-menu-shortcut-backgroud: #334155;
+  --mx-menu-shortcut-backgroud-hover: #4338ca;
+  --mx-menu-shortcut-backgroud-active: #4f46e5;
+  --mx-menu-shortcut-backgroud-open: #334155;
+  --mx-menu-shortcut-backgroud-disabled: #1e293b;
+  --mx-menu-shortcut-text: rgba(248, 250, 252, 0.65);
+  --mx-menu-shortcut-text-hover: #818cf8;
+  --mx-menu-shortcut-text-active: #a5b4fc;
+  --mx-menu-shortcut-text-open: rgba(248, 250, 252, 0.65);
+  --mx-menu-shortcut-text-disabled: rgba(248, 250, 252, 0.45)
+}
+
+.mx-menu-bar.flat, .mx-context-menu.flat {
+  border-radius: 0;
+  padding: 7px 0;
+  box-shadow: 0 1px 2px 1px var(--mx-menu-shadow-color)
+}
+
+.mx-menu-bar.flat .mx-context-menu-item, .mx-context-menu.flat .mx-context-menu-item {
+  padding: 3px 12px
+}
+
+.mx-menu-bar.win10, .mx-context-menu.win10 {
+  border-radius: 0;
+  padding: 8px 0;
+  border: 1px solid var(--mx-menu-border-color);
+  box-shadow: 2px 2px 1px 0 var(--mx-menu-shadow-color)
+}
+
+.mx-menu-bar.win10, .mx-context-menu.win10 {
+  --mx-menu-backgroud: #eeeeee;
+  --mx-menu-hover-backgroud: #d8d8d8;
+  --mx-menu-active-backgroud: #dfdfdf;
+  --mx-menu-open-backgroud: #f1f1f1;
+  --mx-menu-open-hover-backgroud: #d8d8d8;
+  --mx-menu-divider: #aaaaaa;
+  --mx-menu-border-color: #b1b1b1;
+  --mx-menu-shortcut-backgroud: transparent;
+  --mx-menu-shortcut-backgroud-hover: transparent;
+  --mx-menu-shortcut-backgroud-active: transparent;
+  --mx-menu-shortcut-backgroud-open: transparent;
+  --mx-menu-shortcut-backgroud-disabled: transparent;
+  --mx-menu-shortcut-text: #272727;
+  --mx-menu-shortcut-text-hover: #272727;
+  --mx-menu-shortcut-text-active: #272727;
+  --mx-menu-shortcut-text-open: #272727;
+  --mx-menu-shortcut-text-disabled: #6b6b6b
+}
+
+.mx-menu-bar.win10 .mx-context-menu-item, .mx-context-menu.win10 .mx-context-menu-item {
+  padding: 2px 4px;
+  margin: 0 4px
+}
+
+.mx-menu-bar.win10 .mx-context-menu-item-sperator, .mx-context-menu.win10 .mx-context-menu-item-sperator {
+  margin: 0 4px
+}
+
+.mx-menu-bar.win10.dark, .mx-context-menu.win10.dark {
+  --mx-menu-backgroud: #1e293b;
+  --mx-menu-hover-backgroud: #334155;
+  --mx-menu-active-backgroud: #475569;
+  --mx-menu-open-backgroud: #334155;
+  --mx-menu-open-hover-backgroud: #334155;
+  --mx-menu-divider: rgba(148, 163, 184, 0.25);
+  --mx-menu-border-color: rgba(148, 163, 184, 0.25);
+  --mx-menu-shortcut-backgroud: transparent;
+  --mx-menu-shortcut-backgroud-hover: transparent;
+  --mx-menu-shortcut-backgroud-active: transparent;
+  --mx-menu-shortcut-backgroud-open: transparent;
+  --mx-menu-shortcut-backgroud-disabled: transparent;
+  --mx-menu-shortcut-text: rgba(248, 250, 252, 0.65);
+  --mx-menu-shortcut-text-hover: #818cf8;
+  --mx-menu-shortcut-text-active: #a5b4fc;
+  --mx-menu-shortcut-text-open: rgba(248, 250, 252, 0.65);
+  --mx-menu-shortcut-text-disabled: rgba(248, 250, 252, 0.45);
+  padding: 8px 0
+}
+
+.mx-menu-bar.win10.dark .mx-context-menu-item, .mx-context-menu.win10.dark .mx-context-menu-item {
+  padding: 6px 12px;
+  margin: 0
+}
+
+.mx-menu-bar.win10.dark .mx-context-menu-item-sperator, .mx-context-menu.win10.dark .mx-context-menu-item-sperator {
+  margin: 0 7px
+}
+
+.mx-menu-bar.mac, .mx-context-menu.mac {
+  padding: 4px 0;
+  box-shadow: var(--fluent-card-shadow);
+  border: 1px solid var(--fluent-border-subtle);
+  backdrop-filter: var(--fluent-acrylic-blur);
+  background-color: var(--fluent-card-bg);
+  transition: box-shadow var(--fluent-transition-normal), border-color var(--fluent-transition-normal)
+}
+
+.mx-menu-bar.mac, .mx-context-menu.mac {
+  --mx-menu-backgroud: var(--fluent-card-bg);
+  --mx-menu-hover-backgroud: var(--fluent-item-hover);
+  --mx-menu-active-backgroud: var(--fluent-item-active);
+  --mx-menu-open-backgroud: var(--fluent-item-selected);
+  --mx-menu-open-hover-backgroud: var(--fluent-item-hover);
+  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-text: var(--td-text-color-primary);
+  --mx-menu-hover-text: var(--td-text-color-primary);
+  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-open-text: var(--td-text-color-primary);
+  --mx-menu-open-hover-text: var(--td-text-color-primary);
+  --mx-menu-disabled-text: var(--td-text-color-disabled);
+  --mx-menu-shadow-color: var(--fluent-card-shadow);
+  --mx-menu-backgroud-radius: var(--fluent-radius-card);
+  --mx-menu-shortcut-backgroud: var(--td-bg-color-secondarycomponent);
+  --mx-menu-shortcut-backgroud-hover: var(--td-bg-color-component);
+  --mx-menu-shortcut-backgroud-active: var(--td-bg-color-component-hover);
+  --mx-menu-shortcut-backgroud-open: var(--td-bg-color-secondarycomponent);
+  --mx-menu-shortcut-backgroud-disabled: var(--td-bg-color-component-disabled);
+  --mx-menu-shortcut-text: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
+  --mx-menu-border-color: var(--fluent-border-subtle)
+}
+
+.mx-menu-bar.mac.dark, .mx-context-menu.mac.dark {
+  --mx-menu-backgroud: var(--fluent-acrylic-bg-dark);
+  --mx-menu-hover-backgroud: var(--fluent-item-hover);
+  --mx-menu-active-backgroud: var(--fluent-item-active);
+  --mx-menu-open-hover-backgroud: var(--fluent-item-hover);
+  --mx-menu-open-backgroud: var(--fluent-item-selected);
+  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-text: var(--td-text-color-primary);
+  --mx-menu-hover-text: var(--td-text-color-primary);
+  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-open-text: var(--td-text-color-primary);
+  --mx-menu-open-hover-text: var(--td-text-color-primary);
+  --mx-menu-disabled-text: var(--td-text-color-disabled);
+  --mx-menu-shadow-color: var(--fluent-card-shadow);
+  --mx-menu-backgroud-radius: var(--fluent-radius-card);
+  --mx-menu-shortcut-backgroud: var(--td-bg-color-secondarycomponent);
+  --mx-menu-shortcut-backgroud-hover: var(--td-bg-color-component);
+  --mx-menu-shortcut-backgroud-active: var(--td-bg-color-component-hover);
+  --mx-menu-shortcut-backgroud-open: var(--td-bg-color-secondarycomponent);
+  --mx-menu-shortcut-backgroud-disabled: var(--td-bg-color-component-disabled);
+  --mx-menu-shortcut-text: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
+  --mx-menu-border-color: var(--fluent-border-subtle-dark);
+  box-shadow: var(--fluent-card-shadow);
+  border: 1px solid var(--fluent-border-subtle-dark);
+  backdrop-filter: var(--fluent-acrylic-blur);
+  background-color: var(--fluent-acrylic-bg-dark);
+  transition: box-shadow var(--fluent-transition-normal), border-color var(--fluent-transition-normal)
+}
+
+.mx-menu-bar.mac .mx-context-menu-item, .mx-context-menu.mac .mx-context-menu-item {
+  border-radius: var(--fluent-radius-smooth);
+  margin: 0 4px;
+  transition: background-color var(--fluent-transition-fast), color var(--fluent-transition-fast)
+}
+
+.mx-menu-bar.mac .mx-context-menu-item.keyboard-focus, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus {
+  background-color: var(--mx-menu-active-backgroud);
+  color: var(--mx-menu-active-text);
+  outline: none;
+  box-shadow: var(--fluent-focus-ring)
+}
+
+.mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-right-arrow, .mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-checked-mark, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-right-arrow, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-checked-mark {
+  fill: var(--mx-menu-active-text)
+}
+
+.mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-shortcut, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-shortcut {
+  background-color: var(--mx-menu-shortcut-backgroud-active);
+  color: var(--mx-menu-shortcut-text-active)
+}
+
+.mx-menu-bar.mac .mx-context-menu-item-sperator, .mx-context-menu.mac .mx-context-menu-item-sperator {
+  margin: 4px 12px
+}
+
+.mx-context-menu .vue-scroll-rect > .scroll-content {
+  overflow-y: scroll;
+  height: 100%;
+  width: auto;
+  position: relative !important
+}
+
+.mx-menu-ghost-host {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  pointer-events: none
+}
+
+.mx-menu-ghost-host.fullscreen {
+  position: fixed
+}
+
+.mx-menu-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--mx-menu-backgroud);
+  padding: 5px 0
+}
+
+.mx-menu-bar.mini {
+  flex-grow: 0
+}
+
+.mx-menu-bar .mx-menu-bar-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center
+}
+
+.mx-menu-bar .mx-menu-bar-item {
+  padding: 2px 8px;
+  border-radius: 5px;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: var(--mx-menu-backgroud);
+  color: var(--mx-menu-text)
+}
+
+.mx-menu-bar .mx-menu-bar-item:hover {
+  background-color: var(--mx-menu-hover-backgroud);
+  color: var(--mx-menu-hover-text)
+}
+
+.mx-menu-bar .mx-menu-bar-item:hover .mx-menu-bar-icon-menu {
+  fill: var(--mx-menu-hover-text)
+}
+
+.mx-menu-bar .mx-menu-bar-item:active, .mx-menu-bar .mx-menu-bar-item.active {
+  background-color: var(--mx-menu-active-backgroud);
+  color: var(--mx-menu-active-text)
+}
+
+.mx-menu-bar .mx-menu-bar-item:active .mx-menu-bar-icon-menu, .mx-menu-bar .mx-menu-bar-item.active .mx-menu-bar-icon-menu {
+  fill: var(--mx-menu-active-text)
+}
+
+.mx-menu-bar .mx-menu-bar-icon-menu {
+  fill: var(--mx-menu-text);
+  width: var(--mx-menu-icon-size);
+  height: var(--mx-menu-icon-size)
+}
+
+.mx-menu-bar.flat .mx-menu-bar-item {
+  border-radius: 0
+}

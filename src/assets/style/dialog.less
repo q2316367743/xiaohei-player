@@ -1,0 +1,130 @@
+.release-instance-info, .release-version-info {
+  padding: 8px !important;
+
+  .t-dialog__header {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 9;
+  }
+
+  .t-tab-panel {
+    height: calc(100vh - 240px);
+  }
+}
+
+
+.release-deploy-info {
+  padding: 8px !important;
+  .t-dialog__header {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 9;
+  }
+  .t-dialog__body {
+    padding: 0;
+  }
+  .deploy-info {
+    height: calc(100vh - 116px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .deploy-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--td-border-level-1-color);
+      background: var(--td-bg-color-container);
+      backdrop-filter: var(--fluent-acrylic-blur);
+
+      .deploy-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--td-text-color-primary);
+        margin-bottom: 8px;
+      }
+
+      .deploy-meta {
+        display: flex;
+        gap: 24px;
+        font-size: 13px;
+        color: var(--td-text-color-secondary);
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+      }
+    }
+
+    .deploy-content {
+      flex: 1;
+      overflow: hidden;
+
+      .t-tabs {
+        height: 100%;
+
+        .t-tabs__nav {
+          padding: 0 16px;
+          background: var(--td-bg-color-container);
+          border-bottom: 1px solid var(--td-border-level-1-color);
+        }
+
+
+        .t-tabs__content {
+          height: calc(100% - 48px);
+          overflow: hidden;
+
+          .t-tab-panel {
+            height: 100%;
+            overflow-y: auto;
+            padding: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.version-timeline {
+  .timeline-item {
+    .timeline-content {
+      .log-content {
+        :deep(.cherry-preview-container) {
+          .cherry {
+            .cherry-previewer {
+              background: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.asset-section {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  background: var(--td-bg-color-page);
+
+  .asset-sidebar {
+    width: 280px;
+    border-right: 1px solid var(--td-border-level-1-color);
+    display: flex;
+    flex-direction: column;
+    background: var(--td-bg-color-container);
+    backdrop-filter: var(--fluent-acrylic-blur);
+    box-shadow: var(--fluent-elevation-1);
+  }
+
+  .asset-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
