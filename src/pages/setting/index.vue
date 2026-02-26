@@ -13,6 +13,7 @@
     <div class="setting-content">
       <router-view/>
     </div>
+    <t-back-top container=".setting-content" />
   </div>
 </template>
 <script lang="ts" setup>

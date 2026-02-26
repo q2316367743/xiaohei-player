@@ -122,6 +122,7 @@ export interface SystemSetting {
    * 日志文件
    * 日志文件的路径，如果为空则表示关闭日志记录。更改之后需要重启。
    */
+  logFile: string;
   /**
    * 输出日志到终端
    * 日志除了输出到文件外还输出到终端，如果关闭日志记录则始终开启。更改之后需要重启。
@@ -172,6 +173,7 @@ export function getSystemSetting(): SystemSetting {
       excludeStart: 0,
       excludeEnd: 0
     },
+    logFile: '',
     logToTerminal: true,
     logLevel: 'info',
     logHTTP: true,
@@ -197,6 +199,7 @@ export const SystemSettingTitle: Record<keyof SystemSetting, string> = {
   transcoderPreset: '调整预设值',
   transcoderIncludeAudio: '包括声音',
   preview: '预览生成选项',
+  logFile: '日志文件',
   logToTerminal: '输出日志到终端',
   logLevel: '日志等级',
   logHTTP: '记录 HTTP 访问日志',

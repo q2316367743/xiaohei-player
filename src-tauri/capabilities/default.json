@@ -102,6 +102,16 @@
     "opener:allow-open-url",
     "opener:allow-reveal-item-in-dir",
     {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "xattr-d-apple",
+          "cmd": "xattr",
+          "args": ["-d", "com.apple.quarantine", { "validator": ".*" }]
+        }
+      ]
+    },
+    {
       "identifier": "opener:allow-open-path",
       "allow": [
         { "path": "$HOME/**/*" },
