@@ -50,6 +50,12 @@
           </template>
           片库
         </t-menu-item>
+        <t-menu-item to="/setting" value="/setting">
+          <template #icon>
+            <setting-icon />
+          </template>
+          设置
+        </t-menu-item>
       </t-menu>
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
@@ -63,7 +69,7 @@ import {
   FileIcon,
   HistoryIcon,
   HomeIcon,
-  InternetIcon,
+  InternetIcon, SettingIcon,
   VideoIcon,
   ViewListIcon
 } from "tdesign-icons-vue-next";

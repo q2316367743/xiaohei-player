@@ -27,7 +27,9 @@ watch(path, value => router.push(value), {immediate: true});
   height: 100vh;
 
   .library-content {
-    height: calc(100vh - 50px);
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    padding: 8px;
   }
 }
 </style>

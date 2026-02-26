@@ -42,6 +42,53 @@ export const router = createRouter({
           component: () => import('@/pages/library/scene/index.vue'),
         }
       ]
+    },
+    {
+      name: "设置",
+      path: '/setting',
+      component: () => import('@/pages/setting/index.vue'),
+      children: [
+        {
+          name: "任务",
+          path: 'task',
+          component: () => import('@/pages/setting/task/SettingTask.vue'),
+        },
+        {
+          name: "收藏库",
+          path: 'library',
+          component: () => import('@/pages/setting/library/index.vue'),
+        },
+        {
+          name: "界面",
+          path: 'interface',
+          component: () => import('@/pages/setting/interface/index.vue'),
+        },
+        {
+          name: "元数据提供者",
+          path: 'metadata',
+          component: () => import('@/pages/setting/metadata/index.vue'),
+        },
+        {
+          name: "系统",
+          path: 'system',
+          component: () => import('@/pages/setting/system/index.vue'),
+        },
+        {
+          name: "插件",
+          path: 'plugin',
+          component: () => import('@/pages/setting/plugin/index.vue'),
+        },
+        {
+          name: "日志",
+          path: 'log',
+          component: () => import('@/pages/setting/log/index.vue'),
+        },
+        {
+          name: "关于",
+          path: 'about',
+          component: () => import('@/pages/setting/about/index.vue'),
+        }
+      ]
     }
   ]
 });

@@ -1,5 +1,4 @@
 import {MessagePlugin} from "tdesign-vue-next";
-import {stringifyJsonWithBigIntSupport} from "@/util";
 
 function render(message: string, e?: any) {
   if (e instanceof Error) {
@@ -14,7 +13,7 @@ function success(message: any, callback: () => void): void;
 function success(message: any, callback?: () => void): void {
   MessagePlugin.success({
     closeBtn: true,
-    content: typeof message === "string" ? message : stringifyJsonWithBigIntSupport(message)
+    content: typeof message === "string" ? message : JSON.stringify(message)
   });
   if (callback) {
     callback()
@@ -48,7 +47,7 @@ export default {
   info(message: any) {
     MessagePlugin.info({
       closeBtn: true,
-      content: typeof message === "string" ? message : stringifyJsonWithBigIntSupport(message)
+      content: typeof message === "string" ? message : JSON.stringify(message)
     });
   },
   warning,

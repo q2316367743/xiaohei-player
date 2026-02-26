@@ -2,6 +2,7 @@ import {Store} from "@tauri-apps/plugin-store";
 import {APP_DATA_STORE_PATH} from "@/global/Constants";
 import {cloneDeep} from "es-toolkit";
 import type {UnlistenFn} from "@tauri-apps/api/event";
+import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
 
 
 class StoreWrapper {
@@ -18,7 +19,7 @@ class StoreWrapper {
   async getStore(): Promise<Store> {
     // 将新的 SQL 调用追加到 Promise 链尾部
     this.promiseChain = this.promiseChain
-      .finally(() => this._getStore())
+      .then(() => this._getStore())
       .catch((err) => {
         console.error('get store error:', err);
         // 失败也继续
@@ -70,6 +71,45 @@ class StoreWrapper {
   }
 }
 
-const instance = new StoreWrapper("path");
+export class StoreEntry<T extends Record<string, any>>
+{
+  private store: StoreWrapper;
 
-export const usePathStore = () => instance;
+  constructor(storeName: string) {
+    this.store = new StoreWrapper(storeName);
+  }
+
+  private getStore() {
+    return this.store.getStore();
+  }
+
+  async get(): Promise<T> {
+    const store = await this.getStore();
+    const entries = await store.entries<any>();
+    return entries.reduce((acc, [key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      acc[key] = value;
+      return acc;
+    }, {} as T);
+  }
+
+  async set(data: T) {
+    const store = await this.getStore();
+    for (const [key, value] of Object.entries(data)) {
+      await store.set(key, value);
+    }
+    await store.save();
+  }
+
+  async setItem<K extends keyof T>(key: K, value: T[K]) {
+    const store = await this.getStore();
+    await store.set(key as string, value);
+    await store.save();
+  }
+}
+
+const instance = new StoreEntry<TaskSetting>("task");
+
+// 任务设置
+export const useTaskSettingStore = () => instance;
