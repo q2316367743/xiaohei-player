@@ -68,7 +68,7 @@ export async function generatePreview(ffmpeg: string, path: string, preview: str
   
   const filterComplex = [];
   for (let i = 0; i < 5; i++) {
-    const startTime = (i * segmentDuration).toFixed(2);
+    const startTime = Math.min(i * segmentDuration, duration - 2).toFixed(2);
     filterComplex.push(`[0:v]trim=start=${startTime}:duration=2,setpts=PTS-STARTPTS[v${i}];[0:a]atrim=start=${startTime}:duration=2,asetpts=PTS-STARTPTS[a${i}]`);
   }
   

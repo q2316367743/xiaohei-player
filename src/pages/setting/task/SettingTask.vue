@@ -272,9 +272,12 @@ async function handleScan() {
   }
 
   try {
-    taskManager.addTask('扫描收藏库', async (onProgress) => {
+    console.log('开始添加扫描任务');
+    const task = taskManager.addTask('扫描收藏库', async (onProgress) => {
+      console.log('scanLibrary 回调被调用');
       await scanLibrary(onProgress);
     });
+    console.log('任务已添加:', task);
   } catch (e) {
     MessageUtil.error('扫描失败', e);
   }

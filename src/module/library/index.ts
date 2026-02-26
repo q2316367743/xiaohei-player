@@ -146,7 +146,7 @@ export async function scanLibrary(
   }
 
   logInfo("扫描完成，共发现", foundFiles.size, "个视频文件");
-  onProgress(0, foundFiles.size, "扫描完成，共发现" + foundFiles.size + "个视频文件")
+  onProgress(0, foundFiles.size, "扫描完成，共发现" + foundFiles.size + "个视频文件");
 
   const appData = await appDataDir();
   const vttPrefixDir = await join(appData, system.dataPath, "vtt");

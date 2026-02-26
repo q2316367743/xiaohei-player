@@ -10,6 +10,11 @@ export const router = createRouter({
       component: () => import('@/pages/home/index.vue'),
     },
     {
+      name: "首页h",
+      path: '/h',
+      component: () => import('@/pages/h/index.vue'),
+    },
+    {
       name: "最近播放",
       path: '/history',
       component: () => import('@/pages/history/index.vue'),
