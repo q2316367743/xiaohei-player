@@ -2,6 +2,9 @@
   <div class="mb-8px">
     <t-tabs default-value="1">
       <t-tab-panel :label="title" value="1" />
+      <template #action>
+        <slot name="action" />
+      </template>
     </t-tabs>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-8px w-full">
     <t-input v-model="data" class="w-full" :placeholder/>
-    <t-button variant="outline" theme="primary" @click="handleSelect">选择文件</t-button>
+    <t-button variant="outline" theme="primary" @click="handleSelect">{{label}}</t-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -31,7 +31,11 @@ const props = defineProps({
   defaultPath: String,
   directory: Boolean,
   recursive: Boolean,
-  canCreateDirectories: Boolean
+  canCreateDirectories: Boolean,
+  label: {
+    type: String,
+    default: '选择文件'
+  }
 });
 
 const handleSelect = () => {

@@ -2,7 +2,8 @@ import {Store} from "@tauri-apps/plugin-store";
 import {APP_DATA_STORE_PATH} from "@/global/Constants";
 import {cloneDeep} from "es-toolkit";
 import type {UnlistenFn} from "@tauri-apps/api/event";
-import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
+import {getTaskSetting, type TaskSetting} from "@/entity/setting/TaskSetting.ts";
+import {getLibrarySetting, type LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
 
 
 class StoreWrapper {
@@ -65,18 +66,20 @@ class StoreWrapper {
     const store = await this.getStore();
     return store.entries<T>();
   }
+
   async onChange<T>(cb: (key: string, value: T | undefined) => void): Promise<UnlistenFn> {
     const store = await this.getStore();
     return store.onChange(cb);
   }
 }
 
-export class StoreEntry<T extends Record<string, any>>
-{
-  private store: StoreWrapper;
+export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
+  private readonly store: StoreWrapper;
+  private readonly defaultValue: T;
 
-  constructor(storeName: string) {
+  constructor(storeName: string, defaultValue: T) {
     this.store = new StoreWrapper(storeName);
+    this.defaultValue = defaultValue;
   }
 
   private getStore() {
@@ -86,12 +89,23 @@ export class StoreEntry<T extends Record<string, any>>
   async get(): Promise<T> {
     const store = await this.getStore();
     const entries = await store.entries<any>();
-    return entries.reduce((acc, [key, value]) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+    const r: Record<string, any> = {};
+
+    const target = entries.reduce((acc, [key, value]) => {
       acc[key] = value;
       return acc;
-    }, {} as T);
+    }, {} as Record<string, any>);
+
+    Object.entries(this.defaultValue).forEach(([key, value]) => {
+      // 获取的
+      const v = target[key] as any;
+      if (typeof v === 'undefined' || v === null) {
+        r[key] = value;
+      }else {
+        r[key] = v;
+      }
+    });
+    return r as T;
   }
 
   async set(data: T) {
@@ -107,9 +121,21 @@ export class StoreEntry<T extends Record<string, any>>
     await store.set(key as string, value);
     await store.save();
   }
+
+  async getItem<K extends keyof T>(key: K): Promise<T[K]> {
+    const store = await this.getStore();
+    const v = await store.get<T[K]>(key as string);
+    if (typeof v === 'undefined' || v === null) {
+      return this.defaultValue[key];
+    }
+    return v;
+  }
 }
 
-const instance = new StoreEntry<TaskSetting>("task");
+const taskSettingStore = new StoreEntry<TaskSetting>("task", getTaskSetting());
+const librarySettingStore = new StoreEntry<LibrarySetting>("task", getLibrarySetting());
 
 // 任务设置
-export const useTaskSettingStore = () => instance;
+export const useTaskSettingStore = () => taskSettingStore;
+// 收藏库设置
+export const useLibrarySettingStore = () => librarySettingStore;

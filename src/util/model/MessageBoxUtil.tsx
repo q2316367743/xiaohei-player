@@ -1,4 +1,4 @@
-import { DialogPlugin, Input, Paragraph } from "tdesign-vue-next";
+import {DialogPlugin, FormItem, Input, Paragraph, TagInput} from "tdesign-vue-next";
 
 export default {
   confirm(
@@ -138,6 +138,34 @@ export default {
           reject("cancel");
         }
       });
+    });
+  },
+
+  tagPrompt(content: string, title: string, config?: {
+    initValue: Array<string>,
+    confirmButtonText?: string;
+    cancelButtonText?: string;
+  }): Promise<Array<string>> {
+    return new Promise<Array<string>>((resolve) => {
+      const {
+        initValue = [],
+        confirmButtonText = "确认",
+        cancelButtonText = "取消",
+      } = config || {};
+
+      const value = ref<Array<string>>(initValue);
+      const dp = DialogPlugin({
+        header: title,
+        confirmBtn: confirmButtonText,
+        cancelBtn: cancelButtonText,
+        default: () => <FormItem labelAlign={'top'} help={content}>
+          <TagInput v-model={value.value} />
+        </FormItem>,
+        onConfirm: () => {
+          dp.destroy();
+          resolve(value.value)
+        },
+      })
     });
   }
 };

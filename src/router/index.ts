@@ -56,7 +56,7 @@ export const router = createRouter({
         {
           name: "收藏库",
           path: 'library',
-          component: () => import('@/pages/setting/library/index.vue'),
+          component: () => import('@/pages/setting/library/SettingLibrary.vue'),
         },
         {
           name: "界面",
