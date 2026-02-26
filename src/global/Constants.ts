@@ -2,6 +2,7 @@ import {appDataDir, join} from "@tauri-apps/api/path";
 import {exists, mkdir} from "@tauri-apps/plugin-fs";
 import {useColorMode} from "@/hooks/ColorMode.ts";
 import {useBoolState} from "@/hooks";
+import {logDebug} from "@/lib/log.ts";
 
 export const APP_NAME = "xiaoheiplayer";
 export const APP_VERSION = "1.0.0";
@@ -26,6 +27,7 @@ export const initPath = async () => {
     APP_DATA_HOLD_DIR(),
   ])
   for (const dir of items) {
+    logDebug("初始化目录：" + dir);
     if (!await exists(dir)) {
       await mkdir(dir, {
         recursive: true
@@ -33,6 +35,12 @@ export const initPath = async () => {
     }
   }
 };
+
+// 主要
+export const MAIN_MIGRATE_FILES = [{
+  file: 'lib/migrate/0000_main.sql',
+  version: 0
+}];
 
 export const {colorMode, isDark} = useColorMode();
 

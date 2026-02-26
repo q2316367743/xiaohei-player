@@ -5,6 +5,8 @@ use tauri::{
 };
 use tauri_plugin_log::{Target, TargetKind};
 
+mod commands;
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -34,6 +36,7 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![commands::ffmpeg::ffmpeg_command])
         .setup(|app| {
 
             // 注册更新插件

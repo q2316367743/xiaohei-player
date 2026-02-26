@@ -48,7 +48,7 @@
           <template #icon>
             <video-icon/>
           </template>
-          片库
+          媒体库
         </t-menu-item>
         <t-menu-item to="/setting" value="/setting">
           <template #icon>
