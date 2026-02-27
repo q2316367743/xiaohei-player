@@ -1,9 +1,5 @@
 <template>
   <div class="video-info-panel">
-    <div class="video-title">
-      <h2>{{ video?.title }}</h2>
-    </div>
-    
     <div class="video-meta-row">
       <span class="meta-create-time">创建于 {{ formatDate(video?.created_at) }}</span>
       <span class="meta-fps-resolution">{{ video?.fps }} 帧每秒 | {{ video?.height }}p</span>
@@ -11,7 +7,7 @@
     
     <t-tabs v-model:value="activeTab" class="video-tabs">
       <t-tab-panel label="简介" value="intro">
-        <t-form labelWidth="70px" labelAlign="left">
+        <t-form  labelAlign="left">
           <t-form-item label="创建日期">{{ formatDate(video?.created_at) }}</t-form-item>
           <t-form-item label="更新日期">{{ formatDate(video?.updated_at) }}</t-form-item>
           <t-form-item label="描述">{{ video?.description || '-' }}</t-form-item>
@@ -44,9 +40,6 @@
         <div class="empty-content">暂无历史记录</div>
       </t-tab-panel>
       
-      <t-tab-panel label="编辑" value="edit">
-        <div class="empty-content">暂无编辑内容</div>
-      </t-tab-panel>
     </t-tabs>
   </div>
 </template>

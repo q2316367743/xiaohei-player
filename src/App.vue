@@ -83,8 +83,5 @@ import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
     box-shadow: var(--td-shadow-1);
   }
 
-  .app-content {
-    transform: scale(1);
-  }
 }
 </style>

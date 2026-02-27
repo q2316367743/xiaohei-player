@@ -31,6 +31,8 @@
     "store:allow-entries",
     "core:app:allow-set-app-theme",
     "core:window:allow-set-theme",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
     "core:webview:allow-set-webview-position",
     "core:webview:allow-create-webview",
     "core:webview:allow-webview-show",

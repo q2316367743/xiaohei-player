@@ -128,11 +128,7 @@
   top: -40px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(
-    145deg,
-    #ffffff 0%,
-    #f5f5f5 100%
-  );
+  background: var(--td-bg-color-component);
   border-radius: 6px;
   padding: 6px 12px;
   font-size: 12px;
@@ -143,7 +139,7 @@
     0 4px 12px rgba(0, 0, 0, 0.15),
     0 8px 24px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  z-index: 30;
+  z-index: 99999;
   pointer-events: none;
 
   &::after {

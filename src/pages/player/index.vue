@@ -10,6 +10,11 @@
         <div class="player-header__title">
           <span>{{ video?.title }}</span>
         </div>
+        <t-button theme="primary" variant="text" shape="square">
+          <template #icon>
+            <edit-icon />
+          </template>
+        </t-button>
       </div>
     </header>
 
@@ -26,7 +31,7 @@
 
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
-import {ChevronLeftIcon} from 'tdesign-icons-vue-next';
+import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
 import type {Video} from '@/entity/domain/Video.ts';
 import type {Tag} from '@/entity/domain/Tag.ts';
 import {getVideoById} from '@/service/VideoService.ts';

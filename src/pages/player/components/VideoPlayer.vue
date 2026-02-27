@@ -41,12 +41,13 @@
 </template>
 
 <script lang="ts" setup>
-import {onBeforeUnmount, onMounted, ref} from 'vue';
+import {onBeforeUnmount, onMounted, ref, nextTick} from 'vue';
 import Artplayer from 'artplayer';
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrc} from '@tauri-apps/api/core';
 import {readTextFile} from '@tauri-apps/plugin-fs';
 import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
+import {getCurrentWindow} from "@tauri-apps/api/window";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -60,6 +61,7 @@ const emit = defineEmits<{
   timeupdate: [currentTime: number];
 }>();
 
+const currentWindow = getCurrentWindow();
 const playerRef = ref<HTMLDivElement>();
 const timelineRef = ref<HTMLDivElement>();
 const player = ref<Artplayer>();
@@ -85,24 +87,30 @@ function formatTime(seconds: number): string {
 }
 
 function updateScrollOffset() {
-  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return;
-  
+  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return false;
+
   const containerWidth = timelineRef.value.clientWidth;
   const currentPercent = currentTime.value / duration.value;
   const totalWidth = timelineRef.value.scrollWidth;
-  
+
   const targetOffset = currentPercent * totalWidth - containerWidth / 2;
-  scrollOffset.value = Math.max(0, Math.min(totalWidth - containerWidth, targetOffset));
+  const newOffset = Math.max(0, Math.min(totalWidth - containerWidth, targetOffset));
+
+  if (scrollOffset.value !== newOffset) {
+    scrollOffset.value = newOffset;
+    return true;
+  }
+  return false;
 }
 
 function getCueAtCenter(): VttCue | null {
   if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return null;
-  
+
   const containerWidth = timelineRef.value.clientWidth;
   const centerPercent = (scrollOffset.value + containerWidth / 2) / timelineRef.value.scrollWidth;
   const centerTime = centerPercent * duration.value;
-  
-  return vttCues.value.find(cue => 
+
+  return vttCues.value.find(cue =>
     centerTime >= cue.startTime && centerTime <= cue.endTime
   ) || null;
 }
@@ -116,13 +124,13 @@ function onTimelineMouseDown(event: MouseEvent) {
 
 function onTimelineMouseMove(event: MouseEvent) {
   if (!timelineRef.value) return;
-  
+
   if (isDragging.value) {
     const deltaX = event.clientX - dragStartX.value;
     const newOffset = dragStartOffset.value - deltaX;
     const maxOffset = timelineRef.value.scrollWidth - timelineRef.value.clientWidth;
     scrollOffset.value = Math.max(0, Math.min(maxOffset, newOffset));
-    
+
     hoverCue.value = getCueAtCenter();
   } else {
     const rect = timelineRef.value.getBoundingClientRect();
@@ -130,8 +138,8 @@ function onTimelineMouseMove(event: MouseEvent) {
     const totalWidth = timelineRef.value.scrollWidth;
     const percent = scrollPos / totalWidth;
     const hoverTimeSec = percent * duration.value;
-    
-    hoverCue.value = vttCues.value.find(cue => 
+
+    hoverCue.value = vttCues.value.find(cue =>
       hoverTimeSec >= cue.startTime && hoverTimeSec <= cue.endTime
     ) || null;
   }
@@ -180,6 +188,9 @@ function initPlayer() {
   player.value = new Artplayer({
     container: playerRef.value,
     url: videoUrl,
+    // 【关键配置 1】：不启用 ArtPlayer 内部的全屏逻辑，避免它尝试调用 browser.requestFullscreen
+    fullscreen: false,
+    fullscreenWeb: false,
     volume: 0.7,
     isLive: false,
     muted: false,
@@ -193,8 +204,6 @@ function initPlayer() {
     flip: true,
     playbackRate: true,
     aspectRatio: true,
-    fullscreen: true,
-    fullscreenWeb: true,
     miniProgressBar: true,
     theme: '#23ade5',
     lang: 'zh-cn',
@@ -215,6 +224,17 @@ function initPlayer() {
         video.src = url;
       },
     },
+    controls: [{
+      name: 'fullscreen',
+      position: 'right',
+      html: `<span>全屏</span>`,
+      click() {
+        currentWindow.isFullscreen().then(v => {
+          player.value!.fullscreenWeb = !v;
+          currentWindow.setFullscreen(!v);
+        })
+      }
+    }]
   });
 
   player.value.on('ready', () => {
@@ -233,7 +253,9 @@ function initPlayer() {
     if (videoElement) {
       currentTime.value = videoElement.currentTime;
       emit('timeupdate', videoElement.currentTime);
-      updateScrollOffset();
+      if (!isDragging.value) {
+        updateScrollOffset();
+      }
     }
   });
 }
@@ -249,17 +271,26 @@ function getKeyframeStyle(cue: VttCue) {
     return {};
   }
 
+  const scale = 64 / cue.height;
+  const displayWidth = cue.width * scale;
+  const spriteWidth = 2880;
+  const spriteHeight = 1620;
+
   return {
     backgroundImage: `url(${convertFileSrc(props.video.sprite_path)})`,
-    backgroundPosition: `-${cue.x}px -${cue.y}px`,
-    backgroundSize: '2880px 1620px',
-    width: `${(cue.width/cue.height*64).toFixed(2)}px`
+    backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
+    backgroundSize: `${spriteWidth * scale}px ${spriteHeight * scale}px`,
+    width: `${displayWidth.toFixed(2)}px`,
+    height: '64px'
   };
 }
 
 function init() {
   loadVtt().then(() => {
     initPlayer();
+    nextTick(() => {
+      updateScrollOffset();
+    });
   });
 }
 
@@ -275,5 +306,5 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="less">
-@import "less/VideoPlayer";
+@import "less/VideoPlayer.less";
 </style>

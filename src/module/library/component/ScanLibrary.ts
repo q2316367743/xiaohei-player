@@ -100,7 +100,8 @@ async function processVideoFile(
     vttPrefixDir
   });
   const videoMetadata = await parseLibrary({
-    filePath
+    filePath,
+    fileName
   });
 
   const form: VideoEditForm = {
