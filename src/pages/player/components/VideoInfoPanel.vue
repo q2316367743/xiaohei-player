@@ -45,7 +45,6 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from 'vue';
 import type {Video} from '@/entity/domain/Video.ts';
 import type {Tag} from '@/entity/domain/Tag.ts';
 

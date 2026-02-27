@@ -1,0 +1,175 @@
+<template>
+  <div class="video-list-item" @click="handleClick">
+    <div
+      class="video-cover"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+    >
+      <t-image :src="coverUrl" fit="contain" style="width: 160px;height: 90px;background-color: black"/>
+      <div class="video-preview" v-show="isHovered && previewUrl">
+        <video
+          :src="previewUrl"
+          class="preview-video"
+          autoplay
+          loop
+          muted
+          playsinline
+        />
+      </div>
+    </div>
+    <div class="video-info">
+      <div class="video-title" :title="video.title">{{ video.title }}</div>
+      <div class="video-meta">
+        <span class="meta-item">
+          <t-icon name="time" size="14px" />
+          <span>{{ formatDuration(video.duration_ms) }}</span>
+        </span>
+        <span class="meta-item">
+          <t-icon name="file" size="14px" />
+          <span>{{ formatSize(video.file_size) }}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import type {Video} from '@/entity/domain/Video.ts';
+import {convertFileSrc} from '@tauri-apps/api/core';
+
+const router = useRouter();
+
+interface Props {
+  video: Video;
+}
+
+const props = defineProps<Props>();
+
+function handleClick() {
+  router.push(`/player/${props.video.id}`);
+}
+
+const isHovered = ref(false);
+
+const coverUrl = computed(() => convertFileSrc(props.video.cover_path));
+
+
+const previewUrl = computed(() => {
+  if (props.video.screenshot_path) {
+    return convertFileSrc(props.video.screenshot_path);
+  }
+  return '';
+});
+
+
+
+function handleMouseEnter() {
+  isHovered.value = true;
+}
+
+function handleMouseLeave() {
+  isHovered.value = false;
+}
+
+function formatDuration(ms: number): string {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  }
+  return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
+}
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  } else if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  } else if (bytes < 1024 * 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  } else {
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  }
+}
+</script>
+
+<style scoped lang="less">
+.video-list-item {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--td-bg-color-container);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.video-cover {
+  position: relative;
+  flex-shrink: 0;
+  width: 160px;
+  height: 90px;
+  background: var(--td-bg-color-page);
+  overflow: hidden;
+}
+
+.video-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.preview-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.video-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 12px;
+  min-width: 0;
+}
+
+.video-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--td-text-color-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 8px;
+}
+
+.video-meta {
+  display: flex;
+  gap: 12px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--td-text-color-secondary);
+  padding: 2px 6px;
+  background: var(--td-bg-color-container-hover);
+  border-radius: 4px;
+}
+</style>

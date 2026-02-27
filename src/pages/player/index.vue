@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, onMounted} from 'vue';
 import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
 import type {Video} from '@/entity/domain/Video.ts';
 import type {Tag} from '@/entity/domain/Tag.ts';

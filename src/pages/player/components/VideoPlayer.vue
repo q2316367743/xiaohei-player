@@ -41,7 +41,6 @@
 </template>
 
 <script lang="ts" setup>
-import {onBeforeUnmount, onMounted, ref, nextTick} from 'vue';
 import Artplayer from 'artplayer';
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrc} from '@tauri-apps/api/core';
