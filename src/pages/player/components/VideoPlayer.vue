@@ -243,6 +243,12 @@ function initPlayer() {
     }
   });
 
+  player.value.on('fullscreenWeb', e => {
+    if (!e) {
+      currentWindow.setFullscreen(false);
+    }
+  })
+
   player.value.on('error', (error) => {
     console.error('Player error:', error);
   });
