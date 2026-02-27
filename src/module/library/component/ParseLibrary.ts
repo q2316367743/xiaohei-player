@@ -2,6 +2,7 @@ import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
 
 interface ParseLibraryProp {
   filePath: string;
+  fileName: string;
 }
 
 interface ParseLibraryResult extends VideoMetadata, VideoEdit {
@@ -9,6 +10,8 @@ interface ParseLibraryResult extends VideoMetadata, VideoEdit {
 
 export async function parseLibrary(prop: ParseLibraryProp): Promise<ParseLibraryResult> {
   console.log('parseLibrary', prop);
+  const titleTemp = prop.fileName.split(".");
+  if (titleTemp.length > 1) titleTemp.pop();
   return {
     studio_id: '',
     actors: [],
@@ -18,6 +21,6 @@ export async function parseLibrary(prop: ParseLibraryProp): Promise<ParseLibrary
     tags: [],
     description: '',
     release_date: '',
-    title: ''
+    title: titleTemp.join('.')
   }
 }

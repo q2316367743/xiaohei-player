@@ -267,8 +267,8 @@ onBeforeUnmount(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--td-bg-color-page);
+  color: var(--td-text-color-primary);
   
   .player-header {
     display: flex;
@@ -279,7 +279,7 @@ onBeforeUnmount(() => {
     line-height: 32px;
     border-bottom: 1px solid var(--td-border-level-2-color);
     box-sizing: border-box;
-    background: #2a2a2a;
+    background: var(--td-bg-color-container);
     
     &__left {
       display: flex;
@@ -291,9 +291,9 @@ onBeforeUnmount(() => {
     &__title {
       display: flex;
       align-items: center;
-      font-size: 16px;
-      font-weight: 500;
-      color: #fff;
+      font-size: var(--td-font-size-title-medium);
+      font-weight: 600;
+      color: var(--td-text-color-primary);
       flex: 1;
       min-width: 0;
       overflow: hidden;
@@ -309,23 +309,23 @@ onBeforeUnmount(() => {
     
     .video-info-panel {
       width: 30%;
-      padding: 20px;
-      background: #2a2a2a;
+      padding: var(--td-comp-paddingLR-l);
+      background: var(--td-bg-color-secondarycontainer);
       overflow-y: auto;
       
       .video-meta {
         .meta-item {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 10px;
-          font-size: 14px;
+          margin-bottom: var(--td-comp-margin-m);
+          font-size: var(--td-font-size-body-medium);
           
           .label {
-            color: #999;
+            color: var(--td-text-color-secondary);
           }
           
           .value {
-            color: #fff;
+            color: var(--td-text-color-primary);
           }
         }
       }
@@ -343,9 +343,9 @@ onBeforeUnmount(() => {
       
       .keyframes-timeline {
         height: 120px;
-        background: #2a2a2a;
-        border-top: 1px solid #333;
-        padding: 10px;
+        background: var(--td-bg-color-secondarycontainer);
+        border-top: 1px solid var(--td-border-level-1-color);
+        padding: var(--td-comp-paddingTB-m);
         
         .timeline-scroll {
           width: 100%;
@@ -359,16 +359,16 @@ onBeforeUnmount(() => {
           }
           
           &::-webkit-scrollbar-track {
-            background: #333;
-            border-radius: 4px;
+            background: var(--td-scroll-track-color);
+            border-radius: var(--td-radius-default);
           }
           
           &::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
+            background: var(--td-scrollbar-color);
+            border-radius: var(--td-radius-default);
             
             &:hover {
-              background: #666;
+              background: var(--td-scrollbar-hover-color);
             }
           }
           
@@ -380,11 +380,11 @@ onBeforeUnmount(() => {
             .keyframe-item {
               width: 100px;
               height: 80px;
-              margin-right: 20px;
+              margin-right: var(--td-comp-margin-xl);
               background-size: cover;
               background-position: center;
               cursor: pointer;
-              border-radius: 4px;
+              border-radius: var(--td-radius-medium);
               position: relative;
               transition: transform 0.2s;
               
@@ -394,13 +394,13 @@ onBeforeUnmount(() => {
               
               .keyframe-time {
                 position: absolute;
-                bottom: 4px;
-                left: 4px;
-                background: rgba(0, 0, 0, 0.7);
-                color: #fff;
-                font-size: 12px;
-                padding: 2px 6px;
-                border-radius: 2px;
+                bottom: var(--td-comp-margin-xs);
+                left: var(--td-comp-margin-xs);
+                background: var(--td-mask-active);
+                color: var(--td-text-color-anti);
+                font-size: var(--td-font-size-link-small);
+                padding: var(--td-comp-paddingTB-xxs) var(--td-comp-paddingLR-xs);
+                border-radius: var(--td-radius-small);
               }
             }
           }
