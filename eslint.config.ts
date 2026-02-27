@@ -27,7 +27,8 @@ export default defineConfig([
   {files: ["**/*.css"], plugins: {css}, language: "css/css", extends: ["css/recommended"]},
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "off",
+      "vue/multi-word-component-names": "off"
     }
   },
   // 👇 特别为 src-utools 目录放宽限制

@@ -40,6 +40,21 @@ export const router = createRouter({
           name: "电影",
           path: 'scene',
           component: () => import('@/pages/library/scene/index.vue'),
+        },
+        {
+          name: "演员",
+          path: 'actor',
+          component: () => import('@/pages/library/actor/index.vue'),
+        },
+        {
+          name: "标签",
+          path: 'tag',
+          component: () => import('@/pages/library/tag/index.vue'),
+        },
+        {
+          name: "工作室",
+          path: 'studio',
+          component: () => import('@/pages/library/studio/index.vue'),
         }
       ]
     },
