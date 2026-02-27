@@ -3,6 +3,7 @@ import {exists, mkdir} from "@tauri-apps/plugin-fs";
 import {useColorMode} from "@/hooks/ColorMode.ts";
 import {useBoolState} from "@/hooks";
 import {logDebug} from "@/lib/log.ts";
+import {LocalName} from "@/global/LocalName.ts";
 
 export const APP_NAME = "xiaoheiplayer";
 export const APP_VERSION = "1.0.0";
@@ -44,4 +45,4 @@ export const MAIN_MIGRATE_FILES = [{
 
 export const {colorMode, isDark} = useColorMode();
 
-export const [collapsed, toggleCollapsed] = useBoolState( false);
+export const [collapsed, toggleCollapsed] = useBoolState( false, LocalName.KEY_COLLAPSED);

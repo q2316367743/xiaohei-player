@@ -3,25 +3,45 @@
     <div ref="playerRef" class="artplayer"></div>
 
     <div class="keyframes-timeline" v-if="vttCues.length > 0">
-      <div class="timeline-scroll" ref="timelineScrollRef">
-        <div class="timeline-container" :style="{ width: timelineWidth + 'px' }">
+      <div class="timeline-indicator-fixed">
+        <div class="indicator-line"></div>
+        <div class="indicator-head"></div>
+      </div>
+      <div
+        class="timeline-container"
+        ref="timelineRef"
+        @mousedown="onTimelineMouseDown"
+        @mousemove="onTimelineMouseMove"
+        @mouseup="onTimelineMouseUp"
+        @mouseleave="onTimelineMouseLeave"
+        @wheel.prevent="onTimelineWheel"
+      >
+        <div
+          class="timeline-track"
+          :style="{ transform: `translateX(${-scrollOffset}px)` }"
+        >
           <div
             v-for="(cue, index) in vttCues"
             :key="index"
             class="keyframe-item"
             :style="getKeyframeStyle(cue)"
             @click="seekToTime(cue.startTime)"
-          >
-            <div class="keyframe-time">{{ formatTime(cue.startTime) }}</div>
-          </div>
+          />
         </div>
+      </div>
+      <div
+        class="timeline-tooltip"
+        v-if="isDragging || hoverCue"
+        :style="{ left: '50%' }"
+      >
+        {{ hoverCue ? formatTime(hoverCue.startTime) : formatTime(currentTime) }}
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed, onBeforeUnmount, ref} from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import Artplayer from 'artplayer';
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrc} from '@tauri-apps/api/core';
@@ -41,9 +61,101 @@ const emit = defineEmits<{
 }>();
 
 const playerRef = ref<HTMLDivElement>();
+const timelineRef = ref<HTMLDivElement>();
 const player = ref<Artplayer>();
 const vttCues = ref<VttCue[]>([]);
-const timelineWidth = computed(() => vttCues.value.length * 120);
+const currentTime = ref(0);
+const duration = ref(0);
+const scrollOffset = ref(0);
+const hoverCue = ref<VttCue | null>(null);
+const isDragging = ref(false);
+const dragStartX = ref(0);
+const dragStartOffset = ref(0);
+
+function formatTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  const ms = Math.floor((seconds % 1) * 100);
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+  }
+  return `${minutes}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+}
+
+function updateScrollOffset() {
+  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return;
+  
+  const containerWidth = timelineRef.value.clientWidth;
+  const currentPercent = currentTime.value / duration.value;
+  const totalWidth = timelineRef.value.scrollWidth;
+  
+  const targetOffset = currentPercent * totalWidth - containerWidth / 2;
+  scrollOffset.value = Math.max(0, Math.min(totalWidth - containerWidth, targetOffset));
+}
+
+function getCueAtCenter(): VttCue | null {
+  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return null;
+  
+  const containerWidth = timelineRef.value.clientWidth;
+  const centerPercent = (scrollOffset.value + containerWidth / 2) / timelineRef.value.scrollWidth;
+  const centerTime = centerPercent * duration.value;
+  
+  return vttCues.value.find(cue => 
+    centerTime >= cue.startTime && centerTime <= cue.endTime
+  ) || null;
+}
+
+function onTimelineMouseDown(event: MouseEvent) {
+  isDragging.value = true;
+  dragStartX.value = event.clientX;
+  dragStartOffset.value = scrollOffset.value;
+  hoverCue.value = getCueAtCenter();
+}
+
+function onTimelineMouseMove(event: MouseEvent) {
+  if (!timelineRef.value) return;
+  
+  if (isDragging.value) {
+    const deltaX = event.clientX - dragStartX.value;
+    const newOffset = dragStartOffset.value - deltaX;
+    const maxOffset = timelineRef.value.scrollWidth - timelineRef.value.clientWidth;
+    scrollOffset.value = Math.max(0, Math.min(maxOffset, newOffset));
+    
+    hoverCue.value = getCueAtCenter();
+  } else {
+    const rect = timelineRef.value.getBoundingClientRect();
+    const scrollPos = scrollOffset.value + (event.clientX - rect.left);
+    const totalWidth = timelineRef.value.scrollWidth;
+    const percent = scrollPos / totalWidth;
+    const hoverTimeSec = percent * duration.value;
+    
+    hoverCue.value = vttCues.value.find(cue => 
+      hoverTimeSec >= cue.startTime && hoverTimeSec <= cue.endTime
+    ) || null;
+  }
+}
+
+function onTimelineMouseUp() {
+  if (hoverCue.value) {
+    seekToTime(hoverCue.value.startTime);
+  }
+  isDragging.value = false;
+}
+
+function onTimelineMouseLeave() {
+  isDragging.value = false;
+  hoverCue.value = null;
+}
+
+function onTimelineWheel(event: WheelEvent) {
+  if (!timelineRef.value) return;
+  const delta = event.deltaY > 0 ? 100 : -100;
+  const maxOffset = timelineRef.value.scrollWidth - timelineRef.value.clientWidth;
+  scrollOffset.value = Math.max(0, Math.min(maxOffset, scrollOffset.value + delta));
+  hoverCue.value = getCueAtCenter();
+}
 
 async function loadVtt() {
   console.log(props.video)
@@ -107,6 +219,9 @@ function initPlayer() {
 
   player.value.on('ready', () => {
     console.log('Player is ready');
+    if (player.value?.video) {
+      duration.value = player.value.video.duration || 0;
+    }
   });
 
   player.value.on('error', (error) => {
@@ -116,10 +231,9 @@ function initPlayer() {
   player.value.on('timeupdate', () => {
     const videoElement = player.value?.video;
     if (videoElement) {
+      currentTime.value = videoElement.currentTime;
       emit('timeupdate', videoElement.currentTime);
-      vttCues.value.find(cue =>
-        videoElement.currentTime >= cue.startTime && videoElement.currentTime <= cue.endTime
-      );
+      updateScrollOffset();
     }
   });
 }
@@ -138,14 +252,9 @@ function getKeyframeStyle(cue: VttCue) {
   return {
     backgroundImage: `url(${convertFileSrc(props.video.sprite_path)})`,
     backgroundPosition: `-${cue.x}px -${cue.y}px`,
-    backgroundSize: '2880px 1620px'
+    backgroundSize: '2880px 1620px',
+    width: `${(cue.width/cue.height*64).toFixed(2)}px`
   };
-}
-
-function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
 }
 
 function init() {

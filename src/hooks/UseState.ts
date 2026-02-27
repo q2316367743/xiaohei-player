@@ -9,8 +9,12 @@ export const useState = <T>(initial: T): [Ref<T>, (v: T) => void] => {
   ]
 }
 
-export const useBoolState = (initial: boolean): [Ref<boolean>, () => void] => {
+export const useBoolState = (initial: boolean, key?: string): [Ref<boolean>, () => void] => {
   const [data, setData] = useState(initial);
+  if (key) {
+    watch(data, (v) => localStorage.setItem(key, JSON.stringify({value: v})));
+    data.value = JSON.parse(localStorage.getItem(key) || "{}").value;
+  }
   return [
     data,
     () => {
