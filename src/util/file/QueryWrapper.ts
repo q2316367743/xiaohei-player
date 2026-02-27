@@ -1,6 +1,6 @@
 import {logDebug} from "@/lib/log";
 import {generatePlaceholders, stringifyJsonWithBigIntSupport} from "@/util";
-import type {PageResponse} from "@/global/PageResponse.ts";
+import type {PageResponse} from "@/global/CommonType.ts";
 import {SqlBase} from "@/lib/sql.ts";
 
 

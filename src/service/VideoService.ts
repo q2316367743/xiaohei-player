@@ -35,7 +35,7 @@ export async function saveVideo(from: VideoEditForm, hash: string) {
   const {actors, tags, studio, ...video} = from;
 
   // 先处理工作室
-  const studio_id = await handleStudio( studio);
+  const studio_id = await handleStudio(studio);
   // 处理演员
   await saveOrUpdateActor(actors, hash);
   // 处理标签
@@ -54,7 +54,7 @@ export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
   const now = Date.now();
   const {actors, tags, studio, ...video} = from;
 
-  let studio_id: string|undefined = undefined;
+  let studio_id: string | undefined = undefined;
   // 先处理工作室
   if (studio) {
     studio_id = await handleStudio(studio);
@@ -69,6 +69,21 @@ export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
     studio_id,
     updated_at: now,
   });
+}
+
+export type VideoSortField = 'file_name' | 'file_size' | 'created_at' | 'updated_at' | 'duration_ms' | 'fps' | 'release_date';
+export type SortOrder = 'ASC' | 'DESC';
+
+export async function pageVideo(
+  page: number = 1,
+  size: number = 20,
+  order: VideoSortField = 'file_name',
+  type: SortOrder = 'ASC'
+) {
+  const q = useSql().query<Video>('video')
+    .eq('is_deleted', 0);
+  q.order(order, type);
+  return await q.page(page, size);
 }
 
 export async function listVideo() {

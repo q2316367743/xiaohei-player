@@ -55,6 +55,7 @@ declare module 'vue' {
     TMenu: typeof import('tdesign-vue-next')['Menu']
     TMenuItem: typeof import('tdesign-vue-next')['MenuItem']
     TOption: typeof import('tdesign-vue-next')['Option']
+    TPagination: typeof import('tdesign-vue-next')['Pagination']
     TProgress: typeof import('tdesign-vue-next')['Progress']
     TRadio: typeof import('tdesign-vue-next')['Radio']
     TRadioButton: typeof import('tdesign-vue-next')['RadioButton']
@@ -69,7 +70,7 @@ declare module 'vue' {
     TTag: typeof import('tdesign-vue-next')['Tag']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
     VerticalSplitPanel: typeof import('./src/components/common/VerticalSplitPanel.vue')['default']
-    VideoCard: typeof import('./src/pages/library/scene/VideoCard.vue')['default']
+    VideoCard: typeof import('@/pages/library/scene/components/VideoCard.vue')['default']
     XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
     XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
   }
@@ -120,6 +121,7 @@ declare global {
   const TMenu: typeof import('tdesign-vue-next')['Menu']
   const TMenuItem: typeof import('tdesign-vue-next')['MenuItem']
   const TOption: typeof import('tdesign-vue-next')['Option']
+  const TPagination: typeof import('tdesign-vue-next')['Pagination']
   const TProgress: typeof import('tdesign-vue-next')['Progress']
   const TRadio: typeof import('tdesign-vue-next')['Radio']
   const TRadioButton: typeof import('tdesign-vue-next')['RadioButton']
@@ -134,7 +136,7 @@ declare global {
   const TTag: typeof import('tdesign-vue-next')['Tag']
   const TTooltip: typeof import('tdesign-vue-next')['Tooltip']
   const VerticalSplitPanel: typeof import('./src/components/common/VerticalSplitPanel.vue')['default']
-  const VideoCard: typeof import('./src/pages/library/scene/VideoCard.vue')['default']
+  const VideoCard: typeof import('@/pages/library/scene/components/VideoCard.vue')['default']
   const XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
   const XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
 }

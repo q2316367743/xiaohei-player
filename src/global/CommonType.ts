@@ -9,3 +9,10 @@ export type YesOrNo = 1 | 0;
  * AI聊天支持的角色
  */
 export type AiChatRole = "system" | "user" | "assistant" | "model-change" | "error";
+
+export interface PageResponse<T> {
+  total: number;
+  records: Array<T>;
+  pageNum: number;
+  pageSize: number;
+}
