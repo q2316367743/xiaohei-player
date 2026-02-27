@@ -53,7 +53,15 @@ import {addLibraryItem, settingLibraryItemColumns} from "@/pages/setting/library
 
 const data = ref<LibrarySetting>(getLibrarySetting());
 
-const columns = settingLibraryItemColumns(onItemChange);
+const columns = settingLibraryItemColumns(onItemChange, onDeleteItem);
+
+function onDeleteItem(path: string) {
+  const idx = data.value.items.findIndex(i => i.path === path);
+  if (idx >= 0) {
+    data.value.items.splice(idx, 1);
+    onChange('items', data.value.items);
+  }
+}
 
 onMounted(() => {
   useLibrarySettingStore().get()

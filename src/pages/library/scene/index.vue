@@ -4,65 +4,68 @@
       <div class="header-left">
         <t-radio-group v-model="layout" default-value="grid">
           <t-radio-button value="grid">
-            <app-icon />
+            <app-icon/>
           </t-radio-button>
           <t-radio-button value="list">
-            <view-list-icon />
+            <view-list-icon/>
           </t-radio-button>
         </t-radio-group>
       </div>
       <div class="header-right">
-        <t-select v-model="sortField" :style="{ width: '120px' }" @change="handleSortChange">
-          <t-option value="file_name" label="名称" />
-          <t-option value="file_size" label="大小" />
-          <t-option value="file_birthtime" label="文件创建时间" />
-          <t-option value="created_at" label="创建时间" />
-          <t-option value="updated_at" label="更新时间" />
-          <t-option value="duration_ms" label="时长" />
-          <t-option value="release_date" label="发行日期" />
+        <t-select v-model="sortField" :style="{ width: '140px' }" @change="handleSortChange">
+          <t-option value="file_name" label="名称"/>
+          <t-option value="file_size" label="大小"/>
+          <t-option value="file_birthtime" label="文件创建时间"/>
+          <t-option value="created_at" label="创建时间"/>
+          <t-option value="updated_at" label="更新时间"/>
+          <t-option value="duration_ms" label="时长"/>
+          <t-option value="release_date" label="发行日期"/>
         </t-select>
-        <t-radio-group v-model="sortOrder" @change="handleSortChange">
+        <t-radio-group v-model="sortOrder" variant="primary-filled" @change="handleSortChange">
           <t-radio-button value="ASC">
-            <chevron-up-icon />
+            <chevron-up-icon/>
           </t-radio-button>
           <t-radio-button value="DESC">
-            <chevron-down-icon />
+            <chevron-down-icon/>
           </t-radio-button>
         </t-radio-group>
       </div>
     </div>
 
-    <t-loading v-if="loading" size="large" class="loading-container" />
-    <template v-else>
-      <div v-if="layout === 'grid'" class="video-grid">
-        <VideoCard
-          v-for="video in videos"
-          :key="video.id"
-          :video="video"
-        />
-      </div>
+    <div class="scene-content">
+      <t-loading v-if="loading" size="large" class="loading-container"/>
+      <template v-else>
+        <div v-if="layout === 'grid'" class="video-grid">
+          <VideoCard
+            v-for="video in videos"
+            :key="video.id"
+            :video="video"
+          />
+        </div>
 
-      <div v-else class="video-list">
-        <VideoListItem
-          v-for="video in videos"
-          :key="video.id"
-          :video="video"
-        />
-      </div>
+        <div v-else class="video-list">
+          <VideoListItem
+            v-for="video in videos"
+            :key="video.id"
+            :video="video"
+          />
+        </div>
 
-      <t-empty v-if="videos.length === 0" description="暂无视频" />
+        <t-empty v-if="videos.length === 0" description="暂无视频"/>
+      </template>
+    </div>
 
-      <div v-if="total > 0" class="pagination-container">
-        <t-pagination
-          v-model="currentPage"
-          v-model:page-size="pageSize"
-          :total="total"
-          :page-size-options="[20, 40, 60, 100]"
-          @change="handlePageChange"
-          @page-size-change="handlePageSizeChange"
-        />
-      </div>
-    </template>
+    <div v-if="total > 0" class="pagination-container">
+      <t-pagination
+        v-model="currentPage"
+        v-model:page-size="pageSize"
+        :total="total"
+        :page-size-options="[15, 30, 50, 80]"
+        @change="handlePageChange"
+        @page-size-change="handlePageSizeChange"
+      />
+    </div>
+    <t-back-top container=".scene-content" />
   </div>
 </template>
 
@@ -75,14 +78,14 @@ import VideoCard from './components/VideoCard.vue';
 import VideoListItem from './components/VideoListItem.vue';
 
 const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_SCENE_LAYOUT, 'grid');
+const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_SCENE_SORT, 'file_name');
+const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_SCENE_ORDER, 'ASC');
 
 const videos = ref<Video[]>([]);
 const loading = ref(true);
 const currentPage = ref(1);
-const pageSize = ref(20);
+const pageSize = ref(15);
 const total = ref(0);
-const sortField = ref<VideoSortField>('file_name');
-const sortOrder = ref<SortOrder>('ASC');
 
 onMounted(async () => {
   await loadVideos();
@@ -120,19 +123,47 @@ function handleSortChange() {
 
 <style scoped lang="less">
 .scene-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .scene-header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .scene-content {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 48px;
+    overflow-y: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .pagination-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    height: 48px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
-.scene-header {
-  margin-bottom: 16px;
-  position: sticky;
-  left: 0;
-  top: 0;
-  right: 0;
-  z-index: 99;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 .header-left {
   display: flex;
@@ -163,11 +194,5 @@ function handleSortChange() {
   justify-content: center;
   align-items: center;
   min-height: 200px;
-}
-
-.pagination-container {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
 }
 </style>

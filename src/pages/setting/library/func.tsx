@@ -1,10 +1,13 @@
 import type {PrimaryTableCol} from "tdesign-vue-next";
 import {revealItemInDir} from '@tauri-apps/plugin-opener';
-import {DialogPlugin, Form, FormItem, Input, Link, Switch} from "tdesign-vue-next";
+import {Button, DialogPlugin, Form, FormItem, Input, Link, Popconfirm, Switch} from "tdesign-vue-next";
 import type {LibraryItem} from "@/entity/setting/LibrarySetting.ts";
 import XhFileSelect from "@/components/xiaohei/XhFileSelect.vue";
 
-export const settingLibraryItemColumns = (onItemChange: (path: string, key: 'video' | 'image', value: boolean) => void): Array<PrimaryTableCol> => {
+export const settingLibraryItemColumns = (
+  onItemChange: (path: string, key: 'video' | 'image', value: boolean) => void,
+  onDelete: (path: string) => void
+): Array<PrimaryTableCol> => {
   return [{
     title: '名称',
     colKey: 'name',
@@ -23,6 +26,13 @@ export const settingLibraryItemColumns = (onItemChange: (path: string, key: 'vid
     colKey: 'image',
     width: 100,
     cell: (_h, {row}) => <Switch value={row.image} onChange={e => onItemChange(row.path, 'image', e as any)}/>
+  }, {
+    title: '操作',
+    colKey: 'action',
+    width: 80,
+    cell: (_h, {row}) => <Popconfirm content={'确认删除吗？'} onConfirm={() => onDelete(row.path)}>
+      <Button theme="danger" variant="text">删除</Button>
+    </Popconfirm>
   }];
 }
 
