@@ -69,7 +69,6 @@ declare module 'vue' {
     VideoCard: typeof import('./src/pages/library/scene/VideoCard.vue')['default']
     XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
     XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
-    XhUploadImage: typeof import('./src/components/xiaohei/XhUploadImage.vue')['default']
   }
 }
 
@@ -132,5 +131,4 @@ declare global {
   const VideoCard: typeof import('./src/pages/library/scene/VideoCard.vue')['default']
   const XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
   const XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
-  const XhUploadImage: typeof import('./src/components/xiaohei/XhUploadImage.vue')['default']
 }

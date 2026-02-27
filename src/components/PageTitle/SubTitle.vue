@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-8px">
+  <div class="my-8px">
     <t-tabs default-value="1">
       <t-tab-panel :label="title" value="1" />
       <template #action>
