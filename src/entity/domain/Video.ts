@@ -9,6 +9,7 @@ export interface VideoFile {
   cover_path: string;       // 封面文件路径
   file_name: string;        // 文件名 (带扩展名)
   file_size: number;        // 文件大小 (字节)
+  file_birthtime: number;   // 文件创建时间
 }
 
 // 视频信息

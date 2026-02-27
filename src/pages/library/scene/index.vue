@@ -15,6 +15,7 @@
         <t-select v-model="sortField" :style="{ width: '120px' }" @change="handleSortChange">
           <t-option value="file_name" label="名称" />
           <t-option value="file_size" label="大小" />
+          <t-option value="file_birthtime" label="文件创建时间" />
           <t-option value="created_at" label="创建时间" />
           <t-option value="updated_at" label="更新时间" />
           <t-option value="duration_ms" label="时长" />

@@ -28,6 +28,18 @@
           <t-icon name="file" size="14px" />
           <span>{{ formatSize(video.file_size) }}</span>
         </span>
+        <span class="meta-item" v-if="video.file_birthtime">
+          <t-icon name="file-add" size="14px" />
+          <span>{{ formatDate(video.file_birthtime) }}</span>
+        </span>
+        <span class="meta-item" v-if="video.created_at">
+          <t-icon name="add-rectangle" size="14px" />
+          <span>{{ formatDate(video.created_at) }}</span>
+        </span>
+        <span class="meta-item" v-if="video.play_count > 0">
+          <t-icon name="play-circle" size="14px" />
+          <span>{{ video.play_count }}次</span>
+        </span>
       </div>
     </div>
   </div>
@@ -92,6 +104,12 @@ function formatSize(bytes: number): string {
   } else {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
   }
+}
+
+function formatDate(timestamp: number): string {
+  if (!timestamp) return '-';
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('zh-CN');
 }
 </script>
 

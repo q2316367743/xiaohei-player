@@ -109,6 +109,7 @@ async function processVideoFile(
     file_name: fileName,
     file_path: filePath,
     file_size: fileStat.size,
+    file_birthtime: fileStat.birthtime?.getTime() || 0,
 
     // 视频信息
     ...videoInfo,

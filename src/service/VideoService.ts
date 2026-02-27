@@ -71,7 +71,10 @@ export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
   });
 }
 
-export type VideoSortField = 'file_name' | 'file_size' | 'created_at' | 'updated_at' | 'duration_ms' | 'fps' | 'release_date';
+export type VideoSortField = 'file_name'
+  | 'file_size' | 'created_at' | 'updated_at' | 'duration_ms' | 'fps'
+  | 'release_date'
+  | 'file_birthtime';
 export type SortOrder = 'ASC' | 'DESC';
 
 export async function pageVideo(

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS video
     cover_path       TEXT    NOT NULL DEFAULT '',        -- 封面图片
     file_name        TEXT    NOT NULL DEFAULT '',        -- 文件名 (带扩展名)
     file_size        INTEGER NOT NULL DEFAULT 0,         -- 文件大小 (字节)
+    file_birthtime   INTEGER NOT NULL DEFAULT 0,         -- 文件创建时间
 
     -- 视频信息
     duration_ms      INTEGER NOT NULL DEFAULT 0,         -- 视频时长 (毫秒)
