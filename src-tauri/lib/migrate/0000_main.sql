@@ -3,15 +3,21 @@ CREATE TABLE IF NOT EXISTS video
     id               TEXT PRIMARY KEY,                   -- 视频文件内容的 SHA-256 Hash (例如: "a1b2c3...")
     created_at       INTEGER NOT NULL DEFAULT 0,
     updated_at       INTEGER NOT NULL DEFAULT 0,
+
     file_path        TEXT    NOT NULL DEFAULT '' UNIQUE, -- 当前绝对文件路径 (UNIQUE 约束防止同一路径重复插入，但允许 Hash 相同路径不同？需业务逻辑控制)
     screenshot_path  TEXT    NOT NULL DEFAULT '',
     sprite_path      TEXT    NOT NULL DEFAULT '',
     vtt_path         TEXT    NOT NULL DEFAULT '',
+    cover_path       TEXT    NOT NULL DEFAULT '',        -- 封面图片
     file_name        TEXT    NOT NULL DEFAULT '',        -- 文件名 (带扩展名)
     file_size        INTEGER NOT NULL DEFAULT 0,         -- 文件大小 (字节)
+
+    -- 视频信息
     duration_ms      INTEGER NOT NULL DEFAULT 0,         -- 视频时长 (毫秒)
     width            INTEGER NOT NULL DEFAULT 0,         -- 分辨率宽
     height           INTEGER NOT NULL DEFAULT 0,         -- 分辨率高
+    fps              INTEGER NOT NULL DEFAULT 0,
+    bit_rate         INTEGER NOT NULL DEFAULT 0,
     container_format TEXT    NOT NULL DEFAULT '',        -- 容器格式 (mp4, mkv, avi...)
     video_codec      TEXT    NOT NULL DEFAULT '',        -- 视频编码 (h264, hevc...)
     audio_codec      TEXT    NOT NULL DEFAULT '',        -- 音频编码 (aac, mp3...)
@@ -19,7 +25,12 @@ CREATE TABLE IF NOT EXISTS video
     -- 用户可编辑的元数据
     title            TEXT    NOT NULL DEFAULT '',        -- 视频标题 (可手动覆盖)
     description      TEXT    NOT NULL DEFAULT '',        -- 描述
+    link             TEXT    NOT NULL DEFAULT '',
     release_date     TEXT    NOT NULL DEFAULT '',        -- 发行日期
+    director         TEXT    NOT NULL DEFAULT '',
+    studio_id        TEXT    NOT NULL DEFAULT '',
+
+    -- 播放信息
     last_played_at   INTEGER NOT NULL DEFAULT 0,         -- 最后播放时间
     play_count       INTEGER          DEFAULT 0,         -- 播放次数
 
@@ -36,6 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_videos_title ON video (title);
 CREATE INDEX IF NOT EXISTS idx_videos_last_played ON video (last_played_at DESC);
 CREATE INDEX IF NOT EXISTS idx_videos_file_path ON video (file_path);
 
+-- 演员
 CREATE TABLE IF NOT EXISTS actor
 (
     id            TEXT PRIMARY KEY,
@@ -52,6 +64,7 @@ CREATE TABLE IF NOT EXISTS actor
 
 CREATE INDEX IF NOT EXISTS idx_actors_name ON actor (name);
 
+-- 工作室
 CREATE TABLE IF NOT EXISTS studio
 (
     id           TEXT PRIMARY KEY,
@@ -83,21 +96,8 @@ CREATE TABLE IF NOT EXISTS video_actor
 CREATE INDEX IF NOT EXISTS idx_video_actors_actor ON video_actor (actor_id);
 CREATE INDEX IF NOT EXISTS idx_video_actors_video ON video_actor (video_id);
 
-CREATE TABLE IF NOT EXISTS video_studio
-(
-    id         TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL DEFAULT 0,
-    updated_at INTEGER NOT NULL DEFAULT 0,
-    video_id   TEXT    NOT NULL DEFAULT '',
-    studio_id  INTEGER NOT NULL DEFAULT 0,
-    role_type  TEXT    NOT NULL DEFAULT 'production', -- 角色类型: 'production', 'distribution', 'sponsor'
 
-    FOREIGN KEY (video_id) REFERENCES video (id) ON DELETE CASCADE,
-    FOREIGN KEY (studio_id) REFERENCES studio (id) ON DELETE CASCADE
-);
-
-CREATE INDEX IF NOT EXISTS idx_video_studios_studio ON video_studio (studio_id);
-
+-- 标签
 CREATE TABLE IF NOT EXISTS tag
 (
     id         TEXT PRIMARY KEY,

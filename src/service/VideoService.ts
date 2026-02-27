@@ -1,5 +1,8 @@
 import {useSql} from "@/lib/sql.ts";
-import type {Video} from "@/entity/domain/Video.ts";
+import type {Video, VideoEditForm} from "@/entity/domain/Video.ts";
+import type {Studio} from "@/entity/domain/Studio.ts";
+import {saveOrUpdateActor} from "@/service/ActorService.ts";
+import {saveOrUpdateTag} from "@/service/TagService.ts";
 
 export async function existVideo(id: string) {
   const count = await useSql().query<Video>('video')
@@ -8,11 +11,67 @@ export async function existVideo(id: string) {
   return count > 0;
 }
 
-export async function saveVideo(video: Video) {
-  await useSql().mapper<Video>('video').insertSelf(video);
+async function handleStudio(studio: string) {
+  if (!studio) return '';
+  let studio_id: string;
+  const studioEntry = await useSql().query<Studio>('studio').eq('name', studio).get();
+  if (studioEntry) {
+    studio_id = studioEntry.id;
+  } else {
+    const {id} = await useSql().mapper<Studio>('studio').insert({
+      name: studio,
+      country: '',
+      founded_year: 0,
+      website: '',
+      logo_path: ''
+    });
+    studio_id = id;
+  }
+  return studio_id
 }
 
-export async function getAllVideos() {
+export async function saveVideo(from: VideoEditForm, hash: string) {
+  const now = Date.now();
+  const {actors, tags, studio, ...video} = from;
+
+  // 先处理工作室
+  const studio_id = await handleStudio( studio);
+  // 处理演员
+  await saveOrUpdateActor(actors, hash);
+  // 处理标签
+  await saveOrUpdateTag(tags, hash);
+
+  await useSql().mapper<Video>('video').insertSelf({
+    ...video,
+    studio_id,
+    id: hash,
+    created_at: now,
+    updated_at: now,
+  });
+}
+
+export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
+  const now = Date.now();
+  const {actors, tags, studio, ...video} = from;
+
+  let studio_id: string|undefined = undefined;
+  // 先处理工作室
+  if (studio) {
+    studio_id = await handleStudio(studio);
+  }
+  // 处理演员
+  if (actors) await saveOrUpdateActor(actors, id);
+  // 处理标签
+  if (tags) await saveOrUpdateTag(tags, id);
+
+  await useSql().mapper<Video>('video').updateById(id, {
+    ...video,
+    studio_id,
+    updated_at: now,
+  });
+}
+
+export async function listVideo() {
   return await useSql().query<Video>('video').eq('is_deleted', 0).list();
 }
 

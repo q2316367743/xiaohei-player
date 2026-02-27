@@ -32,37 +32,6 @@
       </div>
       <t-list size="small" split>
         <t-list-item>
-          生成短片封面
-          <template #action>
-            <t-switch v-model="data.generateShortCover" @change="onChange('generateShortCover', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          生成预览
-          <template #action>
-            <t-switch v-model="data.generatePreview" @change="onChange('generatePreview', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          生成时间轴预览小图
-          <template #action>
-            <t-switch v-model="data.generateTimelinePreviewThumbnail"
-                      @change="onChange('generateTimelinePreviewThumbnail', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          生成图片的缩略图
-          <template #action>
-            <t-switch v-model="data.generateImageThumbnail" @change="onChange('generateImageThumbnail', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          为图像短片生成预览图
-          <template #action>
-            <t-switch v-model="data.generateShortCoverPreview" @change="onChange('generateShortCoverPreview', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
           重新扫描文件
           <template #action>
             <t-switch v-model="data.reScanFile" @change="onChange('reScanFile', $event)"/>
@@ -130,25 +99,6 @@
           </div>
           <template #action>
             <t-switch v-model="data.markScreenshot" @change="onChange('markScreenshot', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          产生热图和速度资料给有互动的短片
-          <template #action>
-            <t-switch v-model="data.generateHeatmapAndSpeedData"
-                      @change="onChange('generateHeatmapAndSpeedData', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          图像片段预览
-          <template #action>
-            <t-switch v-model="data.imageSegmentPreview" @change="onChange('imageSegmentPreview', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          图像缩略图
-          <template #action>
-            <t-switch v-model="data.imageThumbnail" @change="onChange('imageThumbnail', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>

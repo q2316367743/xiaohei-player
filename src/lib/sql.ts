@@ -14,7 +14,6 @@ type TableName =
   | 'tag'
   | 'video'
   | 'video_actor'
-  | 'video_studio'
   | 'video_tag'
   ;
 

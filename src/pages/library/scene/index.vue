@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
-import {getAllVideos} from '@/service/VideoService.ts';
+import {listVideo} from '@/service/VideoService.ts';
 import type {Video} from '@/entity/domain/Video.ts';
 import VideoCard from './VideoCard.vue';
 
@@ -29,7 +29,7 @@ onMounted(async () => {
 async function loadVideos() {
   loading.value = true;
   try {
-    videos.value = await getAllVideos();
+    videos.value = await listVideo();
   } catch (e) {
     console.error('加载视频列表失败', e);
   } finally {
