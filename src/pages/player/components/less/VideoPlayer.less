@@ -3,66 +3,103 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 16px;
+  background: var(--td-bg-color-page);
 }
 
 .artplayer {
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #000;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .keyframes-timeline {
-  background: #1e1e1e;
-  border-radius: 8px;
-  padding: 12px;
+  background: var(--td-bg-color-secondarycontainer);
+  border-radius: 12px;
+  padding: 16px;
   overflow: hidden;
+  box-shadow: 
+    var(--td-shadow-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--td-border-level-1-color);
 }
 
 .timeline-scroll {
   overflow-x: auto;
   scrollbar-width: thin;
+  padding: 4px 0;
 
   &::-webkit-scrollbar {
-    height: 6px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--td-scroll-track-color);
+    border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #666;
-    border-radius: 3px;
+    background: var(--td-scrollbar-color);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--td-scrollbar-hover-color);
+    }
   }
 }
 
 .timeline-container {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   min-width: max-content;
 }
 
 .keyframe-item {
   width: 112px;
   height: 63px;
-  background-color: #333;
+  background-color: var(--td-bg-color-component);
   background-size: cover;
   background-position: center;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 4px;
-  transition: transform 0.2s;
+  padding-bottom: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--td-border-level-1-color);
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 8px 16px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
 
 .keyframe-time {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   color: #fff;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 2px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }

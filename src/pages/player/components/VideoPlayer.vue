@@ -1,12 +1,12 @@
 <template>
   <div class="video-content">
     <div ref="playerRef" class="artplayer"></div>
-    
+
     <div class="keyframes-timeline" v-if="vttCues.length > 0">
       <div class="timeline-scroll" ref="timelineScrollRef">
         <div class="timeline-container" :style="{ width: timelineWidth + 'px' }">
-          <div 
-            v-for="(cue, index) in vttCues" 
+          <div
+            v-for="(cue, index) in vttCues"
             :key="index"
             class="keyframe-item"
             :style="getKeyframeStyle(cue)"
@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, onBeforeUnmount} from 'vue';
+import {computed, onBeforeUnmount, ref} from 'vue';
 import Artplayer from 'artplayer';
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrc} from '@tauri-apps/api/core';
 import {readTextFile} from '@tauri-apps/plugin-fs';
-import {parseVtt, type VttCue} from "@/util";
+import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -46,14 +46,15 @@ const vttCues = ref<VttCue[]>([]);
 const timelineWidth = computed(() => vttCues.value.length * 120);
 
 async function loadVtt() {
+  console.log(props.video)
   if (!props.video?.vtt_path) {
     return;
   }
-  
+
   try {
     const content = await readTextFile(props.video.vtt_path);
-    const cues = parseVtt(content);
-    vttCues.value = cues;
+    vttCues.value = parseVtt(content);
+    console.log(vttCues.value)
   } catch (error) {
     console.error('Failed to load VTT file:', error);
   }
@@ -61,9 +62,9 @@ async function loadVtt() {
 
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
-  
+
   const videoUrl = convertFileSrc(props.video.file_path);
-  
+
   player.value = new Artplayer({
     container: playerRef.value,
     url: videoUrl,
@@ -103,20 +104,20 @@ function initPlayer() {
       },
     },
   });
-  
+
   player.value.on('ready', () => {
     console.log('Player is ready');
   });
-  
+
   player.value.on('error', (error) => {
     console.error('Player error:', error);
   });
-  
+
   player.value.on('timeupdate', () => {
     const videoElement = player.value?.video;
     if (videoElement) {
       emit('timeupdate', videoElement.currentTime);
-      vttCues.value.find(cue => 
+      vttCues.value.find(cue =>
         videoElement.currentTime >= cue.startTime && videoElement.currentTime <= cue.endTime
       );
     }
@@ -133,7 +134,7 @@ function getKeyframeStyle(cue: VttCue) {
   if (!props.video?.sprite_path) {
     return {};
   }
-  
+
   return {
     backgroundImage: `url(${convertFileSrc(props.video.sprite_path)})`,
     backgroundPosition: `-${cue.x}px -${cue.y}px`,
@@ -153,8 +154,8 @@ function init() {
   });
 }
 
-defineExpose({
-  init
+onMounted(() => {
+  init();
 });
 
 onBeforeUnmount(() => {

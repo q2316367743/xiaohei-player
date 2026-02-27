@@ -1,7 +1,7 @@
 <template>
-  <t-layout class="h-100vh">
-    <t-header class="player-header">
-      <div class="flex gap-8px items-center h-32px p-12px pb-11px" style="border-bottom: 1px solid var(--td-border-level-1-color)">
+  <div class="player-page">
+    <header class="player-header">
+      <div class="player-header__left">
         <t-button theme="primary" variant="text" shape="square" @click="goBack">
           <template #icon>
             <chevron-left-icon/>
@@ -11,28 +11,24 @@
           <span>{{ video?.title }}</span>
         </div>
       </div>
-    </t-header>
-
-    <t-content class="h-full">
-      <t-layout class="h-full">
-        <t-aside width="30vw">
-          <VideoInfoPanel :video="video"/>
-        </t-aside>
-        <t-content>
-          <VideoPlayer ref="videoPlayerRef" :video="video"/>
-        </t-content>
-      </t-layout>
-    </t-content>
+    </header>
 
     <div class="player-container">
+      <div class="video-info-panel-container">
+        <VideoInfoPanel :video="video" :tags="tags" :actors="actors" :studio="studio"/>
+      </div>
+      <div class="video-content-container">
+        <VideoPlayer v-if="video" :video="video"/>
+      </div>
     </div>
-  </t-layout>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {ChevronLeftIcon} from 'tdesign-icons-vue-next';
 import type {Video} from '@/entity/domain/Video.ts';
+import type {Tag} from '@/entity/domain/Tag.ts';
 import {getVideoById} from '@/service/VideoService.ts';
 import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
@@ -46,27 +42,29 @@ const router = useRouter();
 const videoId = route.params.id as string;
 
 const video = ref<Video>();
-const videoPlayerRef = ref<InstanceType<typeof VideoPlayer>>();
+const tags = ref<Tag[]>([]);
+const actors = ref<string>('');
+const studio = ref<string>('');
 
 function goBack() {
   router.back();
 }
-
 
 onMounted(async () => {
   try {
     const videoData = await getVideoById(videoId);
 
     if (!videoData) {
-      router.replace('/');
+      await router.replace('/');
       return;
     }
 
+    // 处理数据
     video.value = videoData;
-    videoPlayerRef.value?.init();
+
   } catch (error) {
     console.error('Failed to load video:', error);
-    router.replace('/');
+    await router.replace('/');
   }
 });
 </script>
