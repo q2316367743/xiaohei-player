@@ -101,7 +101,6 @@
 </template>
 
 <script lang="ts" setup>
-import {convertFileSrc} from "@tauri-apps/api/core";
 import {readDir} from '@tauri-apps/plugin-fs';
 import {dirname, join} from '@tauri-apps/api/path';
 import {writeText} from "@tauri-apps/plugin-clipboard-manager";
@@ -113,6 +112,7 @@ import {MessagePlugin} from 'tdesign-vue-next';
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import {revealItemInDir} from "@tauri-apps/plugin-opener";
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -131,7 +131,7 @@ const videoFiles = ref<Array<{ name: string; path: string }>>([]);
 const type = ref(route.query.type as string);
 const src = ref(route.query.src as string);
 const url = computed(() => {
-  if (type.value === 'file') return convertFileSrc(src.value);
+  if (type.value === 'file') return convertFileSrcToUrl(src.value);
   return src.value;
 });
 

@@ -47,7 +47,7 @@
 
 <script lang="ts" setup>
 import type {Video} from '@/entity/domain/Video.ts';
-import {convertFileSrc} from '@tauri-apps/api/core';
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 const router = useRouter();
 
@@ -63,12 +63,11 @@ function handleClick() {
 
 const isHovered = ref(false);
 
-const coverUrl = computed(() => convertFileSrc(props.video.cover_path));
-
+const coverUrl = computed(() => convertFileSrcToUrl(props.video.cover_path));
 
 const previewUrl = computed(() => {
   if (props.video.screenshot_path) {
-    return convertFileSrc(props.video.screenshot_path);
+    return convertFileSrcToUrl(props.video.screenshot_path);
   }
   return '';
 });

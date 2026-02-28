@@ -28,12 +28,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {convertFileSrc} from "@tauri-apps/api/core";
 import {BaseDirectory, join} from "@tauri-apps/api/path";
 import {exists, mkdir, writeFile} from "@tauri-apps/plugin-fs";
 import {useSnowflake} from "@/util";
 import type {PropType} from "vue";
 import {APP_DATA_ASSET_DIR} from "@/global/Constants.ts";
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 const modelValue = defineModel({
   type: String,
@@ -66,7 +66,7 @@ const props = defineProps({
 });
 const url = computed(() => {
   const v = props.value || modelValue.value;
-  return /https?/.test(v) ? v : convertFileSrc(v);
+  return /https?/.test(v) ? v : convertFileSrcToUrl(v);
 });
 const fileInput = ref<HTMLInputElement | null>(null);
 

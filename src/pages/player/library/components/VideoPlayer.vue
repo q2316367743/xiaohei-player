@@ -43,10 +43,10 @@
 <script lang="ts" setup>
 import Artplayer from 'artplayer';
 import type {Video} from '@/entity/domain/Video.ts';
-import {convertFileSrc} from '@tauri-apps/api/core';
 import {readTextFile} from '@tauri-apps/plugin-fs';
 import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
 import {getCurrentWindow} from "@tauri-apps/api/window";
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -182,7 +182,7 @@ async function loadVtt() {
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
 
-  const videoUrl = convertFileSrc(props.video.file_path);
+  const videoUrl = convertFileSrcToUrl(props.video.file_path);
 
   player.value = new Artplayer({
     container: playerRef.value,
@@ -282,7 +282,7 @@ function getKeyframeStyle(cue: VttCue) {
   const spriteHeight = 1620;
 
   return {
-    backgroundImage: `url(${convertFileSrc(props.video.sprite_path)})`,
+    backgroundImage: `url(${convertFileSrcToUrl(props.video.sprite_path)})`,
     backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
     backgroundSize: `${spriteWidth * scale}px ${spriteHeight * scale}px`,
     width: `${displayWidth.toFixed(2)}px`,
