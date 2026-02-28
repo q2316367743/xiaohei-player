@@ -24,7 +24,6 @@
 </template>
 <script lang="ts" setup>
 import { open } from '@tauri-apps/plugin-dialog';
-import { convertFileSrc } from '@tauri-apps/api/core';
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import {useLibrarySettingStore} from "@/lib/store.ts";
 
@@ -40,13 +39,12 @@ const handleOpenFile = async () => {
     ]
   });
   if (selected) {
-    const fileSrc = convertFileSrc(selected as string);
     // 跳转到播放器页面并传递文件路径
     await router.push({
       path: '/player/link',
       query: {
         type: 'file',
-        src: fileSrc
+        src: selected
       }
     });
   }
