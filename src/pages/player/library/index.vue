@@ -12,7 +12,7 @@
         </div>
         <t-button theme="primary" variant="text" shape="square">
           <template #icon>
-            <edit-icon />
+            <edit-icon/>
           </template>
         </t-button>
       </div>
@@ -33,7 +33,7 @@
 import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
 import type {Video} from '@/entity/domain/Video.ts';
 import type {Tag} from '@/entity/domain/Tag.ts';
-import {getVideoById} from '@/service/VideoService.ts';
+import {getVideoById, updateVideoStatus} from '@/service/VideoService.ts';
 import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
 
@@ -65,6 +65,12 @@ onMounted(async () => {
 
     // 处理数据
     video.value = videoData;
+
+    // 更新播放状态
+    await updateVideoStatus(videoId, {
+      last_played_at: Date.now(),
+      play_count: videoData.play_count + 1
+    })
 
   } catch (error) {
     console.error('Failed to load video:', error);

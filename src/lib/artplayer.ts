@@ -46,7 +46,7 @@ export function playM3u8(video: HTMLVideoElement, url: string, art: Artplayer) {
 export function playTs(video: HTMLVideoElement, url: string, art: Artplayer) {
   if (mpegts.isSupported()) {
     const flvPlayer = mpegts.createPlayer({
-      type: 'mpegts', // 关键：指定类型为 mpegts
+      type: 'mse',
       url: url,
       isLive: false,
     });

@@ -154,7 +154,7 @@ export async function scanLibrary(
   const foundFiles = new Map<string, VideoFile>();
 
   for (const item of library.items) {
-    logInfo("扫描路径:", item.path);
+    logInfo("扫描路径:", item);
     await collectVideoFiles(item, library, foundFiles);
   }
 

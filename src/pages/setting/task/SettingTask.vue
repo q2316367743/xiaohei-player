@@ -46,9 +46,6 @@
           <div class="font-size-1.2rem font-bold">生成</div>
           <div>生成辅助的图片，预览，片段，字幕等其他文件。</div>
         </div>
-        <div class="flex gap-8px">
-          <t-button>生成</t-button>
-        </div>
       </div>
       <t-list size="small" split>
         <t-list-item>
@@ -116,13 +113,13 @@
           <t-list-item-meta title="清理"
                             description="检查缺失的文件并将它们的数据从数据库中删除。 注意，这是一个破坏性的动作。"/>
           <template #action>
-            <t-button theme="danger">清理</t-button>
+            <t-button theme="danger" :disabled="isRunning" @click="handleCleanDeletedVideo">清理</t-button>
           </template>
         </t-list-item>
         <t-list-item>
           <t-list-item-meta title="清除已生成的文件" description="移除没有相应数据库条目的已生成文件。"/>
           <template #action>
-            <t-button theme="danger">清除已生成的文件</t-button>
+            <t-button theme="danger" :disabled="isRunning" @click="handleCleanGenerateFile">清除已生成的文件</t-button>
           </template>
         </t-list-item>
         <t-list-item>
@@ -134,7 +131,7 @@
             </template>
           </t-list-item-meta>
           <template #action>
-            <t-button theme="danger">优化数据库</t-button>
+            <t-button theme="danger" :disabled="isRunning" @click="handleCleanDeletedDb">优化数据库</t-button>
           </template>
         </t-list-item>
       </t-list>
@@ -153,6 +150,9 @@ import {logDebug} from "@/lib/log.ts";
 import {HelpCircleFilledIcon} from "tdesign-icons-vue-next";
 import {taskManager} from "@/lib/TaskManager.ts";
 import {scanLibrary} from "@/module/library/index.ts";
+import {cleanDeletedDb} from "@/module/clean/CleanDeletedDb.ts";
+import {cleanDeletedVideo} from "@/module/clean/CleanDeletedVideo.ts";
+import {cleanGenerateFile} from "@/module/clean/CleanGenerateFile.ts";
 
 const data = ref<TaskSetting>(getTaskSetting());
 const currentTask = ref(taskManager.getCurrentTask());
@@ -230,6 +230,51 @@ async function handleScan() {
     console.log('任务已添加:', task);
   } catch (e) {
     MessageUtil.error('扫描失败', e);
+  }
+}
+
+async function handleCleanDeletedVideo() {
+  if (isRunning.value) {
+    MessageUtil.warning('任务正在执行中，请稍候');
+    return;
+  }
+
+  try {
+    taskManager.addTask('清理已删除的视频', async (onProgress) => {
+      await cleanDeletedVideo(onProgress);
+    });
+  } catch (e) {
+    MessageUtil.error('清理失败', e);
+  }
+}
+
+async function handleCleanGenerateFile() {
+  if (isRunning.value) {
+    MessageUtil.warning('任务正在执行中，请稍候');
+    return;
+  }
+
+  try {
+    taskManager.addTask('清除已生成的文件', async (onProgress) => {
+      await cleanGenerateFile(onProgress);
+    });
+  } catch (e) {
+    MessageUtil.error('清除失败', e);
+  }
+}
+
+async function handleCleanDeletedDb() {
+  if (isRunning.value) {
+    MessageUtil.warning('任务正在执行中，请稍候');
+    return;
+  }
+
+  try {
+    taskManager.addTask('清理已删除的数据库记录', async (onProgress) => {
+      await cleanDeletedDb(onProgress);
+    });
+  } catch (e) {
+    MessageUtil.error('清理失败', e);
   }
 }
 </script>

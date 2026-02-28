@@ -5,7 +5,7 @@ import type {LibraryItem} from "@/entity/setting/LibrarySetting.ts";
 import XhFileSelect from "@/components/xiaohei/XhFileSelect.vue";
 
 export const settingLibraryItemColumns = (
-  onItemChange: (path: string, key: 'video' | 'image', value: boolean) => void,
+  onItemChange: (path: string, key: 'hidden', value: boolean) => void,
   onDelete: (path: string) => void
 ): Array<PrimaryTableCol> => {
   return [{
@@ -20,7 +20,7 @@ export const settingLibraryItemColumns = (
     title: '默认隐藏',
     colKey: 'hidden',
     width: 100,
-    cell: (_h, {row}) => <Switch value={row.video} onChange={e => onItemChange(row.path, 'video', e as any)}/>
+    cell: (_h, {row}) => <Switch value={row.hidden} onChange={e => onItemChange(row.path, 'hidden', e as any)}/>
   }, {
     title: '操作',
     colKey: 'action',

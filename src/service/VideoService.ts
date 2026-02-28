@@ -4,6 +4,8 @@ import {saveOrUpdateActor} from "@/service/ActorService.ts";
 import {saveOrUpdateTag} from "@/service/TagService.ts";
 import {saveOrUpdateStudio} from "@/service/StudioService.ts";
 import type {YesOrNo} from "@/global/CommonType.ts";
+import type {VideoActor} from "@/entity/domain/VideoActor.ts";
+import type {VideoTag} from "@/entity/domain/VideoTag.ts";
 
 export async function existVideo(id: string) {
   const count = await useSql().query<Video>('video')
@@ -87,6 +89,10 @@ export async function pageVideo(
     .page(page, size);
 }
 
+export async function listAllVideo() {
+  return await useSql().query<Video>('video').list();
+}
+
 export async function listVideo() {
   return await useSql().query<Video>('video').eq('is_deleted', 0).list();
 }
@@ -108,4 +114,16 @@ export async function deleteVideoByPath(filePath: string) {
   for (const video of videos) {
     await deleteVideo(video.id);
   }
+}
+
+export async function cleanDeletedVideo() {
+  const deletedVideos = await useSql().query<Video>('video').eq('is_deleted', 1).list();
+
+  for (const video of deletedVideos) {
+    await useSql().query<VideoActor>('video_actor').eq('video_id', video.id).delete();
+    await useSql().query<VideoTag>('video_tag').eq('video_id', video.id).delete();
+    await useSql().mapper<Video>('video').deleteById(video.id);
+  }
+
+  return deletedVideos.length;
 }

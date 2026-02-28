@@ -12,7 +12,7 @@ export async function generatePath(system: SystemSetting): Promise<GeneratePathR
 
   const appData = await appDataDir();
   const vttPrefixDir = await join(appData, system.dataPath, "vtt");
-  const screenshotDir = await join(appData, system.dataPath, "screenshots");
+  const screenshotDir = await join(appData, system.dataPath, "screenshot");
   const coverDir = await join(appData, system.dataPath, "cover");
   if (!await exists(vttPrefixDir)) await mkdir(vttPrefixDir, {recursive: true});
   if (!await exists(screenshotDir)) await mkdir(screenshotDir, {recursive: true});

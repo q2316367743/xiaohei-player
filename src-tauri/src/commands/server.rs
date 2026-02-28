@@ -139,20 +139,27 @@ fn parse_range(range_str: &str, file_size: u64) -> Option<(u64, u64)> {
         return None;
     }
     
-    let start = if parts[0].is_empty() {
-        if parts[1].is_empty() {
-            return None;
+    let (start, end) = match (parts[0].is_empty(), parts[1].is_empty()) {
+        (false, false) => {
+            let start: u64 = parts[0].parse().ok()?;
+            let end: u64 = parts[1].parse().ok()?;
+            (start, end)
         }
-        let end: u64 = parts[1].parse().ok()?;
-        file_size.saturating_sub(end).saturating_sub(1)
-    } else {
-        parts[0].parse().ok()?
-    };
-    
-    let end = if parts[1].is_empty() {
-        file_size - 1
-    } else {
-        parts[1].parse().ok()?
+        (false, true) => {
+            let start: u64 = parts[0].parse().ok()?;
+            (start, file_size.saturating_sub(1))
+        }
+        (true, false) => {
+            let end: u64 = parts[1].parse().ok()?;
+            if end >= file_size {
+                (0, file_size.saturating_sub(1))
+            } else {
+                (file_size.saturating_sub(end).saturating_sub(1), file_size.saturating_sub(1))
+            }
+        }
+        (true, true) => {
+            (0, file_size.saturating_sub(1))
+        }
     };
     
     if start > end || start >= file_size {

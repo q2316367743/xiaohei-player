@@ -66,6 +66,7 @@ function onDeleteItem(path: string) {
 onMounted(() => {
   useLibrarySettingStore().get()
     .then((res) => {
+      console.log(res);
       data.value = res;
     })
     .catch(e => MessageUtil.error("获取数据失败", e))
@@ -78,7 +79,7 @@ function onChange<K extends keyof LibrarySetting>(key: K, value: any) {
     .catch(e => MessageUtil.error("保存失败", e));
 }
 
-function onItemChange(path: string, key: 'video' | 'image', value: boolean) {
+function onItemChange(path: string, key: 'hidden', value: boolean) {
   for (let item of data.value.items) {
     if (item.path === path) {
       item[key] = value;

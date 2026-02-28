@@ -167,7 +167,6 @@ function onTimelineWheel(event: WheelEvent) {
 }
 
 async function loadVtt() {
-  console.log(props.video)
   if (!props.video?.vtt_path) {
     return;
   }
@@ -175,7 +174,6 @@ async function loadVtt() {
   try {
     const content = await readTextFile(props.video.vtt_path);
     vttCues.value = parseVtt(content);
-    console.log(vttCues.value)
   } catch (error) {
     console.error('Failed to load VTT file:', error);
   }
