@@ -1,5 +1,5 @@
 <template>
-  <div>插件</div>
+  <t-card size="small">插件</t-card>
 </template>
 <script lang="ts" setup>
 </script>

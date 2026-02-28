@@ -17,15 +17,10 @@ export const settingLibraryItemColumns = (
     colKey: 'path',
     cell: (_h, {row}) => <Link theme={'primary'} onClick={() => revealItemInDir(row.path)}>{row.path}</Link>
   }, {
-    title: '视频',
-    colKey: 'video',
+    title: '默认隐藏',
+    colKey: 'hidden',
     width: 100,
     cell: (_h, {row}) => <Switch value={row.video} onChange={e => onItemChange(row.path, 'video', e as any)}/>
-  }, {
-    title: '图片',
-    colKey: 'image',
-    width: 100,
-    cell: (_h, {row}) => <Switch value={row.image} onChange={e => onItemChange(row.path, 'image', e as any)}/>
   }, {
     title: '操作',
     colKey: 'action',
@@ -38,7 +33,7 @@ export const settingLibraryItemColumns = (
 
 export const addLibraryItem = (onConfirm: (item: LibraryItem) => void) => {
   const data = ref<LibraryItem>({
-    name: '', path: '', video: true, image: true
+    name: '', path: '', hidden: false
   });
 
   const dp = DialogPlugin({
@@ -50,11 +45,8 @@ export const addLibraryItem = (onConfirm: (item: LibraryItem) => void) => {
       <FormItem label={'路径'} labelAlign={'top'}>
         <XhFileSelect v-model={data.value.path} directory={true} label={'选择文件夹'}/>
       </FormItem>
-      <FormItem label={'视频'} labelAlign={'top'}>
-        <Switch value={data.value.video}/>
-      </FormItem>
-      <FormItem label={'图片'} labelAlign={'top'}>
-        <Switch value={data.value.image}/>
+      <FormItem label={'默认隐藏'} labelAlign={'top'}>
+        <Switch v-model={data.value.hidden}/>
       </FormItem>
     </Form>,
     onConfirm() {

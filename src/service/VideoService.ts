@@ -1,8 +1,9 @@
 import {useSql} from "@/lib/sql.ts";
-import type {Video, VideoEditForm} from "@/entity/domain/Video.ts";
-import type {Studio} from "@/entity/domain/Studio.ts";
+import type {Video, VideoAddForm, VideoStatusInfo} from "@/entity/domain/Video.ts";
 import {saveOrUpdateActor} from "@/service/ActorService.ts";
 import {saveOrUpdateTag} from "@/service/TagService.ts";
+import {saveOrUpdateStudio} from "@/service/StudioService.ts";
+import type {YesOrNo} from "@/global/CommonType.ts";
 
 export async function existVideo(id: string) {
   const count = await useSql().query<Video>('video')
@@ -11,31 +12,13 @@ export async function existVideo(id: string) {
   return count > 0;
 }
 
-async function handleStudio(studio: string) {
-  if (!studio) return '';
-  let studio_id: string;
-  const studioEntry = await useSql().query<Studio>('studio').eq('name', studio).get();
-  if (studioEntry) {
-    studio_id = studioEntry.id;
-  } else {
-    const {id} = await useSql().mapper<Studio>('studio').insert({
-      name: studio,
-      country: '',
-      founded_year: 0,
-      website: '',
-      logo_path: ''
-    });
-    studio_id = id;
-  }
-  return studio_id
-}
 
-export async function saveVideo(from: VideoEditForm, hash: string) {
+export async function saveVideo(from: VideoAddForm, hash: string) {
   const now = Date.now();
   const {actors, tags, studio, ...video} = from;
 
   // 先处理工作室
-  const studio_id = await handleStudio(studio);
+  const studio_id = await saveOrUpdateStudio(studio);
   // 处理演员
   await saveOrUpdateActor(actors, hash);
   // 处理标签
@@ -47,17 +30,23 @@ export async function saveVideo(from: VideoEditForm, hash: string) {
     id: hash,
     created_at: now,
     updated_at: now,
+    // 状态信息
+    last_played_at: 0,
+    play_count: 0,
+    is_deleted: 0,
+    scan_status: 'completed',
+    error_message: '',
   });
 }
 
-export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
+export async function updateVideo(id: string, from: Partial<VideoAddForm>) {
   const now = Date.now();
   const {actors, tags, studio, ...video} = from;
 
   let studio_id: string | undefined = undefined;
   // 先处理工作室
   if (studio) {
-    studio_id = await handleStudio(studio);
+    studio_id = await saveOrUpdateStudio(studio);
   }
   // 处理演员
   if (actors) await saveOrUpdateActor(actors, id);
@@ -67,7 +56,14 @@ export async function updateVideo(id: string, from: Partial<VideoEditForm>) {
   await useSql().mapper<Video>('video').updateById(id, {
     ...video,
     studio_id,
-    updated_at: now,
+    updated_at: now
+  });
+}
+
+export async function updateVideoStatus(id: string, form: Partial<VideoStatusInfo>) {
+  await useSql().mapper<Video>('video').updateById(id, {
+    ...form,
+    updated_at: Date.now()
   });
 }
 
@@ -81,12 +77,14 @@ export async function pageVideo(
   page: number = 1,
   size: number = 20,
   order: VideoSortField = 'file_name',
-  type: SortOrder = 'ASC'
+  type: SortOrder = 'ASC',
+  hidden?: YesOrNo
 ) {
-  const q = useSql().query<Video>('video')
-    .eq('is_deleted', 0);
-  q.order(order, type);
-  return await q.page(page, size);
+  return useSql().query<Video>('video')
+    .eq('is_deleted', 0)
+    .eq('hidden', hidden)
+    .order(order, type)
+    .page(page, size);
 }
 
 export async function listVideo() {

@@ -21,14 +21,24 @@
           <t-option value="duration_ms" label="时长"/>
           <t-option value="release_date" label="发行日期"/>
         </t-select>
-        <t-radio-group v-model="sortOrder" variant="primary-filled" @change="handleSortChange">
-          <t-radio-button value="ASC">
-            <chevron-up-icon/>
-          </t-radio-button>
-          <t-radio-button value="DESC">
-            <chevron-down-icon/>
-          </t-radio-button>
-        </t-radio-group>
+        <t-divider layout="vertical"/>
+        <div>
+          <t-button :theme="sortOrder==='ASC'?'primary' :'default'" shape="square"
+                    @click="handleSortOrderChange('ASC')">
+            <template #icon>
+              <chevron-up-icon/>
+            </template>
+          </t-button>
+          <t-button :theme="sortOrder==='DESC'?'primary' :'default'" shape="square"
+                    @click="handleSortOrderChange('DESC')">
+            <template #icon>
+              <chevron-down-icon/>
+            </template>
+          </t-button>
+        </div>
+        <t-divider layout="vertical"/>
+        <span>隐藏</span>
+        <t-switch v-model="hidden" class="ml-8px" @change="handleSortChange"></t-switch>
       </div>
     </div>
 
@@ -51,7 +61,8 @@
           />
         </div>
 
-        <t-empty v-if="videos.length === 0" description="暂无视频"/>
+        <empty-result v-if="videos.length === 0" tip="暂无视频" />
+
       </template>
     </div>
 
@@ -65,7 +76,7 @@
         @page-size-change="handlePageSizeChange"
       />
     </div>
-    <t-back-top container=".scene-content" />
+    <t-back-top container=".scene-content"/>
   </div>
 </template>
 
@@ -78,14 +89,15 @@ import VideoCard from './components/VideoCard.vue';
 import VideoListItem from './components/VideoListItem.vue';
 
 const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_SCENE_LAYOUT, 'grid');
-const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_SCENE_SORT, 'file_name');
-const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_SCENE_ORDER, 'ASC');
+const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_SCENE_SORT_FIELD, 'file_name');
+const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_SCENE_SORT_ORDER, 'ASC');
 
 const videos = ref<Video[]>([]);
 const loading = ref(true);
 const currentPage = ref(1);
 const pageSize = ref(15);
 const total = ref(0);
+const hidden = ref(false);
 
 onMounted(async () => {
   await loadVideos();
@@ -94,7 +106,9 @@ onMounted(async () => {
 async function loadVideos() {
   loading.value = true;
   try {
-    const result = await pageVideo(currentPage.value, pageSize.value, sortField.value, sortOrder.value);
+    const result = await pageVideo(
+      currentPage.value, pageSize.value, sortField.value, sortOrder.value,
+      hidden.value ? undefined : 0);
     videos.value = result.records;
     total.value = result.total;
   } catch (e) {
@@ -116,9 +130,16 @@ function handlePageSizeChange(newPageSize: number) {
 }
 
 function handleSortChange() {
+
   currentPage.value = 1;
   loadVideos();
 }
+
+function handleSortOrderChange(s: SortOrder) {
+  sortOrder.value = s;
+  handleSortChange();
+}
+
 </script>
 
 <style scoped lang="less">
@@ -138,6 +159,7 @@ function handleSortChange() {
     align-items: center;
     padding-left: 8px;
     padding-right: 8px;
+    background-color: var(--td-bg-color-container);
   }
 
   .scene-content {
@@ -147,8 +169,7 @@ function handleSortChange() {
     right: 0;
     bottom: 48px;
     overflow-y: auto;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding: 8px;
   }
 
   .pagination-container {
@@ -161,6 +182,7 @@ function handleSortChange() {
     height: 48px;
     padding-left: 8px;
     padding-right: 8px;
+    background-color: var(--td-bg-color-container);
   }
 }
 
@@ -174,7 +196,6 @@ function handleSortChange() {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 .video-grid {

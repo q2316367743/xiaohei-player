@@ -1,4 +1,5 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
+import type {YesOrNo} from "@/global/CommonType.ts";
 
 // 文件信息
 export interface VideoFile {
@@ -10,6 +11,7 @@ export interface VideoFile {
   file_name: string;        // 文件名 (带扩展名)
   file_size: number;        // 文件大小 (字节)
   file_birthtime: number;   // 文件创建时间
+  hidden: YesOrNo;          // 隐藏标记 (0:正常, 1:隐藏)
 }
 
 // 视频信息
@@ -36,7 +38,6 @@ export interface VideoMetadata {
 
 // 状态标记
 export interface VideoStatusInfo {
-
   last_played_at: number;   // 最后播放时间
   play_count: number;       // 播放次数
   is_deleted: number;       // 软删除标记 (0:正常, 1:已删除)
@@ -59,5 +60,5 @@ export interface VideoEdit {
   studio: string;
 }
 
-export interface VideoEditForm extends VideoCore, VideoEdit {
+export interface VideoAddForm extends VideoFile, VideoInfo, VideoMetadata, VideoEdit {
 }

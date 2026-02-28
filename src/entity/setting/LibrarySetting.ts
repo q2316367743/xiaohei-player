@@ -1,9 +1,10 @@
 export interface LibraryItem {
+  // 名称
   name: string;
+  // 路径
   path: string;
-  video: boolean;
-  image: boolean;
-
+  // 是否隐藏
+  hidden: boolean;
 }
 
 export interface LibrarySetting {

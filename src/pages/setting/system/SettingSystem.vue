@@ -1,6 +1,51 @@
 <template>
   <t-card size="small">
-    <sub-title title="路径"/>
+    <sub-title title="可执行文件"/>
+    <t-card>
+      <t-list size="small" split>
+        <t-list-item>
+          <t-list-item-meta title="FFmpeg可执行路径">
+            <template #description>
+              ffmpeg可执行文件（不仅仅是文件夹）的路径。如果为空，ffmpeg将通过$PATH、配置目录或$HOME/.stash从环境中解析
+              <br/>
+              <t-link theme="primary">{{ data.ffmpegPath || '未设置' }}</t-link>
+            </template>
+          </t-list-item-meta>
+          <template #action>
+            <t-button theme="primary" @click="onPathEditExecutable('ffmpegPath')">编辑</t-button>
+          </template>
+        </t-list-item>
+        <t-list-item>
+          <t-list-item-meta title="FFprobe 可执行路径">
+            <template #description>
+              ffprobe可执行文件的路径（不仅仅是文件夹）。如果为空，ffprobe将通过$PATH、配置目录或$HOME/.stash从环境中解析
+              <br/>
+              <t-link theme="primary">{{ data.ffprobePath || '未设置' }}</t-link>
+            </template>
+          </t-list-item-meta>
+          <template #action>
+            <t-button theme="primary" @click="onPathEditExecutable('ffprobePath')">编辑</t-button>
+          </template>
+        </t-list-item>
+        <t-list-item>
+          <t-list-item-meta title="Python 可执行文件路径">
+            <template #description>
+              Python 执行程序的路径。（不限于文件夹）给网页挖掘器和插件的源文件使用。如果没有，python会从环境变量找到
+              <br/>
+              <t-link theme="primary">{{ data.pythonPath || '未设置' }}</t-link>
+            </template>
+          </t-list-item-meta>
+          <template #action>
+            <t-button theme="primary" @click="onPathEditExecutable('pythonPath')">编辑</t-button>
+          </template>
+        </t-list-item>
+      </t-list>
+    </t-card>
+    <sub-title title="路径">
+      <template #action>
+        <t-typography-text theme="error" class="pt-3px">非必要请勿修改</t-typography-text>
+      </template>
+    </sub-title>
     <t-card>
       <t-list size="small" split>
         <t-list-item>
@@ -73,42 +118,6 @@
           </t-list-item-meta>
           <template #action>
             <t-button theme="primary" @click="onPathEdit('customActorImagePath')">编辑</t-button>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          <t-list-item-meta title="FFmpeg可执行路径">
-            <template #description>
-              ffmpeg可执行文件（不仅仅是文件夹）的路径。如果为空，ffmpeg将通过$PATH、配置目录或$HOME/.stash从环境中解析
-              <br/>
-              <t-link theme="primary">{{ data.ffmpegPath || '未设置' }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-button theme="primary" @click="onPathEditExecutable('ffmpegPath')">编辑</t-button>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          <t-list-item-meta title="FFprobe 可执行路径">
-            <template #description>
-              ffprobe可执行文件的路径（不仅仅是文件夹）。如果为空，ffprobe将通过$PATH、配置目录或$HOME/.stash从环境中解析
-              <br/>
-              <t-link theme="primary">{{ data.ffprobePath || '未设置' }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-button theme="primary" @click="onPathEditExecutable('ffprobePath')">编辑</t-button>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          <t-list-item-meta title="Python 可执行文件路径">
-            <template #description>
-              Python 执行程序的路径。（不限于文件夹）给网页挖掘器和插件的源文件使用。如果没有，python会从环境变量找到
-              <br/>
-              <t-link theme="primary">{{ data.pythonPath || '未设置' }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-button theme="primary" @click="onPathEditExecutable('pythonPath')">编辑</t-button>
           </template>
         </t-list-item>
         <t-list-item>

@@ -1,10 +1,10 @@
-import type {VideoEditForm} from "@/entity/domain/Video.ts";
+import type {VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
 import type {Tag} from "@/entity/domain/Tag.ts";
 import {map} from "@/util";
 
-export async function saveOrUpdateTag(tags: VideoEditForm['tags'], videoId: string) {
+export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string) {
   await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
 
   if (tags.length === 0) return;

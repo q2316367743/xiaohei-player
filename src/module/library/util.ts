@@ -2,7 +2,13 @@ import {appDataDir, join} from "@tauri-apps/api/path";
 import {exists, mkdir} from "@tauri-apps/plugin-fs";
 import type {SystemSetting} from "@/entity/setting/SystemSetting.ts";
 
-export async function generatePath(system: SystemSetting) {
+export interface GeneratePathResult {
+  vttPrefixDir: string;
+  screenshotDir: string;
+  coverDir: string;
+}
+
+export async function generatePath(system: SystemSetting): Promise<GeneratePathResult> {
 
   const appData = await appDataDir();
   const vttPrefixDir = await join(appData, system.dataPath, "vtt");

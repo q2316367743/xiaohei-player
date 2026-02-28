@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS video
     file_name        TEXT    NOT NULL DEFAULT '',        -- 文件名 (带扩展名)
     file_size        INTEGER NOT NULL DEFAULT 0,         -- 文件大小 (字节)
     file_birthtime   INTEGER NOT NULL DEFAULT 0,         -- 文件创建时间
+    hidden           INTEGER NOT NULL DEFAULT 0,         -- 隐藏标记 (0:正常, 1:已隐藏)
 
     -- 视频信息
     duration_ms      INTEGER NOT NULL DEFAULT 0,         -- 视频时长 (毫秒)

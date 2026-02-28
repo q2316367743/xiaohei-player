@@ -1,5 +1,5 @@
 <template>
-  <div>元数据提供者</div>
+  <t-card size="small">元数据提供者</t-card>
 </template>
 <script lang="ts" setup>
 </script>

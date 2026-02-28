@@ -1,10 +1,10 @@
-import type {VideoEditForm} from "@/entity/domain/Video.ts";
+import type {VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoActor} from "@/entity/domain/VideoActor.ts";
 import type {Actor} from "@/entity/domain/Actor.ts";
 import {map} from "@/util";
 
-export async function saveOrUpdateActor(actors: VideoEditForm['actors'], videoId: string) {
+export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId: string) {
   // 删除旧的
   await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).delete();
   const actorNames = actors.map(actor => actor.name);

@@ -4,13 +4,13 @@ import {extname, join} from "@tauri-apps/api/path";
 import {readDir, stat} from "@tauri-apps/plugin-fs";
 import {deleteVideo, getVideoById, listVideo, saveVideo, updateVideo} from "@/service/VideoService.ts";
 import type {LibraryItem, LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
-import {generatePath} from "@/module/library/util.ts";
+import {generatePath, type GeneratePathResult} from "@/module/library/util.ts";
 import type {SystemSetting} from "@/entity/setting/SystemSetting.ts";
 import {sha256} from "@/util/lang/CryptoUtil.ts";
 import {generatorLibrary} from "@/module/library/component/GenerateLibrary.ts";
 import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import {parseLibrary} from "@/module/library/component/ParseLibrary.ts";
-import type {VideoEditForm} from "@/entity/domain/Video.ts";
+import type {VideoAddForm} from "@/entity/domain/Video.ts";
 
 /**
  * 扫描视频文件
@@ -21,7 +21,7 @@ import type {VideoEditForm} from "@/entity/domain/Video.ts";
 async function collectVideoFiles(
   item: LibraryItem,
   library: LibrarySetting,
-  foundFiles: Set<string>
+  foundFiles: Map<string, VideoFile>
 ) {
   const {path} = item;
   logDebug("开始扫描目录:", path);
@@ -41,7 +41,11 @@ async function collectVideoFiles(
           continue;
         }
 
-        foundFiles.add(newPath);
+        foundFiles.set(newPath, {
+          item,
+          filePath: newPath,
+          fileName: file.name
+        });
         logTrace("发现视频文件:", file.name);
       }
     } catch (e) {
@@ -52,27 +56,27 @@ async function collectVideoFiles(
   logDebug("目录扫描完成:", path);
 }
 
-/**
- * 处理视频文件
- * @param filePath 视频文件路径
- * @param fileName 视频文件名
- * @param system 设置
- * @param task 任务设置
- * @param onProgress 进度回调
- * @param vttPrefixDir 字幕文件前缀
- * @param screenshotDir 截图文件目录
- * @param coverDir 封面文件目录
- */
-async function processVideoFile(
+interface VideoFile {
+  item: LibraryItem,
   filePath: string,
   fileName: string,
+}
+
+interface ProcessVideoFileProp {
+  file: VideoFile;
   system: SystemSetting,
   task: TaskSetting,
   onProgress: (progress: number, total: number, message: string) => void,
-  vttPrefixDir: string,
-  screenshotDir: string,
-  coverDir: string,
-) {
+  generatePath: GeneratePathResult;
+}
+
+/**
+ * 处理视频文件
+ */
+async function processVideoFile(prop: ProcessVideoFileProp) {
+  const {file, system, task, onProgress, generatePath} = prop;
+  const {filePath, fileName, item} = file;
+  const {vttPrefixDir, screenshotDir, coverDir} = generatePath;
   const hash = await sha256(filePath);
   const old = await getVideoById(hash);
 
@@ -104,7 +108,7 @@ async function processVideoFile(
     fileName
   });
 
-  const form: VideoEditForm = {
+  const form: VideoAddForm = {
     // 基础信息
     file_name: fileName,
     file_path: filePath,
@@ -118,11 +122,7 @@ async function processVideoFile(
     ...videoMetadata,
 
     // 状态信息
-    last_played_at: 0,
-    play_count: 0,
-    is_deleted: 0,
-    scan_status: 'completed',
-    error_message: '',
+    hidden: item.hidden ? 1 : 0,
 
   };
 
@@ -151,7 +151,7 @@ export async function scanLibrary(
   }
 
   logInfo("配置了", library.items.length, "个扫描路径");
-  const foundFiles = new Set<string>();
+  const foundFiles = new Map<string, VideoFile>();
 
   for (const item of library.items) {
     logInfo("扫描路径:", item.path);
@@ -162,19 +162,23 @@ export async function scanLibrary(
   onProgress(0, foundFiles.size, "扫描完成，共发现" + foundFiles.size + "个视频文件");
 
   // 生成指定目录
-  const {vttPrefixDir, screenshotDir, coverDir} = await generatePath(system);
+  const generatePathResult = await generatePath(system);
 
   let processedCount = 0;
-  for (const filePath of foundFiles) {
-    const fileName = filePath.split('/').pop() || filePath;
+  for (const file of foundFiles.values()) {
     try {
-      await processVideoFile(
-        filePath, fileName, system, task, onProgress, vttPrefixDir, screenshotDir, coverDir);
+      await processVideoFile({
+        file,
+        system,
+        task,
+        onProgress,
+        generatePath: generatePathResult
+      });
     } catch (e) {
-      logError("处理视频文件出错:", filePath, e);
+      logError("处理视频文件出错:", file.filePath, e);
     }
     processedCount++;
-    onProgress(processedCount, foundFiles.size, `正在处理: ${fileName}`);
+    onProgress(processedCount, foundFiles.size, `正在处理: ${file.fileName}`);
   }
 
   onProgress(foundFiles.size, foundFiles.size, "正在清理已删除的视频...");
