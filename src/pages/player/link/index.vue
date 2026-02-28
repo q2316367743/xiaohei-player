@@ -107,7 +107,7 @@ import {writeText} from "@tauri-apps/plugin-clipboard-manager";
 import Artplayer from 'artplayer';
 import {VideoIcon, ArrowLeftIcon, ListNumberedIcon} from 'tdesign-icons-vue-next';
 import {getCurrentWindow} from '@tauri-apps/api/window';
-import {playFlv, playM3u8} from '@/lib/artplayer';
+import {getVideoType, playFlv, playM3u8, playTs} from '@/lib/artplayer';
 import {MessagePlugin} from 'tdesign-vue-next';
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
@@ -141,18 +141,6 @@ onMounted(() => {
   initPlayer();
 });
 
-// 判断链接类型
-const getVideoType = (url: string): string => {
-  if (!url) return '';
-  const lowerUrl = url.toLowerCase();
-  if (lowerUrl.endsWith('.flv')) return 'flv';
-  if (lowerUrl.endsWith('.m3u8') || lowerUrl.includes('.m3u8')) return 'm3u8';
-  if (lowerUrl.endsWith('.mp4')) return 'mp4';
-  if (lowerUrl.endsWith('.webm')) return 'webm';
-  if (lowerUrl.endsWith('.mkv')) return 'mkv';
-  return 'mp4';
-};
-
 // 切换侧边栏
 const toggleSidebar = async () => {
   showSidebar.value = !showSidebar.value;
@@ -168,7 +156,7 @@ const loadVideoFiles = async () => {
   loading.value = true;
   try {
     const librarySetting = await useLibrarySettingStore().get();
-    const videoExtname = librarySetting.videoExtname;
+    const videoExtname = librarySetting.openExtname;
     const directory = await dirname(src.value);
 
     const entries = await readDir(directory);
@@ -255,6 +243,7 @@ const initPlayer = () => {
     customType: {
       flv: playFlv,
       m3u8: playM3u8,
+      ts: playTs,
     },
     controls: [{
       name: 'fullscreen',

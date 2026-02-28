@@ -14,7 +14,7 @@ export async function initServerPort(): Promise<void> {
 
 export function convertFileSrcToUrl(filePath: string): string {
   const encodedPath = encodeURIComponent(filePath);
-  return `http://127.0.0.1:${serverPort}/file?path=${encodedPath}`;
+  return `http://127.0.0.1:${serverPort}/file/${encodedPath}`;
 }
 
 export function convertWebDavToUrl(

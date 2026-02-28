@@ -35,6 +35,9 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
 axum = "0.7"
 reqwest = { version = "0.11", features = ["json"] }
+tokio-util = "0.7"
+percent-encoding = "2.3"
+mime_guess = "2.0"
 
 tauri-plugin-velesdb = "1.1.1"
 

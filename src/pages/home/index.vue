@@ -34,7 +34,7 @@ const handleOpenFile = async () => {
   const selected = await open({
     multiple: false,
     filters: [
-      { name: '视频文件', extensions: librarySetting.videoExtname },
+      { name: '视频文件', extensions: librarySetting.openExtname },
       { name: '所有文件', extensions: ['*'] }
     ]
   });

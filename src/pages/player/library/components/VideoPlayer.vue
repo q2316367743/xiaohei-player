@@ -47,6 +47,7 @@ import {readTextFile} from '@tauri-apps/plugin-fs';
 import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
 import {getCurrentWindow} from "@tauri-apps/api/window";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import {getVideoType, playFlv, playM3u8, playTs} from "@/lib/artplayer.ts";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -188,6 +189,7 @@ function initPlayer() {
   player.value = new Artplayer({
     container: playerRef.value,
     url: videoUrl,
+    type: getVideoType(videoUrl),
     // 【关键配置 1】：不启用 ArtPlayer 内部的全屏逻辑，避免它尝试调用 browser.requestFullscreen
     fullscreen: false,
     fullscreenWeb: false,
@@ -214,15 +216,9 @@ function initPlayer() {
       autoplay: false,
     },
     customType: {
-      mp4: function (video: HTMLVideoElement, url: string) {
-        video.src = url;
-      },
-      webm: function (video: HTMLVideoElement, url: string) {
-        video.src = url;
-      },
-      mkv: function (video: HTMLVideoElement, url: string) {
-        video.src = url;
-      },
+      flv: playFlv,
+      m3u8: playM3u8,
+      ts: playTs,
     },
     controls: [{
       name: 'fullscreen',

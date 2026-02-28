@@ -1,26 +1,23 @@
 use axum::{
     body::Body,
-    extract::Query,
+    extract::{Path as AxumPath, Query},
     http::{header, HeaderMap, StatusCode},
     response::IntoResponse,
     routing::get,
     Router,
 };
+use percent_encoding::percent_decode_str;
 use serde::Deserialize;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU16, Ordering};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
+use tokio_util::io::ReaderStream;
 
 static SERVER_PORT: AtomicU16 = AtomicU16::new(0);
 
 #[derive(Clone)]
 struct AppState;
-
-#[derive(Debug, Deserialize)]
-struct FileQuery {
-    path: String,
-}
 
 #[derive(Debug, Deserialize)]
 struct WebDavQuery {
@@ -29,8 +26,25 @@ struct WebDavQuery {
     password: Option<String>,
 }
 
-async fn serve_file(Query(query): Query<FileQuery>, headers: HeaderMap) -> impl IntoResponse {
-    let path = query.path.clone();
+use mime_guess::from_path;
+
+fn get_mime_type(path: &str) -> String {
+    from_path(path).first_or_octet_stream().to_string()
+}
+
+async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap) -> impl IntoResponse {
+    let path = match percent_decode_str(&path).decode_utf8() {
+        Ok(p) => p.to_string(),
+        Err(_) => {
+            return Err((
+                StatusCode::BAD_REQUEST,
+                "Invalid URL encoding".to_string(),
+            ));
+        }
+    };
+    
+    let path = if path.starts_with('/') { path } else { format!("/{}", path) };
+    let mime_type = get_mime_type(&path);
     
     match tokio::fs::File::open(&path).await {
         Ok(mut file) => {
@@ -73,13 +87,14 @@ async fn serve_file(Query(query): Query<FileQuery>, headers: HeaderMap) -> impl 
                         
                         let response = axum::http::Response::builder()
                             .status(StatusCode::PARTIAL_CONTENT)
-                            .header(header::CONTENT_TYPE, "application/octet-stream")
+                            .header(header::CONTENT_TYPE, mime_type)
                             .header(header::CONTENT_LENGTH, file_size_range.to_string())
                             .header(header::CONTENT_RANGE, format!("bytes {}-{}/{}", start, end, file_size))
                             .header(header::ACCEPT_RANGES, "bytes")
                             .header("Access-Control-Allow-Origin", "*")
                             .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
                             .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
+                            .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
                             .body(Body::from(buffer))
                             .unwrap();
                         
@@ -88,24 +103,23 @@ async fn serve_file(Query(query): Query<FileQuery>, headers: HeaderMap) -> impl 
                 }
             }
             
-            let mut buffer = Vec::new();
-            if let Err(e) = file.read_to_end(&mut buffer).await {
-                return Err((
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Failed to read file: {}", e),
-                ));
-            }
+            let file_size_usize = file_size as usize;
             
-            let response = axum::http::Response::builder()
+            let builder = axum::http::Response::builder()
                 .status(StatusCode::OK)
-                .header(header::CONTENT_TYPE, "application/octet-stream")
-                .header(header::CONTENT_LENGTH, buffer.len().to_string())
+                .header(header::CONTENT_TYPE, mime_type)
+                .header(header::CONTENT_LENGTH, file_size_usize.to_string())
                 .header(header::ACCEPT_RANGES, "bytes")
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
                 .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
-                .body(Body::from(buffer))
-                .unwrap();
+                .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges");
+            
+            let file = tokio::fs::File::open(&path).await.unwrap();
+            let stream = ReaderStream::new(file);
+            let body = Body::from_stream(stream);
+            
+            let response = builder.body(body).unwrap();
             
             Ok(response)
         }
@@ -191,6 +205,7 @@ async fn serve_webdav(Query(query): Query<WebDavQuery>, headers: HeaderMap) -> i
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
                 .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
+                .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
                 .body(Body::from(bytes)).unwrap())
         }
         Err(e) => {
@@ -237,7 +252,7 @@ pub fn get_server_port() -> u16 {
 
 pub async fn start_server() -> Result<u16, Box<dyn std::error::Error + Send + Sync>> {
     let app = Router::new()
-        .route("/file", get(serve_file))
+        .route("/file/:path", get(serve_file))
         .route("/webdav", get(serve_webdav))
         .with_state(Arc::new(AppState));
     

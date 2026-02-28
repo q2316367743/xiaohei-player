@@ -13,10 +13,10 @@
     <t-card>
       <t-list size="small" split>
         <t-list-item>
-          <t-list-item-meta title="视频拓展名">
+          <t-list-item-meta title="扫描视频拓展名">
             <template #description>
-              <div>{{ data.videoExtname.join(',') }}</div>
-              <div>视频文件扩展名列表，将被标识为视频。</div>
+              <div>{{ data.scanExtname.join(',') }}</div>
+              <div>扫描视频文件扩展名列表，扫描时匹配的文件将被标识为视频。</div>
             </template>
           </t-list-item-meta>
           <template #action>
@@ -24,10 +24,10 @@
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="图片拓展名">
+          <t-list-item-meta title="打开视频拓展名">
             <template #description>
-              <div>{{ data.imageExtname.join(',') }}</div>
-              <div>图片文件扩展名列表，将被标识为图片。</div>
+              <div>{{ data.openExtname.join(',') }}</div>
+              <div>打开视频拓展名列表，控制打开文件时可选择的文件类型。</div>
             </template>
           </t-list-item-meta>
           <template #action>
@@ -90,19 +90,19 @@ function onItemChange(path: string, key: 'video' | 'image', value: boolean) {
 
 const onVideoExtnameEdit = () => {
   console.log(data.value)
-  MessageBoxUtil.tagPrompt("视频文件扩展名列表，将被标识为视频。", "视频拓展名", {
-    initValue: data.value.videoExtname
+  MessageBoxUtil.tagPrompt("扫描视频文件扩展名列表，扫描时匹配的文件将被标识为视频。", "扫描视频拓展名", {
+    initValue: data.value.scanExtname
   }).then((res) => {
-    onChange('videoExtname', res);
-    data.value.videoExtname = res;
+    onChange('scanExtname', res);
+    data.value.scanExtname = res;
   })
 }
 const onImageExtnameEdit = () => {
-  MessageBoxUtil.tagPrompt("图片文件扩展名列表，将被标识为图片。", "图片拓展名", {
-    initValue: data.value.imageExtname
+  MessageBoxUtil.tagPrompt("打开视频拓展名列表，控制打开文件时可选择的文件类型。", "打开视频拓展名", {
+    initValue: data.value.openExtname
   }).then((res) => {
-    onChange('imageExtname', res);
-    data.value.imageExtname = res;
+    onChange('openExtname', res);
+    data.value.openExtname = res;
   })
 }
 

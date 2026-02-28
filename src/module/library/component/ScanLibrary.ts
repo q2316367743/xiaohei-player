@@ -36,7 +36,7 @@ async function collectVideoFiles(
         await collectVideoFiles({...item, path: newPath}, library, foundFiles);
       } else if (file.isFile) {
         const en = await extname(file.name);
-        if (!library.videoExtname.includes(en)) {
+        if (!library.scanExtname.includes(en)) {
           logTrace("跳过非视频文件:", file.name, "扩展名:", en);
           continue;
         }

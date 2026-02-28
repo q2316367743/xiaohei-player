@@ -12,10 +12,10 @@ export interface LibrarySetting {
   // 收藏库列表
   items: Array<LibraryItem>;
 
-  // 视频拓展名
-  videoExtname: Array<string>;
-  // 图片拓展名
-  imageExtname: Array<string>;
+  // 扫描视频拓展名
+  scanExtname: Array<string>;
+  // 打开视频拓展名
+  openExtname: Array<string>;
 
   // 视频排除规则
   videoExclude: Array<string>;
@@ -38,8 +38,8 @@ export interface LibrarySetting {
 export function getLibrarySetting(): LibrarySetting{
   return {
     items: [],
-    videoExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
-    imageExtname: ['png', "jpg", "jpeg", "gif", "webp", "avif"],
+    scanExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
+    openExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
     videoExclude: [],
     imageExclude: [],
     imageFromImageFolder: false,
