@@ -130,9 +130,15 @@ const videoFiles = ref<Array<{ name: string; path: string }>>([]);
 
 const type = ref(route.query.type as string);
 const src = ref(route.query.src as string);
-const url = computed(() => {
-  if (type.value === 'file') return convertFileSrcToUrl(src.value);
-  return src.value;
+const url = ref('');
+
+onMounted(() => {
+  if (type.value === 'file') {
+    url.value = convertFileSrcToUrl(src.value);
+  } else {
+    url.value = src.value;
+  }
+  initPlayer();
 });
 
 // 判断链接类型
@@ -278,10 +284,6 @@ const initPlayer = () => {
     MessagePlugin.error('播放出错，请检查链接是否有效');
   });
 };
-
-onMounted(() => {
-  initPlayer();
-});
 
 onBeforeUnmount(() => {
   if (player.value) {

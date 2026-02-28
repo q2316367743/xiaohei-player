@@ -33,6 +33,9 @@ tauri-plugin-store = "2"
 tauri-plugin-clipboard-manager = "2.3.2"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
+axum = "0.7"
+reqwest = { version = "0.11", features = ["json"] }
+
 tauri-plugin-velesdb = "1.1.1"
 
 [dependencies.tauri-plugin-sql]

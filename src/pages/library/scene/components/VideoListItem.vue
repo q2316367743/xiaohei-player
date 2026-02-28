@@ -63,13 +63,16 @@ function handleClick() {
 
 const isHovered = ref(false);
 
-const coverUrl = computed(() => convertFileSrcToUrl(props.video.cover_path));
+const coverUrl = ref('');
+const previewUrl = ref('');
 
-const previewUrl = computed(() => {
-  if (props.video.screenshot_path) {
-    return convertFileSrcToUrl(props.video.screenshot_path);
+onMounted(() => {
+  if (props.video.cover_path) {
+    coverUrl.value = convertFileSrcToUrl(props.video.cover_path);
   }
-  return '';
+  if (props.video.screenshot_path) {
+    previewUrl.value = convertFileSrcToUrl(props.video.screenshot_path);
+  }
 });
 
 
@@ -106,87 +109,7 @@ function formatSize(bytes: number): string {
 }
 
 function formatDate(timestamp: number): string {
-  if (!timestamp) return '-';
   const date = new Date(timestamp);
-  return date.toLocaleDateString('zh-CN');
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 </script>
-
-<style scoped lang="less">
-.video-list-item {
-  display: flex;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--td-bg-color-container);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.video-cover {
-  position: relative;
-  flex-shrink: 0;
-  width: 160px;
-  height: 90px;
-  background: var(--td-bg-color-page);
-  overflow: hidden;
-}
-
-.video-preview {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.preview-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.video-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 8px 12px;
-  min-width: 0;
-}
-
-.video-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--td-text-color-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-bottom: 8px;
-}
-
-.video-meta {
-  display: flex;
-  gap: 12px;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--td-text-color-secondary);
-  padding: 2px 6px;
-  background: var(--td-bg-color-container-hover);
-  border-radius: 4px;
-}
-</style>

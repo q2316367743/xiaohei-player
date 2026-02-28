@@ -70,7 +70,7 @@ const handleOpenUrl = () => {
 </script>
 <style scoped lang="less">
 .home-container {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background-color: var(--td-bg-color-page);
   display: flex;

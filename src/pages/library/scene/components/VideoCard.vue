@@ -46,13 +46,16 @@ function handleClick() {
 
 const isHovered = ref(false);
 
-const coverUrl = computed(() => convertFileSrcToUrl(props.video.cover_path));
+const coverUrl = ref('');
+const previewUrl = ref('');
 
-const previewUrl = computed(() => {
-  if (props.video.screenshot_path) {
-    return convertFileSrcToUrl(props.video.screenshot_path);
+onMounted(() => {
+  if (props.video.cover_path) {
+    coverUrl.value = convertFileSrcToUrl(props.video.cover_path);
   }
-  return '';
+  if (props.video.screenshot_path) {
+    previewUrl.value = convertFileSrcToUrl(props.video.screenshot_path);
+  }
 });
 
 

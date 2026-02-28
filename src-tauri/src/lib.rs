@@ -36,9 +36,18 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![commands::ffmpeg::ffmpeg_command])
+        .invoke_handler(tauri::generate_handler![
+            commands::ffmpeg::ffmpeg_command,
+            commands::server::get_server_port
+        ])
         .setup(|app| {
-
+            std::thread::spawn(|| {
+                let rt = tokio::runtime::Runtime::new().unwrap();
+                rt.block_on(async {
+                    let _ = commands::server::start_server().await;
+                });
+            });
+            
             // 注册更新插件
             #[cfg(desktop)]
             let _ = app.handle().plugin(tauri_plugin_updater::Builder::new().build());

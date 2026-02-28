@@ -72,6 +72,7 @@ const hoverCue = ref<VttCue | null>(null);
 const isDragging = ref(false);
 const dragStartX = ref(0);
 const dragStartOffset = ref(0);
+const spriteUrl = ref('');
 
 function formatTime(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
@@ -272,7 +273,7 @@ function seekToTime(time: number) {
 }
 
 function getKeyframeStyle(cue: VttCue) {
-  if (!props.video?.sprite_path) {
+  if (!props.video?.sprite_path || !spriteUrl.value) {
     return {};
   }
 
@@ -282,7 +283,7 @@ function getKeyframeStyle(cue: VttCue) {
   const spriteHeight = 1620;
 
   return {
-    backgroundImage: `url(${convertFileSrcToUrl(props.video.sprite_path)})`,
+    backgroundImage: `url(${spriteUrl.value})`,
     backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
     backgroundSize: `${spriteWidth * scale}px ${spriteHeight * scale}px`,
     width: `${displayWidth.toFixed(2)}px`,
@@ -291,6 +292,9 @@ function getKeyframeStyle(cue: VttCue) {
 }
 
 function init() {
+  if (props.video?.sprite_path) {
+    spriteUrl.value = convertFileSrcToUrl(props.video.sprite_path);
+  }
   loadVtt().then(() => {
     initPlayer();
     nextTick(() => {
