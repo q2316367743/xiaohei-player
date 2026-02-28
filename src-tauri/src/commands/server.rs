@@ -1,7 +1,7 @@
 use axum::{
     body::Body,
     extract::{Path as AxumPath, Query},
-    http::{header, HeaderMap, StatusCode},
+    http::{header, HeaderMap, Method, StatusCode},
     response::IntoResponse,
     routing::get,
     Router,
@@ -32,7 +32,18 @@ fn get_mime_type(path: &str) -> String {
     from_path(path).first_or_octet_stream().to_string()
 }
 
-async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap) -> impl IntoResponse {
+async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method: Method) -> impl IntoResponse {
+    if method == Method::OPTIONS {
+        return Ok(axum::http::Response::builder()
+            .status(StatusCode::OK)
+            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
+            .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
+            .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
+            .body(Body::empty())
+            .unwrap());
+    }
+
     let path = match percent_decode_str(&path).decode_utf8() {
         Ok(p) => p.to_string(),
         Err(_) => {
@@ -64,7 +75,7 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap) -> imp
             if let Some(range_header) = range {
                 if let Ok(range_str) = range_header.to_str() {
                     if let Some((start, end)) = parse_range(range_str, file_size) {
-                        let file_size_range = (end - start + 1) as usize;
+                        let content_length = end - start + 1;
                         
                         if file.seek(std::io::SeekFrom::Start(start)).await.is_err() {
                             return Err((
@@ -73,50 +84,44 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap) -> imp
                             ));
                         }
                         
-                        let mut buffer = vec![0u8; file_size_range];
-                        match file.read_exact(&mut buffer).await {
-                            Ok(_) => {}
-                            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => {}
-                            Err(e) => {
-                                return Err((
-                                    StatusCode::INTERNAL_SERVER_ERROR,
-                                    format!("Failed to read file: {}", e),
-                                ));
-                            }
-                        }
+                        let reader = tokio::io::BufReader::new(file);
+                        let stream = ReaderStream::new(reader.take(content_length));
+                        let body = Body::from_stream(stream);
                         
                         let response = axum::http::Response::builder()
                             .status(StatusCode::PARTIAL_CONTENT)
                             .header(header::CONTENT_TYPE, mime_type)
-                            .header(header::CONTENT_LENGTH, file_size_range.to_string())
+                            .header(header::CONTENT_LENGTH, content_length.to_string())
                             .header(header::CONTENT_RANGE, format!("bytes {}-{}/{}", start, end, file_size))
                             .header(header::ACCEPT_RANGES, "bytes")
                             .header("Access-Control-Allow-Origin", "*")
-                            .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                            .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
                             .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
                             .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
-                            .body(Body::from(buffer))
+                            .body(body)
                             .unwrap();
                         
                         return Ok(response);
+                    } else {
+                        return Err((
+                            StatusCode::RANGE_NOT_SATISFIABLE,
+                            format!("Range Not Satisfiable: {}", range_str),
+                        ));
                     }
                 }
             }
             
-            let file_size_usize = file_size as usize;
-            
             let builder = axum::http::Response::builder()
                 .status(StatusCode::OK)
                 .header(header::CONTENT_TYPE, mime_type)
-                .header(header::CONTENT_LENGTH, file_size_usize.to_string())
+                .header(header::CONTENT_LENGTH, file_size.to_string())
                 .header(header::ACCEPT_RANGES, "bytes")
                 .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
                 .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
                 .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges");
             
-            let file = tokio::fs::File::open(&path).await.unwrap();
-            let stream = ReaderStream::new(file);
+            let stream = ReaderStream::new(tokio::io::BufReader::new(file));
             let body = Body::from_stream(stream);
             
             let response = builder.body(body).unwrap();
@@ -259,7 +264,7 @@ pub fn get_server_port() -> u16 {
 
 pub async fn start_server() -> Result<u16, Box<dyn std::error::Error + Send + Sync>> {
     let app = Router::new()
-        .route("/file/:path", get(serve_file))
+        .route("/file/:path", get(serve_file).head(serve_file))
         .route("/webdav", get(serve_webdav))
         .with_state(Arc::new(AppState));
     
