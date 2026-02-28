@@ -112,7 +112,7 @@ export const router = createRouter({
     },
     {
       name: "player-link",
-      path: '/player/link/:id',
+      path: '/player/link',
       component: () => import('@/pages/player/link/index.vue'),
     }
   ]

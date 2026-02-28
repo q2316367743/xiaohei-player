@@ -80,6 +80,7 @@ export default {
       confirmButtonText?: string;
       cancelButtonText?: string;
       inputPattern?: RegExp;
+      inputPlaceholder?: string;
       inputErrorMessage?: string;
       inputValue?: string;
       onClose?: () => void;
@@ -88,6 +89,7 @@ export default {
   ): Promise<string> {
     const {
       inputValue = "",
+      inputPlaceholder,
       confirmButtonText = "确认",
       cancelButtonText = "取消",
       maxlength,
@@ -111,6 +113,7 @@ export default {
               v-model={value.value}
               clearable={true}
               onEnter={onKeydown}
+              placeholder={inputPlaceholder}
             ></Input>
           </div>
         ),

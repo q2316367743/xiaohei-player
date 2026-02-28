@@ -25,25 +25,49 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/plugin-dialog';
 import { convertFileSrc } from '@tauri-apps/api/core';
+import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
+import {useLibrarySettingStore} from "@/lib/store.ts";
+
+const router = useRouter();
 
 const handleOpenFile = async () => {
+  const librarySetting = await useLibrarySettingStore().get();
   const selected = await open({
     multiple: false,
     filters: [
-      { name: '视频文件', extensions: ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm'] },
+      { name: '视频文件', extensions: librarySetting.videoExtname },
       { name: '所有文件', extensions: ['*'] }
     ]
   });
   if (selected) {
     const fileSrc = convertFileSrc(selected as string);
     // 跳转到播放器页面并传递文件路径
-    window.location.href = `/player?src=${encodeURIComponent(fileSrc)}`;
+    await router.push({
+      path: '/player/link',
+      query: {
+        type: 'file',
+        src: fileSrc
+      }
+    });
   }
 };
 
 const handleOpenUrl = () => {
   // 跳转到URL输入页面
-  window.location.href = '/file';
+  MessageBoxUtil.prompt("请输入您要播放的资源链接地址，一次仅可以识别1个链接", "打开链接", {
+    confirmButtonText: '播放',
+    cancelButtonText: '取消',
+    inputPlaceholder: '支持HTTP、HTTPS、FTP、磁力链、电驴链接、迅雷链接等'
+  }).then(url => {
+    if (!url) return;
+    router.push({
+      path: '/player/link',
+      query: {
+        type: 'url',
+        src: url
+      }
+    });
+  })
 };
 </script>
 <style scoped lang="less">
