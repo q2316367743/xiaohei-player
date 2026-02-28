@@ -1,78 +1,118 @@
 <template>
   <div class="link-player-page">
-
-    <!-- 播放器容器 - 拟物风格外框 -->
-    <div class="player-container">
-      <!-- 播放器顶部装饰条 -->
-      <div class="player-header">
-        <div class="header-actions">
-          <t-button
-            variant="text"
-            shape="square"
-            class="skeuo-btn"
-            @click="goBack"
-          >
-            <template #icon>
-              <ArrowLeftIcon/>
-            </template>
-          </t-button>
-        </div>
-        <div class="header-title">链接播放器</div>
-        <div class="header-actions">
-          <t-button
-            variant="text"
-            shape="square"
-            class="skeuo-btn"
-            @click="copyLink"
-          >
-            <template #icon>
-              <LinkIcon/>
-            </template>
-          </t-button>
-        </div>
-      </div>
-
-      <!-- 播放器主体 -->
-      <div class="player-body">
-        <div ref="playerRef" class="artplayer"></div>
-
-        <!-- 空状态提示 -->
-        <div v-if="!url" class="empty-state">
-          <div class="empty-icon">
-            <VideoIcon/>
+    <!-- 主内容区域 -->
+    <div class="main-content" :class="{ 'has-sidebar': showSidebar }">
+      <!-- 播放器容器 - 拟物风格外框 -->
+      <div class="player-container">
+        <!-- 播放器顶部装饰条 -->
+        <div class="player-header">
+          <div class="header-actions">
+            <t-button
+              variant="text"
+              shape="square"
+              class="skeuo-btn"
+              @click="goBack"
+            >
+              <template #icon>
+                <ArrowLeftIcon/>
+              </template>
+            </t-button>
           </div>
-          <div class="empty-text">暂无播放链接</div>
-          <div class="empty-subtext">请通过参数传入 src 链接</div>
+          <div class="header-title">链接播放器</div>
+          <div class="header-actions">
+          </div>
         </div>
-      </div>
 
-      <!-- 播放器底部信息栏 -->
-      <div class="player-footer flex">
-        <div class="url-display" v-if="url">
-          <div class="url-label">播放链接:</div>
-          <div class="url-value">{{ url }}</div>
+        <!-- 播放器主体 -->
+        <div class="player-body">
+          <div ref="playerRef" class="artplayer"></div>
+
+          <!-- 空状态提示 -->
+          <div v-if="!url" class="empty-state">
+            <div class="empty-icon">
+              <VideoIcon/>
+            </div>
+            <div class="empty-text">暂无播放链接</div>
+            <div class="empty-subtext">请通过参数传入 src 链接</div>
+          </div>
         </div>
-        <div class="ml-auto">
-          <t-button theme="primary" shape="square">
-            <template #icon>
-              <list-numbered-icon/>
-            </template>
-          </t-button>
+
+        <!-- 播放器底部信息栏 -->
+        <div class="player-footer flex">
+          <div class="url-display" v-if="url">
+            <div class="url-label">播放链接:</div>
+            <div class="url-value" @click="copyLink">{{ src }}</div>
+          </div>
+          <div class="ml-auto">
+            <t-button
+              theme="primary"
+              shape="square"
+              @click="toggleSidebar"
+            >
+              <template #icon>
+                <ListNumberedIcon/>
+              </template>
+            </t-button>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- 侧边栏 -->
+    <div v-if="showSidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">文件列表</div>
+        <t-button
+          variant="text"
+          shape="square"
+          size="small"
+          @click="toggleSidebar"
+        >
+          <t-icon name="close"/>
+        </t-button>
+      </div>
+      <div class="sidebar-content">
+        <div v-if="loading" class="loading-state">
+          <t-loading size="small"/>
+          <span>加载中...</span>
+        </div>
+        <div v-else-if="videoFiles.length === 0" class="empty-sidebar">
+          <t-icon name="file-video"/>
+          <span>当前目录无视频文件</span>
+        </div>
+        <div v-else class="file-list">
+          <div
+            v-for="(file, index) in videoFiles"
+            :key="index"
+            class="file-item"
+            :class="{ 'active': file.path === src }"
+            @click="playVideo(file.path)"
+          >
+            <video-icon/>
+            <div class="file-info">
+              <div class="file-name">{{ file.name }}</div>
+              <div class="file-path">{{ file.path }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import {convertFileSrc} from "@tauri-apps/api/core";
+import {readDir} from '@tauri-apps/plugin-fs';
+import {dirname, join} from '@tauri-apps/api/path';
+import {writeText} from "@tauri-apps/plugin-clipboard-manager";
 import Artplayer from 'artplayer';
-import {LinkIcon, VideoIcon, ArrowLeftIcon, ListNumberedIcon} from 'tdesign-icons-vue-next';
+import {VideoIcon, ArrowLeftIcon, ListNumberedIcon} from 'tdesign-icons-vue-next';
 import {getCurrentWindow} from '@tauri-apps/api/window';
 import {playFlv, playM3u8} from '@/lib/artplayer';
 import {MessagePlugin} from 'tdesign-vue-next';
 import MessageUtil from "@/util/model/MessageUtil.ts";
-import {convertFileSrc} from "@tauri-apps/api/core";
+import {useLibrarySettingStore} from "@/lib/store.ts";
+import {revealItemInDir} from "@tauri-apps/plugin-opener";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -84,9 +124,12 @@ const currentWindow = getCurrentWindow();
 
 const playerRef = ref<HTMLDivElement>();
 const player = ref<Artplayer>();
+const showSidebar = ref(false);
+const loading = ref(false);
+const videoFiles = ref<Array<{ name: string; path: string }>>([]);
 
-const type = computed(() => route.query.type as string);
-const src = computed(() => route.query.src as string);
+const type = ref(route.query.type as string);
+const src = ref(route.query.src as string);
 const url = computed(() => {
   if (type.value === 'file') return convertFileSrc(src.value);
   return src.value;
@@ -104,10 +147,65 @@ const getVideoType = (url: string): string => {
   return 'mp4';
 };
 
+// 切换侧边栏
+const toggleSidebar = async () => {
+  showSidebar.value = !showSidebar.value;
+  if (showSidebar.value && type.value === 'file' && src.value) {
+    await loadVideoFiles();
+  }
+};
+
+// 加载视频文件列表
+const loadVideoFiles = async () => {
+  if (type.value !== 'file' || !src.value) return;
+
+  loading.value = true;
+  try {
+    const librarySetting = await useLibrarySettingStore().get();
+    const videoExtname = librarySetting.videoExtname;
+    const directory = await dirname(src.value);
+
+    const entries = await readDir(directory);
+    const videos = [];
+
+    for (const entry of entries) {
+      const fullPath = await join(directory, entry.name);
+      const ext = fullPath.split('.').pop()?.toLowerCase();
+
+      if (ext && videoExtname.includes(ext)) {
+        videos.push({
+          name: entry.name,
+          path: fullPath
+        });
+      }
+    }
+
+    videoFiles.value = videos;
+  } catch (error) {
+    console.error('Failed to load video files:', error);
+    MessageUtil.error('加载文件列表失败', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// 播放视频
+const playVideo = (filePath: string) => {
+  src.value = filePath;
+  if (player.value) {
+    player.value.destroy();
+  }
+  initPlayer();
+};
+
 const copyLink = async () => {
   if (!src.value) return;
+  if (type.value === 'file') {
+    await revealItemInDir(src.value);
+    return;
+  }
   try {
-    await navigator.clipboard.writeText(src.value);
+    await writeText(src.value);
     MessageUtil.success('链接已复制');
   } catch (error) {
     MessageUtil.error('复制失败', error);
