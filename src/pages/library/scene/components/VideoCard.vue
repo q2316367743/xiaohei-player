@@ -41,7 +41,7 @@ interface Props {
 const props = defineProps<Props>();
 
 function handleClick() {
-  router.push(`/player/${props.video.id}`);
+  router.push(`/player/library/${props.video.id}`);
 }
 
 const isHovered = ref(false);

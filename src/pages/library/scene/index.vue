@@ -61,7 +61,7 @@
           />
         </div>
 
-        <empty-result v-if="videos.length === 0" tip="暂无视频" />
+        <empty-result v-if="videos.length === 0" tip="暂无视频"/>
 
       </template>
     </div>
@@ -91,13 +91,13 @@ import VideoListItem from './components/VideoListItem.vue';
 const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_SCENE_LAYOUT, 'grid');
 const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_SCENE_SORT_FIELD, 'file_name');
 const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_SCENE_SORT_ORDER, 'ASC');
+const hidden = useSessionStorage<boolean>(LocalName.PAGE_LIBRARY_SCENE_HIDDEN, false);
 
 const videos = ref<Video[]>([]);
 const loading = ref(true);
 const currentPage = ref(1);
 const pageSize = ref(15);
 const total = ref(0);
-const hidden = ref(false);
 
 onMounted(async () => {
   await loadVideos();

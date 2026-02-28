@@ -106,9 +106,14 @@ export const router = createRouter({
       ]
     },
     {
-      name: "播放器",
-      path: '/player/:id',
-      component: () => import('@/pages/player/index.vue'),
+      name: "player-library",
+      path: '/player/library/:id',
+      component: () => import('@/pages/player/library/index.vue'),
+    },
+    {
+      name: "player-link",
+      path: '/player/link/:id',
+      component: () => import('@/pages/player/link/index.vue'),
     }
   ]
 });
