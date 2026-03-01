@@ -74,7 +74,11 @@ import {
   ViewListIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
+import {useInterfaceSettingStore} from "@/store";
 
+onMounted(() => {
+  useInterfaceSettingStore().init()
+})
 </script>
 <style scoped lang="less">
 .app-container {

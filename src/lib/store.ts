@@ -5,6 +5,7 @@ import type {UnlistenFn} from "@tauri-apps/api/event";
 import {getTaskSetting, type TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import {getLibrarySetting, type LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
 import {getSystemSetting, type SystemSetting} from "@/entity/setting/SystemSetting.ts";
+import {getInterfaceSetting, type InterfaceSetting} from "@/entity/setting/InterfaceSetting.ts";
 
 
 class StoreWrapper {
@@ -151,8 +152,9 @@ export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
 }
 
 const taskSettingStore = new StoreEntry<TaskSetting>("task", getTaskSetting());
-const librarySettingStore = new StoreEntry<LibrarySetting>("task", getLibrarySetting());
-const systemSettingStore = new StoreEntry<SystemSetting>("task", getSystemSetting());
+const librarySettingStore = new StoreEntry<LibrarySetting>("library", getLibrarySetting());
+const systemSettingStore = new StoreEntry<SystemSetting>("system", getSystemSetting());
+export const interfaceSettingStore = new StoreEntry<InterfaceSetting>("interface", getInterfaceSetting());
 
 // 任务设置
 export const useTaskSettingStore = () => taskSettingStore;

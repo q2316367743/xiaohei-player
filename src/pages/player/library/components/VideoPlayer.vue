@@ -177,16 +177,43 @@ async function loadVtt() {
   }
 }
 
+const THUMBNAIL_HEIGHT = 90;
+
+function getThumbnailStyle(cue: VttCue) {
+  if (!spriteUrl.value) {
+    return {};
+  }
+  const scale = THUMBNAIL_HEIGHT / cue.height;
+  const displayWidth = cue.width * scale;
+  const spriteWidth = 2880;
+  const spriteHeight = 1620;
+  
+  return {
+    backgroundImage: `url(${spriteUrl.value})`,
+    backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
+    backgroundSize: `${spriteWidth * scale}px ${spriteHeight * scale}px`,
+    width: `${displayWidth}px`,
+    height: `${THUMBNAIL_HEIGHT}px`
+  };
+}
+
+function findCueByTime(time: number): VttCue | null {
+  return vttCues.value.find(cue =>
+    time >= cue.startTime && time <= cue.endTime
+  ) || null;
+}
+
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
 
   const videoUrl = convertFileSrcToUrl(props.video.file_path);
+  const posterUrl = props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined;
 
   player.value = new Artplayer({
     container: playerRef.value,
     url: videoUrl,
+    poster: posterUrl,
     type: getVideoType(videoUrl),
-    // 【关键配置 1】：不启用 ArtPlayer 内部的全屏逻辑，避免它尝试调用 browser.requestFullscreen
     fullscreen: false,
     fullscreenWeb: false,
     volume: 0.7,
@@ -216,27 +243,80 @@ function initPlayer() {
       m3u8: playM3u8,
       ts: playTs,
     },
-    controls: [{
-      name: 'fullscreen',
-      position: 'right',
-      html: `<span>全屏</span>`,
-      click() {
-        currentWindow.isFullscreen().then(v => {
-          player.value!.fullscreenWeb = !v;
-          currentWindow.setFullscreen(!v);
-        })
+    controls: [
+      ...(vttCues.value.length > 0 && spriteUrl.value ? [{
+        name: 'thumbnail',
+        position: 'top' as const,
+        index: 20,
+        html: '<div class="art-control-thumbnails"></div>',
+        style: {
+          display: 'none',
+          position: 'absolute',
+          bottom: '100%',
+          marginBottom: '10px',
+          pointerEvents: 'none',
+          zIndex: '100',
+        },
+        mounted($control: HTMLElement) {
+          const art = this as unknown as Artplayer;
+          
+          art.on('setBar', (type: string, percentage: number) => {
+            if (type === 'hover') {
+              const second = percentage * art.duration;
+              const cue = findCueByTime(second);
+              
+              if (cue) {
+                const style = getThumbnailStyle(cue);
+                $control.style.display = 'flex';
+                $control.style.backgroundImage = style.backgroundImage as string;
+                $control.style.backgroundPosition = style.backgroundPosition as string;
+                $control.style.backgroundSize = style.backgroundSize as string;
+                $control.style.width = style.width as string;
+                $control.style.height = style.height as string;
+                
+                const progressWidth = art.template.$progress.clientWidth;
+                const width = progressWidth * percentage;
+                const scale = THUMBNAIL_HEIGHT / cue.height;
+                const thumbWidth = cue.width * scale;
+                
+                if (width <= thumbWidth / 2) {
+                  $control.style.left = '0px';
+                } else if (width > progressWidth - thumbWidth / 2) {
+                  $control.style.left = `${progressWidth - thumbWidth}px`;
+                } else {
+                  $control.style.left = `${width - thumbWidth / 2}px`;
+                }
+              } else {
+                $control.style.display = 'none';
+              }
+            }
+          });
+          
+          art.template.$progress.addEventListener('mouseleave', () => {
+            $control.style.display = 'none';
+          });
+        }
+      }] : []),
+      {
+        name: 'fullscreen',
+        position: 'right',
+        html: `<span>全屏</span>`,
+        click() {
+          currentWindow.isFullscreen().then(v => {
+            player.value!.fullscreenWeb = !v;
+            currentWindow.setFullscreen(!v);
+          })
+        }
       }
-    }]
+    ]
   }, () => {
     console.log('Player is ready');
     if (props.video?.resume_time) {
       seekToTime(props.video.resume_time);
     }
-    // 获取视频时长
     if (player.value?.video) {
       duration.value = player.value.video.duration || 0;
     }
-    // 跳转到指定播放位置
   });
 
 

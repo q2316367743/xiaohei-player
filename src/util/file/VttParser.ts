@@ -22,7 +22,6 @@ export function parseVtt(content: string): VttCue[] {
   const cues: VttCue[] = [];
   const lines = content.split('\n');
 
-  console.log(lines)
 
   let i = 0;
   while (i < lines.length) {
@@ -51,8 +50,6 @@ export function parseVtt(content: string): VttCue[] {
     }
     i++;
   }
-
-  console.log(cues)
 
   return cues;
 

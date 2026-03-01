@@ -35,15 +35,11 @@ async function ensureDir(filePath: string) {
 interface GenerateVttProp {
   ffmpeg: string;
   durationMs: number;
-  // 视频路径
   path: string;
   sprite: string;
   vtt: string;
 }
 
-/**
- * 生成vtt图片，一共两个文件，一个 jpg 图片，是 9x9 的图片，另一个是 vtt 文件，记录着每一个图片的时间轴信息。
- */
 export async function generateVtt(prop: GenerateVttProp) {
   const {ffmpeg, durationMs, path, sprite, vtt} = prop;
 
@@ -69,6 +65,8 @@ export async function generateVtt(prop: GenerateVttProp) {
   const thumbWidth = 320;
   const thumbHeight = 180;
 
+  const spriteFileName = sprite.split(/[/\\]/).pop() || 'sprite.jpg';
+
   let vttContent = "WEBVTT\n\n";
 
   for (let i = 0; i < 81; i++) {
@@ -86,7 +84,7 @@ export async function generateVtt(prop: GenerateVttProp) {
     const endTimeStr = formatVttTime(endTime);
 
     vttContent += `${startTimeStr} --> ${endTimeStr}\n`;
-    vttContent += `#xywh=${x},${y},${thumbWidth},${thumbHeight}\n\n`;
+    vttContent += `${spriteFileName}#xywh=${x},${y},${thumbWidth},${thumbHeight}\n\n`;
   }
 
   await writeFile(vtt, new TextEncoder().encode(vttContent));
