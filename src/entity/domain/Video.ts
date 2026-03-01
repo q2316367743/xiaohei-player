@@ -46,6 +46,7 @@ export interface VideoMetadata {
 export interface VideoStatusInfo {
   last_played_at: number;   // 最后播放时间
   play_count: number;       // 播放次数
+  resume_time: number;      // 恢复播放时间
   is_deleted: number;       // 软删除标记 (0:正常, 1:已删除)
   scan_status: string;      // 扫描状态: 'pending', 'scanning', 'completed', 'error'
   error_message: string;    // 扫描或处理错误信息

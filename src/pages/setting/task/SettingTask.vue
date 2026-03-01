@@ -7,12 +7,12 @@
           <div class="task-name">{{ currentTask.name }}</div>
           <t-tag :theme="getStatusTheme(currentTask.status)">{{ getStatusText(currentTask.status) }}</t-tag>
         </div>
-        <div class="task-message">{{ currentTask.message }}</div>
         <div v-if="currentTask.total > 0" class="task-progress">
           <t-progress :percentage="getProgressPercentage(currentTask)" :label="true"/>
         </div>
-        <div class="task-logs">
-          <div v-for="(log, index) in currentTask.logs.slice(-5)" :key="index" class="log-item">{{ log }}</div>
+        <div class="task-current-log">
+          <span class="log-label">当前:</span>
+          <span class="log-content">{{ currentTask.message }}</span>
         </div>
       </div>
       <div v-else class="no-task">
@@ -292,31 +292,29 @@ async function handleCleanDeletedDb() {
     }
   }
 
-  .task-message {
-    font-size: 12px;
-    color: var(--td-text-color-secondary);
-    margin-bottom: 8px;
-  }
-
   .task-progress {
     margin-bottom: 12px;
   }
 
-  .task-logs {
+  .task-current-log {
     background: var(--td-bg-color-container);
     border-radius: 4px;
-    padding: 8px;
-    max-height: 120px;
-    overflow-y: auto;
+    padding: 8px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-    .log-item {
-      font-size: 12px;
-      color: var(--td-text-color-secondary);
-      margin-bottom: 4px;
+    .log-label {
+      color: var(--td-text-color-placeholder);
+      flex-shrink: 0;
+    }
 
-      &:last-child {
-        margin-bottom: 0;
-      }
+    .log-content {
+      color: var(--td-text-color-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

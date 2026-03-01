@@ -48,6 +48,8 @@ import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
 import {getCurrentWindow} from "@tauri-apps/api/window";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {getVideoType, playFlv, playM3u8, playTs} from "@/lib/artplayer.ts";
+import {debounce} from "es-toolkit";
+import {updateVideoStatus} from "@/service";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -55,10 +57,6 @@ defineOptions({
 
 const props = defineProps<{
   video?: Video;
-}>();
-
-const emit = defineEmits<{
-  timeupdate: [currentTime: number];
 }>();
 
 const currentWindow = getCurrentWindow();
@@ -229,14 +227,18 @@ function initPlayer() {
         })
       }
     }]
-  });
-
-  player.value.on('ready', () => {
+  }, () => {
     console.log('Player is ready');
+    if (props.video?.resume_time) {
+      seekToTime(props.video.resume_time);
+    }
+    // 获取视频时长
     if (player.value?.video) {
       duration.value = player.value.video.duration || 0;
     }
+    // 跳转到指定播放位置
   });
+
 
   player.value.on('fullscreenWeb', e => {
     if (!e) {
@@ -248,14 +250,16 @@ function initPlayer() {
     console.error('Player error:', error);
   });
 
-  player.value.on('timeupdate', () => {
-    const videoElement = player.value?.video;
-    if (videoElement) {
-      currentTime.value = videoElement.currentTime;
-      emit('timeupdate', videoElement.currentTime);
-      if (!isDragging.value) {
-        updateScrollOffset();
-      }
+  const updateResumeTime = debounce(async rt => {
+    if (!props.video) return;
+    await updateVideoStatus(props.video.id, {resume_time: rt})
+  }, 300);
+
+  player.value.on('seek', res => {
+    currentTime.value = res;
+    updateResumeTime(res)
+    if (!isDragging.value) {
+      updateScrollOffset();
     }
   });
 }

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS video
     -- 播放信息
     last_played_at   INTEGER NOT NULL DEFAULT 0,         -- 最后播放时间
     play_count       INTEGER          DEFAULT 0,         -- 播放次数
+    resume_time      INTEGER NOT NULL DEFAULT 0,         -- 续播位置
 
     -- 状态标记
     is_deleted       INTEGER NOT NULL DEFAULT 0,         -- 软删除标记 (0:正常, 1:已删除)
