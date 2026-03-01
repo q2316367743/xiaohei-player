@@ -212,13 +212,13 @@
         <t-list-item>
           <t-list-item-meta title="预览片段长度" description="每个预览片段的长度，以秒为单位。"/>
           <template #action>
-            <t-input-number v-model="data.preview.segmentDuration" :min="0" :step="0.01"
+            <t-input-number v-model="data.preview.segmentDuration" :min="0.1" :step="0.1"
                             @change="onChangePreview('segmentDuration', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>
           <t-list-item-meta title="排除开始时间"
-                            description="从短片预览中排除最开始 x 秒。可以是一个以秒为单位的值，也可以是百分比（比如2%）。"/>
+                            description="从短片预览中排除最开始 x 秒。"/>
           <template #action>
             <t-input-number v-model="data.preview.excludeStart" :min="0"
                             @change="onChangePreview('excludeStart', $event)"/>
@@ -226,7 +226,7 @@
         </t-list-item>
         <t-list-item>
           <t-list-item-meta title="排除结束时间"
-                            description="从短片预览中排除最后 x 秒。可以是一个以秒为单位的值，也可以是百分比（比如2%）。"/>
+                            description="从短片预览中排除最后 x 秒。"/>
           <template #action>
             <t-input-number v-model="data.preview.excludeEnd" :min="0" @change="onChangePreview('excludeEnd', $event)"/>
           </template>

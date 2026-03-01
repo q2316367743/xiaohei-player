@@ -2,6 +2,7 @@ import {invoke} from "@tauri-apps/api/core";
 import {mkdir, writeFile, remove} from '@tauri-apps/plugin-fs';
 import {dirname, join, tempDir} from "@tauri-apps/api/path";
 import type {VideoInfo} from "@/entity/domain/Video.ts";
+import type {SystemPreviewSetting} from "@/entity/setting/SystemSetting.ts";
 
 function execFfmepgCommand(ffmpeg: string, args: Array<string>, timeoutMs: number = 30000) {
   const commandPromise = invoke<string>("ffmpeg_command", {
@@ -102,37 +103,60 @@ function formatVttTime(seconds: number): string {
 }
 
 interface GeneratePreviewProp {
+  // ffmpeg 路径
   ffmpeg: string;
+  // 原视频地址
   path: string;
+  // 生成的预览视频地址
   preview: string;
+  // 视频总时长
   durationMs: number;
+
+  // 预览配置
+  previewSetting: SystemPreviewSetting;
 }
 
 /**
- * 生成视频预览图，这是一个 10s 的视频，将视频平均分成 5 份，每份 2s，之后合并成一个 10s 的视频
+ * 生成视频预览图，根据配置将视频分割成多个片段后合并
  */
 export async function generatePreview(prop: GeneratePreviewProp) {
-  const {ffmpeg, path, preview, durationMs} = prop;
+  const {ffmpeg, path, preview, durationMs, previewSetting} = prop;
   const duration = durationMs / 1000;
 
   await ensureDir(preview);
 
-  const segments = 5;
-  const durationPerSegment = 2;
+  let segments = Math.max(1, previewSetting.segments);
+  const segmentDuration = Math.max(0.1, previewSetting.segmentDuration);
+  let excludeStart = previewSetting.excludeStart || 0;
+  let excludeEnd = previewSetting.excludeEnd || 0;
 
-  if (duration < segments * durationPerSegment) {
-    throw new Error(`视频时长不足 ${segments * durationPerSegment} 秒`);
+  if (excludeStart + excludeEnd >= duration) {
+    excludeStart = 0;
+    excludeEnd = 0;
   }
 
-  const segmentInterval = (duration - durationPerSegment) / (segments - 1);
+  const effectiveDuration = duration - excludeStart - excludeEnd;
+
+  if (effectiveDuration < segmentDuration) {
+    throw new Error(`视频有效时长不足 ${segmentDuration} 秒`);
+  }
+
+  const maxPossibleSegments = Math.floor(effectiveDuration / segmentDuration);
+  if (segments > maxPossibleSegments) {
+    segments = maxPossibleSegments;
+  }
+
   const startTimes: number[] = [];
 
-  for (let i = 0; i < segments; i++) {
-    const startTime = Math.min(
-      Math.round(i * segmentInterval * 100) / 100,
-      duration - durationPerSegment
-    );
-    startTimes.push(startTime);
+  if (segments === 1) {
+    const startTime = excludeStart + (effectiveDuration - segmentDuration) / 2;
+    startTimes.push(Math.round(startTime * 100) / 100);
+  } else {
+    const interval = (effectiveDuration - segmentDuration) / (segments - 1);
+    for (let i = 0; i < segments; i++) {
+      const startTime = excludeStart + i * interval;
+      startTimes.push(Math.round(startTime * 100) / 100);
+    }
   }
 
   const tmpDir = await tempDir();
@@ -149,7 +173,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
       "-i",
       path,
       "-t",
-      durationPerSegment.toString(),
+      segmentDuration.toString(),
       "-c",
       "copy",
       "-y",
@@ -195,7 +219,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
     try {
       await remove(tempFile);
     } catch {
-      // 忽略删除错误
+      // ignore
     }
   }
 }

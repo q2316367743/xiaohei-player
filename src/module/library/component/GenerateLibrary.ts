@@ -19,13 +19,13 @@ interface GenerateLibraryOneProp {
 
 interface GenerateLibraryOneResult extends VideoInfo {
   // 封面地址
-  cover_path: string;
+  cover_path: string | undefined;
   // 片段
-  sprite_path: string;
+  sprite_path: string | undefined;
   // 时间轴预览小图
-  vtt_path: string;
+  vtt_path: string | undefined;
   // 预览视频地址
-  screenshot_path: string;
+  screenshot_path: string | undefined;
 }
 
 
@@ -53,8 +53,8 @@ async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo
 }
 
 async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Promise<{
-  sprite_path: string,
-  vtt_path: string
+  sprite_path: string | undefined,
+  vtt_path: string | undefined
 }> {
   const {hash, filePath, fileName, vttPrefixDir, system, task} = props;
 
@@ -64,8 +64,8 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Pro
   const sprite = vttPrefixPath + "_sprite.jpg";
   const vtt = vttPrefixPath + "_thumbs.vtt";
 
-  let sprite_path = '';
-  let vtt_path = '';
+  let sprite_path: string | undefined = undefined;
+  let vtt_path: string | undefined = undefined;
   if (task.timelinePreviewThumbnail) {
     // 需要生成预览小图
     try {
@@ -101,7 +101,7 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Pro
   }
 }
 
-async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: number): Promise<string> {
+async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: number): Promise<string | undefined> {
   const {hash, filePath, fileName, screenshotDir, system, task} = props;
   const screenshotPath = await join(screenshotDir, hash + '.mp4');
   if (task.preview) {
@@ -124,17 +124,18 @@ async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: numb
         ffmpeg: system.ffmpegPath,
         path: filePath,
         preview: screenshotPath,
-        durationMs: duration_ms
+        durationMs: duration_ms,
+        previewSetting: system.preview
       });
       return screenshotPath;
     } catch (e) {
       logError("生成预览视频失败，跳过:", fileName, e);
     }
   }
-  return '';
+  return undefined;
 }
 
-async function handleCover(props: GenerateLibraryOneProp): Promise<string> {
+async function handleCover(props: GenerateLibraryOneProp): Promise<string | undefined> {
   const {hash, filePath, system, task, coverDir} = props;
   const coverPath = await join(coverDir, hash + '.jpg');
   if (task.shortCover) {
@@ -152,7 +153,7 @@ async function handleCover(props: GenerateLibraryOneProp): Promise<string> {
     await generateCover(system.ffmpegPath, filePath, coverPath);
     return coverPath;
   }
-  return '';
+  return undefined;
 }
 
 export async function generatorLibrary(props: GenerateLibraryOneProp): Promise<GenerateLibraryOneResult> {

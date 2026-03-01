@@ -1,3 +1,29 @@
+export interface SystemPreviewSetting {
+  /**
+   * 预览片段段数
+   * 设置预览片段中的段数。
+   * @default 12
+   */
+  segments: number;
+  /**
+   * 预览片段长度
+   * 每个预览片段的长度，以秒为单位。
+   * @default 0.75
+   */
+  segmentDuration: number;
+  /**
+   * 排除开始时间
+   * 从短片预览中排除最开始 x 秒。
+   * @default 0
+   */
+  excludeStart: number;
+  /**
+   * 排除结束时间
+   * 从短片预览中排除最后 x 秒。
+   */
+  excludeEnd: number;
+}
+
 export interface SystemSetting {
   /**
    * 生成数据的存储路径
@@ -92,31 +118,7 @@ export interface SystemSetting {
   /**
    * 预览生成选项
    */
-  preview: {
-    /**
-     * 预览片段段数
-     * 设置预览片段中的段数。
-     * @default 12
-     */
-    segments: number;
-    /**
-     * 预览片段长度
-     * 每个预览片段的长度，以秒为单位。
-     * @default 0.75
-     */
-    segmentDuration: number;
-    /**
-     * 排除开始时间
-     * 从短片预览中排除最开始 x 秒。可以是一个以秒为单位的值，也可以是百分比（比如2%）。
-     * @default 0
-     */
-    excludeStart: number;
-    /**
-     * 排除结束时间
-     * 从短片预览中排除最后 x 秒。可以是一个以秒为单位的值，也可以是百分比（比如2%）。
-     */
-    excludeEnd: number;
-  }
+  preview: SystemPreviewSetting;
 
   /**
    * 日志文件

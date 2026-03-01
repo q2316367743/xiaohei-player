@@ -1,17 +1,23 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
 import type {YesOrNo} from "@/global/CommonType.ts";
 
-// 文件信息
-export interface VideoFile {
+export interface VideoOriginalFile {
   file_path: string;        // 当前绝对文件路径
-  screenshot_path: string;  // 预览视频文件路径
-  sprite_path: string;      // 分割文件路径
-  vtt_path: string;         // vtt文件路径
-  cover_path: string;       // 封面文件路径
   file_name: string;        // 文件名 (带扩展名)
   file_size: number;        // 文件大小 (字节)
   file_birthtime: number;   // 文件创建时间
   hidden: YesOrNo;          // 隐藏标记 (0:正常, 1:隐藏)
+}
+
+export interface VideoGenerateFile {
+  screenshot_path: string;  // 预览视频文件路径
+  sprite_path: string;      // 分割文件路径
+  vtt_path: string;         // vtt文件路径
+  cover_path: string;       // 封面文件路径
+}
+
+// 文件信息
+export interface VideoFile extends VideoOriginalFile, VideoGenerateFile {
 }
 
 // 视频信息
@@ -60,5 +66,9 @@ export interface VideoEdit {
   studio: string;
 }
 
-export interface VideoAddForm extends VideoFile, VideoInfo, VideoMetadata, VideoEdit {
+export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadata, VideoEdit {
+  screenshot_path?: string;  // 预览视频文件路径
+  sprite_path?: string;      // 分割文件路径
+  vtt_path?: string;         // vtt文件路径
+  cover_path?: string;       // 封面文件路径
 }
