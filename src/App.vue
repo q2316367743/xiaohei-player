@@ -27,17 +27,17 @@
           </template>
           最近播放
         </t-menu-item>
-        <t-submenu title="文件" value="/file">
+        <t-submenu title="文件" value="/folder">
           <template #icon>
             <file-icon/>
           </template>
-          <t-menu-item to="/file/webdav" value="/file/webdav">
+          <t-menu-item to="/folder/webdav" value="/folder/webdav">
             <template #icon>
               <internet-icon/>
             </template>
             WebDAV
           </t-menu-item>
-          <t-menu-item to="/file/local" value="/file/local">
+          <t-menu-item to="/folder/local" value="/folder/local">
             <template #icon>
               <file-attachment-icon/>
             </template>
@@ -59,7 +59,11 @@
       </t-menu>
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
-      <router-view/>
+      <router-view v-slot="{ Component, route }">
+        <keep-alive :include="['Library']">
+          <component :is="Component" :key="route.fullPath"/>
+        </keep-alive>
+      </router-view>
     </t-content>
   </t-layout>
 </template>
@@ -75,9 +79,11 @@ import {
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
 import {useInterfaceSettingStore} from "@/store";
+import {useFolderStore} from "@/store/components/FolderStore.ts";
 
 onMounted(() => {
-  useInterfaceSettingStore().init()
+  useInterfaceSettingStore().init();
+  useFolderStore().init();
 })
 </script>
 <style scoped lang="less">

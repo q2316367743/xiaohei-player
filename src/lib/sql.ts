@@ -15,6 +15,8 @@ type TableName =
   | 'video'
   | 'video_actor'
   | 'video_tag'
+  | 'folder_local'
+  | 'folder_webdav'
   ;
 
 
@@ -100,10 +102,11 @@ export class SqlBase<N extends string> {
 
 }
 
-export class SqlWrapper<N extends string> extends SqlBase<N>{
+export class SqlWrapper<N extends string> extends SqlBase<N> {
 
-  private readonly migrateFiles: Array<{file: string, version: number}>;
-  constructor(fileName: string,migrateFiles: Array<{file: string, version: number}>) {
+  private readonly migrateFiles: Array<{ file: string, version: number }>;
+
+  constructor(fileName: string, migrateFiles: Array<{ file: string, version: number }>) {
     super(fileName);
     this.migrateFiles = migrateFiles;
   }
@@ -172,6 +175,6 @@ export class SqlWrapper<N extends string> extends SqlBase<N>{
 
 }
 
-const sql = new SqlWrapper<TableName>('main',MAIN_MIGRATE_FILES);
+const sql = new SqlWrapper<TableName>('main', MAIN_MIGRATE_FILES);
 
 export const useSql = () => sql;

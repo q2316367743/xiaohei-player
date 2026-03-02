@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+globs: 
+---
 # 开发规范与偏好
 
 ## 1. 技术栈强制要求

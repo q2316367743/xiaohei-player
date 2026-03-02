@@ -10,34 +10,34 @@ export const router = createRouter({
       component: () => import('@/pages/home/index.vue'),
     },
     {
-      name: "最近播放",
+      name: "History",
       path: '/history',
       component: () => import('@/pages/history/index.vue'),
     },
     {
       name: "文件",
-      path: '/file',
-      component: () => import('@/pages/file/index.vue'),
+      path: '/folder',
+      component: () => import('@/pages/folder/index.vue'),
       children: [
         {
           name: "WebDAV",
           path: 'webdav',
-          component: () => import('@/pages/file/webdav/index.vue'),
+          component: () => import('@/pages/folder/webdav/index.vue'),
         },
         {
           name: "本地文件",
           path: 'local',
-          component: () => import('@/pages/file/local/index.vue'),
+          component: () => import('@/pages/folder/local/index.vue'),
         },
       ]
     },
     {
-      name: "片库",
+      name: "Library",
       path: '/library',
       component: () => import('@/pages/library/index.vue'),
       children: [
         {
-          name: "电影",
+          name: "LibraryScene",
           path: 'scene',
           component: () => import('@/pages/library/scene/index.vue'),
         },
@@ -59,59 +59,59 @@ export const router = createRouter({
       ]
     },
     {
-      name: "设置",
+      name: "Setting",
       path: '/setting',
       component: () => import('@/pages/setting/index.vue'),
       children: [
         {
-          name: "任务",
+          name: "SettingTask",
           path: 'task',
           component: () => import('@/pages/setting/task/SettingTask.vue'),
         },
         {
-          name: "收藏库",
+          name: "SettingLibrary",
           path: 'library',
           component: () => import('@/pages/setting/library/SettingLibrary.vue'),
         },
         {
-          name: "界面",
+          name: "SettingInterface",
           path: 'interface',
           component: () => import('@/pages/setting/interface/index.vue'),
         },
         {
-          name: "元数据提供者",
+          name: "SettingMetadata",
           path: 'metadata',
           component: () => import('@/pages/setting/metadata/index.vue'),
         },
         {
-          name: "系统",
+          name: "SettingSystem",
           path: 'system',
           component: () => import('@/pages/setting/system/SettingSystem.vue'),
         },
         {
-          name: "插件",
+          name: "SettingPlugin",
           path: 'plugin',
           component: () => import('@/pages/setting/plugin/index.vue'),
         },
         {
-          name: "日志",
+          name: "SettingLog",
           path: 'log',
           component: () => import('@/pages/setting/log/index.vue'),
         },
         {
-          name: "关于",
+          name: "SettingAbout",
           path: 'about',
           component: () => import('@/pages/setting/about/index.vue'),
         }
       ]
     },
     {
-      name: "player-library",
+      name: "PlayerLibrary",
       path: '/player/library/:id',
       component: () => import('@/pages/player/library/index.vue'),
     },
     {
-      name: "player-link",
+      name: "PlayerLink",
       path: '/player/link',
       component: () => import('@/pages/player/link/index.vue'),
     }

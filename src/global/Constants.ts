@@ -41,6 +41,9 @@ export const initPath = async () => {
 export const MAIN_MIGRATE_FILES = [{
   file: 'lib/migrate/0000_main.sql',
   version: 0
+}, {
+  file: 'lib/migrate/0001_folder.sql',
+  version: 1
 }];
 
 export const {colorMode, isDark} = useColorMode();

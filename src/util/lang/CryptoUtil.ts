@@ -17,8 +17,8 @@ function bufferToHex(buffer: ArrayBuffer) {
 
 /**
  * 计算 SHA-256 签名
- * @param {string} message - 待签名的原始字符串
- * @returns {Promise<string>} - 返回 Hex 格式的哈希值
+ * @param message - 待签名的原始字符串
+ * @returns - 返回 Hex 格式的哈希值
  */
 export async function sha256(message: string) {
   // 1. 将消息编码为 Uint8Array
@@ -29,4 +29,12 @@ export async function sha256(message: string) {
 
   // 3. 转换为 Hex 字符串
   return bufferToHex(hashBuffer);
+}
+
+/**
+ * TODO: 计算 MD5 签名
+ * @param text
+ */
+export async function md5(text: string) {
+  return await sha256(text);
 }

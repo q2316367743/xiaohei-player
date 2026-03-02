@@ -1,10 +1,5 @@
 import {Store} from '@tauri-apps/plugin-store';
-// 当设置 `"withGlobalTauri": true` 时，你可以用
-// const { Client, Stronghold } = window.__TAURI__.stronghold;
 import {APP_DATA_VAULT_PATH, APP_PASSWORD} from "@/global/Constants.ts";
-import {useMediaServerStore} from "@/store";
-// 当设置 `"withGlobalTauri": true` 时，你可以用
-// const { appDataDir } = window.__TAURI__.path;
 
 // 加密工具类
 class CryptoUtil {
@@ -214,60 +209,9 @@ class StrongholdWrapper {
 
 }
 
-class StrongholdMediaWrapper extends StrongholdWrapper {
-
-  async getMediaRecord(serviceId: string, key: string) {
-    return await this.getRecord(`/media/${serviceId}/${key}`);
-  }
-
-  async setMediaRecord(serviceId: string, key: string, value: string, timeout?: number) {
-    await this.insertRecord(`/media/${serviceId}/${key}`, value, timeout);
-  }
-
-  async removeMediaRecord(serviceId: string, key: string) {
-    await this.removeRecord(`/media/${serviceId}/${key}`);
-  }
-
-}
-
-class StrongholdFileWrapper extends StrongholdWrapper {
-
-  async getFileRecord(serviceId: string, key: string) {
-    return await this.getRecord(`/file/${serviceId}/${key}`);
-  }
-
-  async setFileRecord(serviceId: string, key: string, value: string, timeout?: number) {
-    await this.insertRecord(`/file/${serviceId}/${key}`, value, timeout);
-  }
-
-  async removeFileRecord(serviceId: string, key: string) {
-    await this.removeRecord(`/file/${serviceId}/${key}`);
-  }
-
-}
 
 const strongholdWrapper = new StrongholdWrapper("vault");
 
 export const useStronghold = () => {
   return strongholdWrapper;
-}
-
-const mediaStrongholdWrap = new StrongholdMediaWrapper("media");
-
-mediaStrongholdWrap.onChange((key) => {
-  const serviceId = key.split("/")[2];
-  if (!serviceId) return;
-  useMediaServerStore().removeServerClient(serviceId);
-}).then(() => console.debug("媒体密钥监听"))
-
-// 媒体专用
-export const useMediaStronghold = () => {
-  return mediaStrongholdWrap;
-}
-
-const fileStrongholdWrap = new StrongholdFileWrapper("file");
-
-// 文件专用
-export const useFileStronghold = () => {
-  return fileStrongholdWrap;
 }

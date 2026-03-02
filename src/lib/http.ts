@@ -18,7 +18,7 @@ export type Method =
   | 'link' | 'LINK'
   | 'unlink' | 'UNLINK';
 
-const instance = axios.create({
+export const instance = axios.create({
   timeout: 150000,
   adapter: 'fetch',
   env: {
@@ -28,10 +28,10 @@ const instance = axios.create({
 });
 
 instance.interceptors.response.use(e => {
-  console.debug(e)
+  if(isTauri())  console.debug(e)
   return e;
 }, e => {
-  console.error(e);
+  if (isTauri()) console.error(e);
   return Promise.reject(e);
 })
 

@@ -9,7 +9,11 @@
       <t-tab-panel label="标签" value="/library/tag"></t-tab-panel>
     </t-tabs>
     <div class="library-content">
-      <router-view/>
+      <router-view v-slot="{ Component, route }">
+        <keep-alive :include="['LibraryScene']">
+          <component :is="Component" :key="route.fullPath"/>
+        </keep-alive>
+      </router-view>
     </div>
   </div>
 </template>
