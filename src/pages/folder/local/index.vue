@@ -3,7 +3,6 @@
     <div class="header">
       <h2 class="title">本地文件夹</h2>
       <t-button
-        class="add-button"
         @click="handleAddFolder"
       >
         <template #icon>
@@ -18,24 +17,26 @@
         v-for="item in list"
         :key="item.id"
         class="folder-card"
+        :title="item.path"
         @mouseenter="handleCardEnter(item.id)"
         @mouseleave="handleCardLeave(item.id)"
       >
         <div class="folder-cover">
           <t-icon v-if="item.password" name="lock-on" class="lock-icon"></t-icon>
           <div class="folder-icon-wrapper">
-            <t-icon name="folder" class="folder-icon"></t-icon>
+            <folder-icon class="folder-icon"/>
           </div>
           <div class="folder-actions">
-            <t-dropdown :options="getActionOptions()" trigger="click" @click="(data) => handleActionClick(data, item)">
-              <t-button variant="text" class="action-btn">
+            <t-dropdown :options="actionOptions" trigger="click"
+                        @click.stop="(data) => handleActionClick(data, item)">
+              <t-button variant="outline" shape="circle">
                 <t-icon name="more"></t-icon>
               </t-button>
             </t-dropdown>
           </div>
         </div>
         <div class="folder-info">
-          <div class="folder-name" :title="item.name">{{ item.name }}</div>
+          <div class="folder-name" :title="item.name">{{ item.name || item.path }}</div>
         </div>
       </div>
     </div>
@@ -51,6 +52,8 @@
 <script lang="ts" setup>
 import {useFolderStore} from "@/store/components/FolderStore.ts";
 import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "./edit.tsx";
+import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
+import {FolderIcon} from "tdesign-icons-vue-next";
 
 const store = useFolderStore();
 const list = computed(() => store.folderLocal);
@@ -74,18 +77,17 @@ function handleCardLeave(id: string) {
   }
 }
 
-function getActionOptions() {
-  return [
-    {
-      content: '修改密码',
-      value: 'password'
-    },
-    {
-      content: '删除',
-      value: 'delete'
-    }
-  ];
-}
+const actionOptions: Array<DropdownOption> = [
+  {
+    content: '修改密码',
+    value: 'password'
+  },
+  {
+    content: '删除',
+    value: 'delete',
+    theme: 'error'
+  }
+];
 
 function handleActionClick(data: any, folder: any) {
   if (data.value === 'password') {
@@ -117,27 +119,6 @@ function handleActionClick(data: any, folder: any) {
   font-weight: 600;
   color: var(--td-text-color-primary);
   margin: 0;
-}
-
-.add-button {
-  background: linear-gradient(145deg, var(--td-brand-color), var(--td-brand-color-hover));
-  border: none;
-  box-shadow: var(--td-shadow-2);
-  transition: all 0.3s ease;
-  border-radius: var(--td-radius-medium);
-  padding: var(--td-comp-paddingTB-m) var(--td-comp-paddingLR-l);
-  color: white;
-  font-weight: 500;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--td-shadow-3);
-  }
-
-  &:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: var(--td-shadow-1);
-  }
 }
 
 .folder-grid {
@@ -228,23 +209,6 @@ function handleActionClick(data: any, folder: any) {
   top: 8px;
   right: 8px;
   z-index: 2;
-}
-
-.action-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: var(--td-shadow-1);
-
-  &:hover {
-    background: white;
-    transform: scale(1.1);
-  }
 }
 
 .folder-info {

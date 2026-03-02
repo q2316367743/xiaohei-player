@@ -6,6 +6,11 @@ export function listFolderLocal() {
   return useSql().query<FolderLocal>('folder_local').list();
 }
 
+export function getFolderLocal(id: string) {
+  return useSql().query<FolderLocal>('folder_local')
+    .eq('id', id).get();
+}
+
 export async function addFolderLocal(form: FolderLocalCore) {
   const now = Date.now();
   await useSql().mapper<FolderLocal>('folder_local').insert({
