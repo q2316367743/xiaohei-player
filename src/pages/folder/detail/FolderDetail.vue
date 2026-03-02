@@ -166,7 +166,8 @@ function getFileIcon(item: FileItem): string {
   flex: 1;
   overflow-x: auto;
   gap: var(--td-comp-margin-xs);
-  padding: var(--td-comp-paddingTB-s) var(--td-comp-paddingLR-m);
+  padding: 0 var(--td-comp-paddingLR-m);
+  height: 32px;
   background: linear-gradient(145deg, var(--td-bg-color-page), var(--td-bg-color-container));
   border-radius: var(--td-radius-medium);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -183,7 +184,6 @@ function getFileIcon(item: FileItem): string {
 
   &:hover {
     background-color: var(--td-bg-color-component-hover);
-    transform: translateY(-1px);
   }
 
   &:active {
