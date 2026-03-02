@@ -18,8 +18,7 @@
         :key="item.id"
         class="folder-card"
         :title="item.path"
-        @mouseenter="handleCardEnter(item.id)"
-        @mouseleave="handleCardLeave(item.id)"
+        @click="handleClick(item)"
       >
         <div class="folder-cover">
           <t-icon v-if="item.password" name="lock-on" class="lock-icon"></t-icon>
@@ -54,10 +53,12 @@ import {useFolderStore} from "@/store/components/FolderStore.ts";
 import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "./edit.tsx";
 import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
 import {FolderIcon} from "tdesign-icons-vue-next";
+import type {FolderLocal} from "@/entity/domain/FolderLocal.ts";
+
+const router = useRouter();
 
 const store = useFolderStore();
 const list = computed(() => store.folderLocal);
-const hoveredCardId = ref<string | null>(null);
 
 onMounted(() => {
   store.init();
@@ -67,15 +68,6 @@ function handleAddFolder() {
   addFolderDialog();
 }
 
-function handleCardEnter(id: string) {
-  hoveredCardId.value = id;
-}
-
-function handleCardLeave(id: string) {
-  if (hoveredCardId.value === id) {
-    hoveredCardId.value = null;
-  }
-}
 
 const actionOptions: Array<DropdownOption> = [
   {
@@ -95,6 +87,10 @@ function handleActionClick(data: any, folder: any) {
   } else if (data.value === 'delete') {
     openDeleteFolderLocal(folder);
   }
+}
+
+const handleClick = (item: FolderLocal) => {
+  router.push(`/folder/local/${item.id}`);
 }
 </script>
 

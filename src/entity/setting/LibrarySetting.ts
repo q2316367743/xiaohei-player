@@ -16,6 +16,8 @@ export interface LibrarySetting {
   scanExtname: Array<string>;
   // 打开视频拓展名
   openExtname: Array<string>;
+  // 文件浏览拓展名
+  folderExtname: Array<string>;
 
   // 视频排除规则
   videoExclude: Array<string>;
@@ -40,6 +42,7 @@ export function getLibrarySetting(): LibrarySetting{
     items: [],
     scanExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
     openExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
+    folderExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
     videoExclude: [],
     imageExclude: [],
     imageFromImageFolder: false,

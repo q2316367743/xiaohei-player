@@ -20,10 +20,11 @@ export function convertFileSrcToUrl(filePath: string): string {
 export function convertWebDavToUrl(
   url: string,
   username?: string,
-  password?: string
+  password?: string,
+  type?: string
 ): string {
   const encodedUrl = encodeURIComponent(url);
   const encodedUsername = encodeURIComponent(username || '');
   const encodedPassword = encodeURIComponent(password || '');
-  return `http://127.0.0.1:${serverPort}/webdav?url=${encodedUrl}&username=${encodedUsername}&password=${encodedPassword}`;
+  return `http://127.0.0.1:${serverPort}/webdav?url=${encodedUrl}&username=${encodedUsername}&password=${encodedPassword}&type=${type}`;
 }

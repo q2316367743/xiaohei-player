@@ -419,7 +419,7 @@ export async function lock(
   const { timeout = "Infinite" } = options;
   
   const lockToken = generateLockToken();
-  const lockXML = createLockXML(context.contactHref, createXMLParser({
+  const lockXML = createLockXML(context.remoteURL, createXMLParser({
     attributeNamePrefix: "@_",
     attributeParsers: [],
     tagParsers: [],

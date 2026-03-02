@@ -26,7 +26,7 @@ export function normalizePath(path: string): string {
 export function extractBasename(path: string): string {
   const normalized = normalizePath(path);
   const segments = normalized.split("/").filter(Boolean);
-  return segments.length > 0 ? segments[segments.length - 1] : "";
+  return segments.length > 0 ? segments[segments.length - 1]! : "";
 }
 
 export function extractDirname(path: string): string {
@@ -37,11 +37,11 @@ export function extractDirname(path: string): string {
 }
 
 export function buildRemoteURL(options: WebDAVClientOptions): string {
-  const { remoteBasePath } = options;
-  let baseURL = options.contactHref || "";
+  const { remoteBasePath, remoteURL } = options;
+  let baseURL = remoteURL || "";
   
   if (!baseURL) {
-    throw new Error("contactHref is required");
+    throw new Error("remoteURL is required");
   }
   
   if (remoteBasePath) {

@@ -20,14 +20,19 @@ export const router = createRouter({
       component: () => import('@/pages/folder/index.vue'),
       children: [
         {
+          name: "FolderLocal",
+          path: 'local',
+          component: () => import('@/pages/folder/local/index.vue'),
+        },
+        {
+          name: "FolderLocalDetail",
+          path: 'local/:id',
+          component: () => import('@/pages/folder/local-detail/index.vue'),
+        },
+        {
           name: "WebDAV",
           path: 'webdav',
           component: () => import('@/pages/folder/webdav/index.vue'),
-        },
-        {
-          name: "本地文件",
-          path: 'local',
-          component: () => import('@/pages/folder/local/index.vue'),
         },
       ]
     },

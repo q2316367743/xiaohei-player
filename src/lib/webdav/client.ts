@@ -52,20 +52,19 @@ import {
 export class WebDAVClientImpl implements WebDAVClient {
   private context: WebDAVClientContext;
 
-  constructor(options: WebDAVClientOptions) {
+  constructor(remoteURL: string, options: WebDAVClientOptions) {
     const authType = getAuthType(options);
     const authHeaders = buildAuthHeaders(options, authType);
 
     this.context = {
       authType,
-      contactHref: options.contactHref || "",
       headers: {
         ...authHeaders,
         ...options.headers,
       },
       password: options.password,
       remotePath: options.remoteBasePath || "/",
-      remoteURL: buildRemoteURL(options),
+      remoteURL: buildRemoteURL({ ...options, remoteURL }),
       token: options.token,
       username: options.username,
       withCredentials: options.withCredentials,

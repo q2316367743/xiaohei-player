@@ -287,7 +287,6 @@ export interface WebDAVClient {
 export interface WebDAVClientContext {
   authType: AuthType;
   remoteBasePath?: string;
-  contactHref: string;
   digest?: DigestContext;
   ha1?: string;
   headers: Headers;
@@ -311,7 +310,7 @@ export interface WebDAVClientOptions {
   attributeNamePrefix?: string;
   authType?: AuthType;
   remoteBasePath?: string;
-  contactHref?: string;
+  remoteURL?: string;
   ha1?: string;
   headers?: Headers;
   httpAgent?: any;
