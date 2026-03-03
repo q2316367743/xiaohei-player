@@ -39,6 +39,12 @@
           </template>
           媒体库
         </t-menu-item>
+        <t-menu-item to="/download" value="/download">
+          <template #icon>
+            <download-icon />
+          </template>
+          视频下载
+        </t-menu-item>
         <t-menu-item to="/setting" value="/setting">
           <template #icon>
             <setting-icon/>
@@ -54,6 +60,7 @@
 </template>
 <script lang="ts" setup>
 import {
+  DownloadIcon,
   FolderOpenIcon,
   HistoryIcon,
   HomeIcon,
