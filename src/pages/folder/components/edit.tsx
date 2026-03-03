@@ -2,7 +2,7 @@ import {DialogPlugin, Form, FormItem, Input, RadioGroup} from "tdesign-vue-next"
 import XhFileSelect from "@/components/xiaohei/XhFileSelect.vue";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
-import {buildFolderViewCore, type FolderType, type FolderView, type FolderViewCore} from "@/entity/domain/Folder.ts";
+import {buildFolderViewCore, type FolderType, type FolderView, type FolderViewCore} from "@/entity/main/Folder.ts";
 import {addFolder, removeFolder, updateFolderPassword} from "@/service";
 
 export function addFolderDialog(type: FolderType, onUpdate: () => void) {

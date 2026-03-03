@@ -1,4 +1,4 @@
-import type {Folder, FolderType, FolderView, FolderViewCore} from "@/entity/domain/Folder";
+import type {Folder, FolderType, FolderView, FolderViewCore} from "@/entity/main/Folder.ts";
 import {useSql} from "@/lib/sql.ts";
 import {md5} from "@/util/lang/CryptoUtil.ts";
 

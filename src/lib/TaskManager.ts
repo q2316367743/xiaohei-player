@@ -1,4 +1,4 @@
-import type {Task} from "@/entity/domain/Task.ts";
+import type {Task} from "@/entity/main/Task.ts";
 
 type TaskExecutor = (onProgress: (progress: number, total: number, message: string) => void) => Promise<void>;
 

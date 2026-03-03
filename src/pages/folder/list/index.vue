@@ -57,7 +57,7 @@
 import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "../components/edit.tsx";
 import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
 import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
-import type {FolderType, FolderView} from "@/entity/domain/Folder.ts";
+import type {FolderType, FolderView} from "@/entity/main/Folder.ts";
 import {checkPassword, listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";

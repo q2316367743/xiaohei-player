@@ -2,7 +2,7 @@ export * from "./types.ts";
 import {LocalFileAdapter}from "./adapter/LocalFileAdapter.ts";
 import {WebDAVFileAdapter} from "./adapter/WebDAVFileAdapter.ts";
 import type {FileBrowser} from "@/module/file/types.ts";
-import type {FolderView} from "@/entity/domain/Folder.ts";
+import type {FolderView} from "@/entity/main/Folder.ts";
 
 
 export function createFileAdapter(data: FolderView): FileBrowser {
