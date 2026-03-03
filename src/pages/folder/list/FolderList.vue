@@ -1,5 +1,6 @@
 <template>
   <div class="folder-local-container">
+    <header class="header">文件夹</header>
 
     <div class="folder-grid" v-if="list.length > 0">
       <div

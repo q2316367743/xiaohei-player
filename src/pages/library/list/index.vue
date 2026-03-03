@@ -1,5 +1,6 @@
 <template>
   <div class="library-local-container">
+    <header class="header">收藏库</header>
     <div class="library-grid" v-if="list.length > 0">
       <div
         v-for="item in list"
