@@ -2,6 +2,14 @@
   <div class="scene-page">
     <div class="scene-header">
       <div class="header-left">
+        <t-button theme="default" shape="square" @click="handleBack">
+          <template #icon>
+            <chevron-left-icon />
+          </template>
+        </t-button>
+        <div>{{ library?.name }}</div>
+      </div>
+      <div class="header-right">
         <t-radio-group v-model="layout" default-value="grid">
           <t-radio-button value="grid">
             <app-icon/>
@@ -10,8 +18,7 @@
             <view-list-icon/>
           </t-radio-button>
         </t-radio-group>
-      </div>
-      <div class="header-right">
+        <t-divider layout="vertical"/>
         <t-select v-model="sortField" :style="{ width: '140px' }" @change="handleSortChange">
           <t-option value="file_name" label="名称"/>
           <t-option value="file_size" label="大小"/>
@@ -80,12 +87,15 @@
 <script lang="ts" setup>
 import {pageVideo, type VideoSortField, type SortOrder} from '@/service/VideoService.ts';
 import type {Video} from '@/entity/domain/Video.ts';
-import {AppIcon, ViewListIcon, ChevronUpIcon, ChevronDownIcon} from "tdesign-icons-vue-next";
+import {AppIcon, ViewListIcon, ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
 import VideoCard from './components/VideoCard.vue';
 import VideoListItem from './components/VideoListItem.vue';
+import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
+import {getLibrary} from "@/service";
 
 const route = useRoute();
+const router = useRouter();
 
 const libraryId = route.params.id as string;
 
@@ -93,6 +103,7 @@ const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_DETAIL_LA
 const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_DETAIL_SORT_FIELD(libraryId), 'file_name');
 const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(libraryId), 'ASC');
 
+const library = ref<LibraryEntity>()
 const videos = ref<Video[]>([]);
 const loading = ref(true);
 const currentPage = ref(1);
@@ -100,6 +111,7 @@ const pageSize = ref(15);
 const total = ref(0);
 
 onMounted(async () => {
+  library.value = await getLibrary(libraryId);
   await loadVideos();
 });
 
@@ -137,7 +149,7 @@ function handleSortOrderChange(s: SortOrder) {
   sortOrder.value = s;
   handleSortChange();
 }
-
+const handleBack = () => router.back();
 </script>
 
 <style scoped lang="less">

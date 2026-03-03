@@ -76,7 +76,7 @@ interface ProcessVideoFileProp {
  * 处理视频文件
  */
 async function processVideoFile(prop: ProcessVideoFileProp) {
-  const {file, system, task, onProgress, generatePath} = prop;
+  const {file, system, task, generatePath} = prop;
   const {filePath, fileName} = file;
   const {vttPrefixDir, screenshotDir, coverDir} = generatePath;
   const hash = await sha256(filePath);
@@ -91,7 +91,6 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
   }
 
   logInfo("发现新视频:", fileName);
-  onProgress(0, 0, `正在处理: ${fileName}`);
 
   const fileStat = await stat(filePath);
 

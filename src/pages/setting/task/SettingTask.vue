@@ -7,8 +7,12 @@
           <div class="task-name">{{ currentTask.name }}</div>
           <t-tag :theme="getStatusTheme(currentTask.status)">{{ getStatusText(currentTask.status) }}</t-tag>
         </div>
-        <div v-if="currentTask.total > 0" class="task-progress">
-          <t-progress :percentage="getProgressPercentage(currentTask)" :label="true"/>
+        <div class="task-progress">
+          <t-progress :percentage="getProgressPercentage(currentTask)">
+            <template #label>
+              {{currentTask.progress}} / {{currentTask.total}}
+            </template>
+          </t-progress>
         </div>
         <div class="task-current-log">
           <span class="log-label">当前:</span>
@@ -144,6 +148,7 @@
 <script lang="ts" setup>
 import SubTitle from "@/components/PageTitle/SubTitle.vue";
 import {getTaskSetting, type TaskSetting} from "@/entity/setting/TaskSetting.ts";
+import type {Task} from "@/entity/main/Task.ts";
 import {useTaskSettingStore} from "@/lib/store.ts";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {logDebug} from "@/lib/log.ts";
@@ -155,8 +160,8 @@ import {cleanDeletedVideo} from "@/module/clean/CleanDeletedVideo.ts";
 import {cleanGenerateFile} from "@/module/clean/CleanGenerateFile.ts";
 
 const data = ref<TaskSetting>(getTaskSetting());
-const currentTask = ref(taskManager.getCurrentTask());
-const isRunning = ref(taskManager.isRunning());
+const currentTask = taskManager.currentTask;
+const isRunning = computed(() => !!currentTask.value);
 
 onMounted(() => {
   useTaskSettingStore().get()
@@ -164,15 +169,6 @@ onMounted(() => {
       data.value = res;
     })
     .catch(e => MessageUtil.error("获取数据失败", e));
-
-  const unsubscribe = taskManager.subscribe(() => {
-    currentTask.value = taskManager.getCurrentTask();
-    isRunning.value = taskManager.isRunning();
-  });
-
-  onUnmounted(() => {
-    unsubscribe();
-  });
 });
 
 function onChange<K extends keyof TaskSetting>(key: K, value: any) {
@@ -210,8 +206,8 @@ function getStatusText(status: string): string {
   }
 }
 
-function getProgressPercentage(task: any): number {
-  if (task.total === 0) return 0;
+function getProgressPercentage(task: Task | null): number {
+  if (!task || task.total === 0) return 0;
   return Math.round((task.progress / task.total) * 100);
 }
 
