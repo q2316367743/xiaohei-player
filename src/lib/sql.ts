@@ -16,6 +16,7 @@ type TableName =
   | 'video_actor'
   | 'video_tag'
   | 'folder'
+  | 'library'
   ;
 
 

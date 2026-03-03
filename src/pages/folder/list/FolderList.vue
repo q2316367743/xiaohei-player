@@ -58,9 +58,10 @@ import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from ".
 import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
 import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
 import type {FolderType, FolderView} from "@/entity/main/Folder.ts";
-import {checkPassword, listFolder} from "@/service";
+import {listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
+import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
 
 const router = useRouter();
 
@@ -93,7 +94,7 @@ function handleActionClick(data: any, folder: any) {
   if (data.value === 'password') {
     openUpdateLocalPassword(folder, loadList);
   } else if (data.value === 'delete') {
-    openDeleteFolderLocal(folder);
+    openDeleteFolderLocal(folder, loadList);
   }
 }
 
@@ -101,7 +102,7 @@ const handleClick = (item: FolderView) => {
   if (item.password) {
     // 请先输入密码
     MessageBoxUtil.prompt("", "请输入密码", {inputType: 'password'}).then(psd => {
-      checkPassword(psd, item).then(res => {
+      checkMd5Password(psd, item.password).then(res => {
         if (res) {
           router.push(`/folder/detail/${item.id}`);
         } else {

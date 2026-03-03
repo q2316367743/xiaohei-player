@@ -73,7 +73,7 @@ declare module 'vue' {
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
     TTypographyText: typeof import('tdesign-vue-next')['Text']
     VerticalSplitPanel: typeof import('./src/components/common/VerticalSplitPanel.vue')['default']
-    VideoCard: typeof import('@/pages/library/scene/components/VideoCard.vue')['default']
+    VideoCard: typeof import('@/pages/library/detail/components/VideoCard.vue')['default']
     XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
     XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
   }
@@ -142,7 +142,7 @@ declare global {
   const TTooltip: typeof import('tdesign-vue-next')['Tooltip']
   const TTypographyText: typeof import('tdesign-vue-next')['Text']
   const VerticalSplitPanel: typeof import('./src/components/common/VerticalSplitPanel.vue')['default']
-  const VideoCard: typeof import('@/pages/library/scene/components/VideoCard.vue')['default']
+  const VideoCard: typeof import('@/pages/library/detail/components/VideoCard.vue')['default']
   const XhAvatar: typeof import('./src/components/xiaohei/XhAvatar.vue')['default']
   const XhFileSelect: typeof import('./src/components/xiaohei/XhFileSelect.vue')['default']
 }

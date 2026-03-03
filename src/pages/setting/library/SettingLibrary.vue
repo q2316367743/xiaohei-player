@@ -6,8 +6,39 @@
       </template>
     </sub-title>
     <t-card>
-      <t-table :columns="columns" :data="data.items" row-key="path">
-      </t-table>
+      <div v-if="list.length > 0" class="flex gap-8px flex-wrap">
+        <t-card v-for="item in list" :key="item.id" :cover="item.cover" theme="poster2" :style="{ width: '320px' }">
+          <template #footer>
+            <div class="flex items-center gap-8px">
+              <lock-on-icon v-if="item.password" style="color: var(--td-error-color)"/>
+              <div>{{ item.name }}</div>
+            </div>
+          </template>
+          <template #actions>
+            <t-dropdown :min-column-width="112" trigger="click">
+              <t-button variant="text" shape="square">
+                <more-icon/>
+              </t-button>
+              <t-dropdown-menu>
+                <t-dropdown-item @click="updateLibraryPsd(item)">
+                  <template #prefix-icon>
+                    <lock-on-icon v-if="item.password"/>
+                    <lock-off-icon v-else/>
+                  </template>
+                  {{ item.password ? '修改密码' : '设置密码' }}
+                </t-dropdown-item>
+                <t-dropdown-item theme="error" @click="removeLibraryWrap(item)">
+                  <template #prefix-icon>
+                    <delete-icon/>
+                  </template>
+                  删除
+                </t-dropdown-item>
+              </t-dropdown-menu>
+            </t-dropdown>
+          </template>
+        </t-card>
+      </div>
+      <t-empty v-else title="空空如也"/>
     </t-card>
     <sub-title title="媒体的文件拓展名"/>
     <t-card>
@@ -49,18 +80,16 @@ import {useLibrarySettingStore} from "@/lib/store.ts";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {logDebug} from "@/lib/log.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
-import {addLibraryItem, settingLibraryItemColumns} from "@/pages/setting/library/func.tsx";
+import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
+import {listLibrary} from "@/service";
+import {DeleteIcon, LockOffIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
+import {addLibraryDialog, openDeleteFolderLocal, openUpdateLibraryPassword} from "@/pages/setting/library/edit.tsx";
 
 const data = ref<LibrarySetting>(getLibrarySetting());
+const list = ref(new Array<LibraryEntity>());
 
-const columns = settingLibraryItemColumns(onItemChange, onDeleteItem);
-
-function onDeleteItem(path: string) {
-  const idx = data.value.items.findIndex(i => i.path === path);
-  if (idx >= 0) {
-    data.value.items.splice(idx, 1);
-    onChange('items', data.value.items);
-  }
+const initList = async () => {
+  list.value = await listLibrary();
 }
 
 onMounted(() => {
@@ -69,7 +98,8 @@ onMounted(() => {
       console.log(res);
       data.value = res;
     })
-    .catch(e => MessageUtil.error("获取数据失败", e))
+    .catch(e => MessageUtil.error("获取数据失败", e));
+  initList()
 })
 
 function onChange<K extends keyof LibrarySetting>(key: K, value: any) {
@@ -77,16 +107,6 @@ function onChange<K extends keyof LibrarySetting>(key: K, value: any) {
     .setItem(key, value)
     .then(() => logDebug("保存成功"))
     .catch(e => MessageUtil.error("保存失败", e));
-}
-
-function onItemChange(path: string, key: 'hidden', value: boolean) {
-  for (let item of data.value.items) {
-    if (item.path === path) {
-      item[key] = value;
-      break;
-    }
-  }
-  onChange('items', data.value.items);
 }
 
 const onVideoExtnameEdit = () => {
@@ -108,15 +128,13 @@ const onImageExtnameEdit = () => {
 }
 
 const addLibraryItemAdd = () => {
-  addLibraryItem(item => {
-    const idx = data.value.items.findIndex(i => i.path === item.path);
-    if (idx >= 0) {
-      MessageUtil.warning("已存在");
-      return;
-    }
-    data.value.items.push(item);
-    onChange('items', data.value.items);
-  })
+  addLibraryDialog(initList);
+}
+const updateLibraryPsd = (item: LibraryEntity) => {
+  openUpdateLibraryPassword(item, initList);
+}
+const removeLibraryWrap = (item: LibraryEntity) => {
+  openDeleteFolderLocal(item, initList);
 }
 </script>
 <style scoped lang="less">

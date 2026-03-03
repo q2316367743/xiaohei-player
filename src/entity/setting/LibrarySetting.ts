@@ -1,16 +1,4 @@
-export interface LibraryItem {
-  // 名称
-  name: string;
-  // 路径
-  path: string;
-  // 是否隐藏
-  hidden: boolean;
-}
-
 export interface LibrarySetting {
-
-  // 收藏库列表
-  items: Array<LibraryItem>;
 
   // 扫描视频拓展名
   scanExtname: Array<string>;
@@ -36,10 +24,8 @@ export interface LibrarySetting {
 
 }
 
-
 export function getLibrarySetting(): LibrarySetting{
   return {
-    items: [],
     scanExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
     openExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],
     folderExtname: ["m4v", "mp4", "mov", "avi", "mpg", "mpeg", "rmvb", "rm", "flv", "asf", "mkv", "webm", "f4v"],

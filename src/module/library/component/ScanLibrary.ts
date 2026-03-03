@@ -3,7 +3,7 @@ import {useLibrarySettingStore, useSystemSettingStore, useTaskSettingStore} from
 import {extname, join} from "@tauri-apps/api/path";
 import {readDir, stat} from "@tauri-apps/plugin-fs";
 import {deleteVideo, getVideoById, listVideo, saveVideo, updateVideo} from "@/service/VideoService.ts";
-import type {LibraryItem, LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
+import type {LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
 import {generatePath, type GeneratePathResult} from "@/module/library/util.ts";
 import type {SystemSetting} from "@/entity/setting/SystemSetting.ts";
 import {sha256} from "@/util/lang/CryptoUtil.ts";
@@ -11,6 +11,8 @@ import {generatorLibrary} from "@/module/library/component/GenerateLibrary.ts";
 import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import {parseLibrary} from "@/module/library/component/ParseLibrary.ts";
 import type {VideoAddForm} from "@/entity/domain/Video.ts";
+import {listLibrary} from "@/service";
+import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
 
 /**
  * 扫描视频文件
@@ -19,7 +21,7 @@ import type {VideoAddForm} from "@/entity/domain/Video.ts";
  * @param foundFiles 找到的文件
  */
 async function collectVideoFiles(
-  item: LibraryItem,
+  item: LibraryEntity,
   library: LibrarySetting,
   foundFiles: Map<string, VideoFile>
 ) {
@@ -42,7 +44,7 @@ async function collectVideoFiles(
         }
 
         foundFiles.set(newPath, {
-          item,
+          item: item,
           filePath: newPath,
           fileName: file.name
         });
@@ -57,9 +59,9 @@ async function collectVideoFiles(
 }
 
 interface VideoFile {
-  item: LibraryItem,
-  filePath: string,
-  fileName: string,
+  item: LibraryEntity;
+  filePath: string;
+  fileName: string;
 }
 
 interface ProcessVideoFileProp {
@@ -75,7 +77,7 @@ interface ProcessVideoFileProp {
  */
 async function processVideoFile(prop: ProcessVideoFileProp) {
   const {file, system, task, onProgress, generatePath} = prop;
-  const {filePath, fileName, item} = file;
+  const {filePath, fileName} = file;
   const {vttPrefixDir, screenshotDir, coverDir} = generatePath;
   const hash = await sha256(filePath);
   const old = await getVideoById(hash);
@@ -110,6 +112,7 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
 
   const form: VideoAddForm = {
     // 基础信息
+    library_id: file.item.id,
     file_name: fileName,
     file_path: filePath,
     file_size: fileStat.size,
@@ -120,9 +123,6 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
 
     // 核心信息
     ...videoMetadata,
-
-    // 状态信息
-    hidden: item.hidden ? 1 : 0,
 
   };
 
@@ -145,15 +145,16 @@ export async function scanLibrary(
   const library = await useLibrarySettingStore().get();
   const system = await useSystemSettingStore().get();
   const task = await useTaskSettingStore().get();
-  if (library.items.length === 0) {
+  const items = await listLibrary();
+  if (items.length === 0) {
     logWarning("收藏库为空，没有配置任何扫描路径");
     return;
   }
 
-  logInfo("配置了", library.items.length, "个扫描路径");
+  logInfo("配置了", items.length, "个扫描路径");
   const foundFiles = new Map<string, VideoFile>();
 
-  for (const item of library.items) {
+  for (const item of items) {
     logInfo("扫描路径:", item);
     await collectVideoFiles(item, library, foundFiles);
   }

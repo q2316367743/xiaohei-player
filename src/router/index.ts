@@ -17,7 +17,7 @@ export const router = createRouter({
     {
       name: "FolderList",
       path: '/folder/list',
-      component: () => import('@/pages/folder/list/index.vue'),
+      component: () => import('@/pages/folder/list/FolderList.vue'),
     },
     {
       name: "FolderDetail",
@@ -27,34 +27,39 @@ export const router = createRouter({
     {
       name: "Library",
       path: '/library',
-      component: () => import('@/pages/library/index.vue'),
+      component: () => import('@/pages/library/Library.vue'),
       children: [
         {
-          name: "LibraryScene",
-          path: 'scene',
-          component: () => import('@/pages/library/scene/index.vue'),
+          name: "LibraryList",
+          path: 'list',
+          component: () => import('@/pages/library/list/index.vue'),
         },
         {
-          name: "演员",
+          name: "LibraryActor",
           path: 'actor',
           component: () => import('@/pages/library/actor/index.vue'),
         },
         {
-          name: "标签",
+          name: "LibraryTag",
           path: 'tag',
           component: () => import('@/pages/library/tag/index.vue'),
         },
         {
-          name: "工作室",
+          name: "LibraryStudio",
           path: 'studio',
           component: () => import('@/pages/library/studio/index.vue'),
         }
       ]
     },
     {
+      name: "LibraryDetail",
+      path: '/library/detail/:id',
+      component: () => import('@/pages/library/detail/index.vue'),
+    },
+    {
       name: "Setting",
       path: '/setting',
-      component: () => import('@/pages/setting/index.vue'),
+      component: () => import('@/pages/setting/Setting.vue'),
       children: [
         {
           name: "SettingTask",

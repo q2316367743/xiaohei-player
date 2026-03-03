@@ -38,3 +38,17 @@ export async function sha256(message: string) {
 export async function md5(text: string) {
   return await sha256(text);
 }
+
+/**
+ * 验证密码
+ * @param password 明文密码
+ * @param sign 签名
+ */
+export async function checkMd5Password(password: string, sign: string) {
+  // 设置了旧密码
+  if (password) {
+    const oldSign = await md5(password);
+    if (oldSign !== sign) return false;
+  }
+  return true;
+}

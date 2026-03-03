@@ -48,20 +48,16 @@
       </t-menu>
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
-      <router-view v-slot="{ Component, route }">
-        <keep-alive :include="['Library', 'FolderList']">
-          <component :is="Component" :key="route.fullPath"/>
-        </keep-alive>
-      </router-view>
+      <router-view/>
     </t-content>
   </t-layout>
 </template>
 <script lang="ts" setup>
 import {
-  FolderIcon, FolderOpenIcon,
+  FolderOpenIcon,
   HistoryIcon,
   HomeIcon,
-  InternetIcon, SettingIcon,
+  SettingIcon,
   VideoIcon,
   ViewListIcon
 } from "tdesign-icons-vue-next";

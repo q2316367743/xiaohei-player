@@ -36,9 +36,6 @@
             </template>
           </t-button>
         </div>
-        <t-divider layout="vertical"/>
-        <span>隐藏</span>
-        <t-switch v-model="hidden" class="ml-8px" @change="handleSortChange"></t-switch>
       </div>
     </div>
 
@@ -85,13 +82,16 @@ import {pageVideo, type VideoSortField, type SortOrder} from '@/service/VideoSer
 import type {Video} from '@/entity/domain/Video.ts';
 import {AppIcon, ViewListIcon, ChevronUpIcon, ChevronDownIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
-import VideoCard from '@/pages/library/detail/components/VideoCard.vue';
-import VideoListItem from '@/pages/library/detail/components/VideoListItem.vue';
+import VideoCard from './components/VideoCard.vue';
+import VideoListItem from './components/VideoListItem.vue';
 
-const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_SCENE_LAYOUT, 'grid');
-const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_SCENE_SORT_FIELD, 'file_name');
-const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_SCENE_SORT_ORDER, 'ASC');
-const hidden = useSessionStorage<boolean>(LocalName.PAGE_LIBRARY_SCENE_HIDDEN, false);
+const route = useRoute();
+
+const libraryId = route.params.id as string;
+
+const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_DETAIL_LAYOUT(libraryId), 'grid');
+const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_DETAIL_SORT_FIELD(libraryId), 'file_name');
+const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(libraryId), 'ASC');
 
 const videos = ref<Video[]>([]);
 const loading = ref(true);
@@ -106,9 +106,7 @@ onMounted(async () => {
 async function loadVideos() {
   loading.value = true;
   try {
-    const result = await pageVideo(
-      currentPage.value, pageSize.value, sortField.value, sortOrder.value,
-      hidden.value ? undefined : 0);
+    const result = await pageVideo(libraryId, currentPage.value, pageSize.value, sortField.value, sortOrder.value);
     videos.value = result.records;
     total.value = result.total;
   } catch (e) {

@@ -3,7 +3,6 @@ import type {Video, VideoAddForm, VideoStatusInfo} from "@/entity/domain/Video.t
 import {saveOrUpdateActor} from "@/service/ActorService.ts";
 import {saveOrUpdateTag} from "@/service/TagService.ts";
 import {saveOrUpdateStudio} from "@/service/StudioService.ts";
-import type {YesOrNo} from "@/global/CommonType.ts";
 import type {VideoActor} from "@/entity/domain/VideoActor.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
 
@@ -76,15 +75,15 @@ export type VideoSortField = 'file_name'
 export type SortOrder = 'ASC' | 'DESC';
 
 export async function pageVideo(
+  libraryId: string,
   page: number = 1,
   size: number = 20,
   order: VideoSortField = 'file_name',
-  type: SortOrder = 'ASC',
-  hidden?: YesOrNo
+  type: SortOrder = 'ASC'
 ) {
   return useSql().query<Video>('video')
     .eq('is_deleted', 0)
-    .eq('hidden', hidden)
+    .eq('library_id', libraryId)
     .order(order, type)
     .page(page, size);
 }

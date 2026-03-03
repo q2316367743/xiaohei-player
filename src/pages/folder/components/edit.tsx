@@ -87,10 +87,11 @@ export function openUpdateLocalPassword(folder: FolderView, onUpdate: () => void
   })
 }
 
-export function openDeleteFolderLocal(folder: FolderView) {
+export function openDeleteFolderLocal(folder: FolderView, onUpdate: () => void) {
   MessageBoxUtil.confirm("确定要删除吗？", "删除文件夹")
     .then(() => {
       removeFolder(folder.id).then(() => {
+        onUpdate();
         MessageUtil.success('删除成功');
       }).catch(e => {
         MessageUtil.error("删除失败", e);

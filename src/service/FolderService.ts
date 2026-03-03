@@ -1,6 +1,6 @@
 import type {Folder, FolderType, FolderView, FolderViewCore} from "@/entity/main/Folder.ts";
 import {useSql} from "@/lib/sql.ts";
-import {md5} from "@/util/lang/CryptoUtil.ts";
+import {checkMd5Password, md5} from "@/util/lang/CryptoUtil.ts";
 
 export async function listFolder(type?: FolderType): Promise<Array<FolderView>> {
   const list = await useSql().query<Folder>('folder')
@@ -38,22 +38,12 @@ export async function addFolder(form: FolderViewCore) {
   });
 }
 
-export async function checkPassword(password: string, item: FolderViewCore) {
-  // 设置了旧密码
-  if (item.password) {
-    const oldSign = await md5(password);
-    console.log(oldSign, item.password)
-    if (oldSign !== item.password) return false;
-  }
-  return true;
-}
-
 export async function updateFolderPassword(id: string, old: string, password: string) {
   const oldItem = await getFolder(id);
   if (!oldItem) return Promise.reject(new Error("文件夹不存在"));
 
   // 设置了旧密码
-  const check = await checkPassword(old, oldItem);
+  const check = await checkMd5Password(old, oldItem.password);
   if (!check) return Promise.reject(new Error("密码错误"));
 
   const now = Date.now();

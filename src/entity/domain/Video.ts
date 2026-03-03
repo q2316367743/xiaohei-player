@@ -1,12 +1,11 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
-import type {YesOrNo} from "@/global/CommonType.ts";
 
 export interface VideoOriginalFile {
+  library_id: string;       // 所属收藏库
   file_path: string;        // 当前绝对文件路径
   file_name: string;        // 文件名 (带扩展名)
   file_size: number;        // 文件大小 (字节)
   file_birthtime: number;   // 文件创建时间
-  hidden: YesOrNo;          // 隐藏标记 (0:正常, 1:隐藏)
 }
 
 export interface VideoGenerateFile {
