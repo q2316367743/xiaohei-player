@@ -2,14 +2,18 @@
   <div class="folder-local-container">
     <div class="header">
       <h2 class="title">文件夹</h2>
-      <t-button
-        @click="handleAddFolder"
-      >
-        <template #icon>
-          <t-icon name="add"></t-icon>
-        </template>
-        添加文件夹
-      </t-button>
+      <t-dropdown trigger="click">
+        <t-button theme="primary">
+          <template #icon>
+            <add-icon/>
+          </template>
+          添加文件夹
+        </t-button>
+        <t-dropdown-menu>
+          <t-dropdown-item @click="handleAddFolder('webdav')">WebDAV</t-dropdown-item>
+          <t-dropdown-item @click="handleAddFolder('local')">本地</t-dropdown-item>
+        </t-dropdown-menu>
+      </t-dropdown>
     </div>
 
     <div class="folder-grid" v-if="list.length > 0">
@@ -36,40 +40,40 @@
         <div class="folder-info">
           <div class="folder-name" :title="item.name">{{ item.name || item.path }}</div>
         </div>
+        <div class="folder-type">
+          <t-tag theme="primary" variant="outline">
+            <span v-if="item.type === 'local'">本地</span>
+            <span v-else-if="item.type === 'webdav'">WebDAV</span>
+          </t-tag>
+        </div>
       </div>
     </div>
 
-    <div class="empty-state" v-else>
-      <t-icon name="folder-open" class="empty-icon"></t-icon>
-      <p class="empty-text">暂无文件夹</p>
-      <t-button theme="primary" @click="handleAddFolder">添加第一个文件夹</t-button>
-    </div>
+    <empty-result v-else tip="暂无文件夹"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "../components/edit.tsx";
 import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
-import {FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
+import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
 import type {FolderType, FolderView} from "@/entity/domain/Folder.ts";
 import {checkPassword, listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 
-const route = useRoute();
 const router = useRouter();
 
-const type = route.params.type as FolderType;
 
 const list = ref(new Array<FolderView>());
 
 const loadList = async () => {
-  list.value = await listFolder(type);
+  list.value = await listFolder();
 };
 
 onMounted(loadList);
 
-function handleAddFolder() {
+function handleAddFolder(type: FolderType) {
   addFolderDialog(type, loadList);
 }
 

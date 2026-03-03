@@ -16,7 +16,7 @@ export const router = createRouter({
     },
     {
       name: "FolderList",
-      path: '/folder/list/:type',
+      path: '/folder/list',
       component: () => import('@/pages/folder/list/index.vue'),
     },
     {

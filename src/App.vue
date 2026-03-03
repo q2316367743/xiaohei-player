@@ -27,23 +27,12 @@
           </template>
           最近播放
         </t-menu-item>
-        <t-submenu title="文件" value="/folder">
+        <t-menu-item to="/folder/list" value="/folder/list">
           <template #icon>
-            <folder-icon />
+            <folder-open-icon/>
           </template>
-          <t-menu-item to="/folder/list/webdav" value="/folder/list/webdav">
-            <template #icon>
-              <internet-icon/>
-            </template>
-            WebDAV
-          </t-menu-item>
-          <t-menu-item to="/folder/list/local" value="/folder/list/local">
-            <template #icon>
-              <folder-open-icon />
-            </template>
-            本地文件
-          </t-menu-item>
-        </t-submenu>
+          文件浏览
+        </t-menu-item>
         <t-menu-item to="/library" value="/library">
           <template #icon>
             <video-icon/>
@@ -52,7 +41,7 @@
         </t-menu-item>
         <t-menu-item to="/setting" value="/setting">
           <template #icon>
-            <setting-icon />
+            <setting-icon/>
           </template>
           设置
         </t-menu-item>
