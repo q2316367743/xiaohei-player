@@ -17,7 +17,6 @@
         v-for="item in list"
         :key="item.id"
         class="folder-card"
-        :title="item.path"
         @click="handleClick(item)"
       >
         <div class="folder-cover">
