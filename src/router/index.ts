@@ -15,26 +15,14 @@ export const router = createRouter({
       component: () => import('@/pages/history/index.vue'),
     },
     {
-      name: "文件",
-      path: '/folder',
-      component: () => import('@/pages/folder/index.vue'),
-      children: [
-        {
-          name: "FolderLocal",
-          path: 'local',
-          component: () => import('@/pages/folder/local/index.vue'),
-        },
-        {
-          name: "FolderLocalDetail",
-          path: 'local/:id',
-          component: () => import('@/pages/folder/local-detail/index.vue'),
-        },
-        {
-          name: "WebDAV",
-          path: 'webdav',
-          component: () => import('@/pages/folder/webdav/index.vue'),
-        },
-      ]
+      name: "FolderList",
+      path: '/folder/list/:type',
+      component: () => import('@/pages/folder/list/index.vue'),
+    },
+    {
+      name: "FolderDetail",
+      path: '/folder/detail/:id',
+      component: () => import('@/pages/folder/detail/index.vue'),
     },
     {
       name: "Library",

@@ -1,23 +1,16 @@
-import type {FolderLocal} from "@/entity/domain/FolderLocal.ts";
-import type {FolderWebDav} from "@/entity/domain/FolderWebDav.ts";
-
 export * from "./types.ts";
 import {LocalFileAdapter}from "./adapter/LocalFileAdapter.ts";
 import {WebDAVFileAdapter} from "./adapter/WebDAVFileAdapter.ts";
 import type {FileBrowser} from "@/module/file/types.ts";
+import type {FolderView} from "@/entity/domain/Folder.ts";
 
-export type FileAdapterType = 'local' | 'webdav';
-export interface FileAdapterMap  {
-  local: FolderLocal,
-  webdav: FolderWebDav
-}
 
-export function createFileAdapter<T extends FileAdapterType>(type: T, prop: FileAdapterMap[T]): FileBrowser {
-  switch (type) {
+export function createFileAdapter(data: FolderView): FileBrowser {
+  switch (data.type) {
     case 'local':
-      return new LocalFileAdapter(prop as FolderLocal);
+      return new LocalFileAdapter(data);
     case 'webdav':
-      return new WebDAVFileAdapter(prop as FolderWebDav);
+      return new WebDAVFileAdapter(data);
     default:
       throw new Error("不支持的文件适配器类型");
   }

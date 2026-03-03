@@ -1,100 +1,3 @@
-<template>
-  <div class="folder-local-container">
-    <div class="header">
-      <h2 class="title">本地文件夹</h2>
-      <t-button
-        @click="handleAddFolder"
-      >
-        <template #icon>
-          <t-icon name="add"></t-icon>
-        </template>
-        添加文件夹
-      </t-button>
-    </div>
-
-    <div class="folder-grid" v-if="list.length > 0">
-      <div
-        v-for="item in list"
-        :key="item.id"
-        class="folder-card"
-        :title="item.path"
-        @click="handleClick(item)"
-      >
-        <div class="folder-cover">
-          <t-icon v-if="item.password" name="lock-on" class="lock-icon"></t-icon>
-          <div class="folder-icon-wrapper">
-            <folder-icon class="folder-icon"/>
-          </div>
-          <div class="folder-actions">
-            <t-dropdown :options="actionOptions" trigger="click"
-                        @click.stop="(data) => handleActionClick(data, item)">
-              <t-button variant="outline" shape="circle">
-                <t-icon name="more"></t-icon>
-              </t-button>
-            </t-dropdown>
-          </div>
-        </div>
-        <div class="folder-info">
-          <div class="folder-name" :title="item.name">{{ item.name || item.path }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="empty-state" v-else>
-      <t-icon name="folder-open" class="empty-icon"></t-icon>
-      <p class="empty-text">暂无本地文件夹</p>
-      <t-button theme="primary" @click="handleAddFolder">添加第一个文件夹</t-button>
-    </div>
-  </div>
-</template>
-
-<script lang="ts" setup>
-import {useFolderStore} from "@/store/components/FolderStore.ts";
-import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "./edit.tsx";
-import type {DropdownOption} from "tdesign-vue-next/es/dropdown/type";
-import {FolderIcon} from "tdesign-icons-vue-next";
-import type {FolderLocal} from "@/entity/domain/FolderLocal.ts";
-
-const router = useRouter();
-
-const store = useFolderStore();
-const list = computed(() => store.folderLocal);
-
-onMounted(() => {
-  store.init();
-});
-
-function handleAddFolder() {
-  addFolderDialog();
-}
-
-
-const actionOptions: Array<DropdownOption> = [
-  {
-    content: '修改密码',
-    value: 'password'
-  },
-  {
-    content: '删除',
-    value: 'delete',
-    theme: 'error'
-  }
-];
-
-function handleActionClick(data: any, folder: any) {
-  if (data.value === 'password') {
-    openUpdateLocalPassword(folder);
-  } else if (data.value === 'delete') {
-    openDeleteFolderLocal(folder);
-  }
-}
-
-const handleClick = (item: FolderLocal) => {
-  router.push(`/folder/local/${item.id}`);
-}
-</script>
-
-<style scoped lang="less">
 .folder-local-container {
   width: calc(100% - 16px);
   height: calc(100vh - 16px);
@@ -172,14 +75,11 @@ const handleClick = (item: FolderLocal) => {
   font-size: 16px;
   color: var(--td-warning-color);
   z-index: 2;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
   width: 24px;
   height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: var(--td-shadow-1);
 }
 
 .folder-icon-wrapper {
@@ -243,4 +143,3 @@ const handleClick = (item: FolderLocal) => {
   margin-bottom: var(--td-comp-margin-xl);
   color: var(--td-text-color-secondary);
 }
-</style>

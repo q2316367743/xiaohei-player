@@ -15,8 +15,7 @@ type TableName =
   | 'video'
   | 'video_actor'
   | 'video_tag'
-  | 'folder_local'
-  | 'folder_webdav'
+  | 'folder'
   ;
 
 

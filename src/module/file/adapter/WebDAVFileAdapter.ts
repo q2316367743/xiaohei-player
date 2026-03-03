@@ -1,9 +1,9 @@
 import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 import type {WebDAVClient} from "@/lib/webdav/types.ts";
-import type {FolderWebDav} from "@/entity/domain/FolderWebDav.ts";
 import {createWebDAVClient} from "@/lib/webdav";
 import {convertWebDavToUrl} from "@/lib/FileSrc.ts";
 import {extname} from "@/module/file/util.ts";
+import type {FolderViewCoreWebdav} from "@/entity/domain/Folder.ts";
 
 export class WebDAVFileAdapter implements FileBrowser {
   private readonly client: WebDAVClient;
@@ -12,15 +12,15 @@ export class WebDAVFileAdapter implements FileBrowser {
   private readonly type: string;
   private readonly base: string
 
-  constructor(prop: FolderWebDav) {
-    this.client = createWebDAVClient(prop.auth_url, {
-      authType: prop.auth_type,
-      username: prop.auth_username,
-      password: prop.auth_password
+  constructor(prop: FolderViewCoreWebdav) {
+    this.client = createWebDAVClient(prop.payload.auth_url, {
+      authType: prop.payload.auth_type,
+      username: prop.payload.auth_username,
+      password: prop.payload.auth_password
     });
-    this.username = prop.auth_username;
-    this.password = prop.auth_password;
-    this.type = prop.auth_type;
+    this.username = prop.payload.auth_username;
+    this.password = prop.payload.auth_password;
+    this.type = prop.payload.auth_type;
     this.base = prop.path;
   }
 

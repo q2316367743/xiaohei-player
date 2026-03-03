@@ -2,13 +2,13 @@ import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {readDir} from "@tauri-apps/plugin-fs";
 import {join, extname} from "@/module/file/util.ts";
-import type {FolderLocal} from "@/entity/domain/FolderLocal.ts";
+import type {FolderViewCoreLocal} from "@/entity/domain/Folder.ts";
 
 export class LocalFileAdapter implements FileBrowser {
 
   private readonly base: string;
 
-  constructor(prop: FolderLocal) {
+  constructor(prop: FolderViewCoreLocal) {
     this.base = prop.path;
   }
 

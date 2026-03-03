@@ -82,6 +82,7 @@ export default {
       inputPattern?: RegExp;
       inputPlaceholder?: string;
       inputErrorMessage?: string;
+      inputType?: "number" | "search" | "hidden" | "submit" | "text" | "url" | "tel" | "password";
       inputValue?: string;
       onClose?: () => void;
       maxlength?: number;
@@ -90,6 +91,7 @@ export default {
     const {
       inputValue = "",
       inputPlaceholder,
+      inputType,
       confirmButtonText = "确认",
       cancelButtonText = "取消",
       maxlength,
@@ -106,14 +108,15 @@ export default {
       const res = DialogPlugin({
         default: () => (
           <div>
-            <Paragraph>{content}</Paragraph>
+            {content && <Paragraph>{content}</Paragraph>}
             <Input
-              maxlength={maxlength}
-              autofocus={true}
               v-model={value.value}
+              autofocus={true}
               clearable={true}
+              maxlength={maxlength}
               onEnter={onKeydown}
               placeholder={inputPlaceholder}
+              type={inputType}
             ></Input>
           </div>
         ),

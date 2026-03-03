@@ -29,17 +29,17 @@
         </t-menu-item>
         <t-submenu title="文件" value="/folder">
           <template #icon>
-            <file-icon/>
+            <folder-icon />
           </template>
-          <t-menu-item to="/folder/webdav" value="/folder/webdav">
+          <t-menu-item to="/folder/list/webdav" value="/folder/list/webdav">
             <template #icon>
               <internet-icon/>
             </template>
             WebDAV
           </t-menu-item>
-          <t-menu-item to="/folder/local" value="/folder/local">
+          <t-menu-item to="/folder/list/local" value="/folder/list/local">
             <template #icon>
-              <file-attachment-icon/>
+              <folder-open-icon />
             </template>
             本地文件
           </t-menu-item>
@@ -60,7 +60,7 @@
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
       <router-view v-slot="{ Component, route }">
-        <keep-alive :include="['Library']">
+        <keep-alive :include="['Library', 'FolderList']">
           <component :is="Component" :key="route.fullPath"/>
         </keep-alive>
       </router-view>
@@ -69,8 +69,7 @@
 </template>
 <script lang="ts" setup>
 import {
-  FileAttachmentIcon,
-  FileIcon,
+  FolderIcon, FolderOpenIcon,
   HistoryIcon,
   HomeIcon,
   InternetIcon, SettingIcon,
@@ -79,11 +78,9 @@ import {
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
 import {useInterfaceSettingStore} from "@/store";
-import {useFolderStore} from "@/store/components/FolderStore.ts";
 
 onMounted(() => {
   useInterfaceSettingStore().init();
-  useFolderStore().init();
 })
 </script>
 <style scoped lang="less">
