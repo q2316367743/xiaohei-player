@@ -25,31 +25,9 @@ export const router = createRouter({
       component: () => import('@/pages/folder/detail/index.vue'),
     },
     {
-      name: "Library",
-      path: '/library',
-      component: () => import('@/pages/library/Library.vue'),
-      children: [
-        {
-          name: "LibraryList",
-          path: 'list',
-          component: () => import('@/pages/library/list/index.vue'),
-        },
-        {
-          name: "LibraryActor",
-          path: 'actor',
-          component: () => import('@/pages/library/actor/index.vue'),
-        },
-        {
-          name: "LibraryTag",
-          path: 'tag',
-          component: () => import('@/pages/library/tag/index.vue'),
-        },
-        {
-          name: "LibraryStudio",
-          path: 'studio',
-          component: () => import('@/pages/library/studio/index.vue'),
-        }
-      ]
+      name: "LibraryList",
+      path: '/library/list',
+      component: () => import('@/pages/library/list/index.vue'),
     },
     {
       name: "LibraryDetail",

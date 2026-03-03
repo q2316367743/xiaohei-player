@@ -33,7 +33,7 @@
           </template>
           文件浏览
         </t-menu-item>
-        <t-menu-item to="/library" value="/library">
+        <t-menu-item to="/library/list" value="/library/list">
           <template #icon>
             <video-icon/>
           </template>

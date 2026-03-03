@@ -1,14 +1,10 @@
 :root {
-  --vue-scroll-rect-scrollbar-thumb-color: rgba(122, 122, 122, .3);
-  --vue-scroll-rect-scrollbar-thumb-color-light: rgba(122, 122, 122, .5);
-  --vue-scroll-rect-scrollbar-thumb-color-pressed: rgba(112, 112, 112, .2);
+  --vue-scroll-rect-scrollbar-thumb-color: var(--td-scrollbar-color);
+  --vue-scroll-rect-scrollbar-thumb-color-light: var(--td-scrollbar-hover-color);
+  --vue-scroll-rect-scrollbar-thumb-color-pressed: rgba(45, 40, 38, 0.2);
   --vue-scroll-rect-scrollbar-thumb-radius: 5px;
   --vue-scroll-rect-scrollbar-thumb-margin: 0px;
   --vue-scroll-rect-scrollbar-size: 8px
-}
-
-#mx-menu-default-container {
-  z-index: 5501 !important;
 }
 
 .vue-scroll-rect {
@@ -113,34 +109,34 @@
 }
 
 :root {
-  --mx-menu-backgroud: #fff9f5;
-  --mx-menu-hover-backgroud: #fff5f0;
-  --mx-menu-active-backgroud: #ffd5cc;
-  --mx-menu-open-backgroud: #ffebe8;
-  --mx-menu-open-hover-backgroud: #ffebe8;
-  --mx-menu-divider: #d7ccc8;
-  --mx-menu-text: #5d4037;
-  --mx-menu-hover-text: #5d4037;
-  --mx-menu-active-text: #bf360c;
-  --mx-menu-open-text: #5d4037;
-  --mx-menu-open-hover-text: #5d4037;
-  --mx-menu-disabled-text: #bcaaa4;
+  --mx-menu-backgroud: linear-gradient(180deg, var(--td-bg-color-container) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-active-backgroud: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent) 100%);
+  --mx-menu-open-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-open-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-text: var(--td-text-color-primary);
+  --mx-menu-hover-text: var(--td-text-color-primary);
+  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-open-text: var(--td-text-color-primary);
+  --mx-menu-open-hover-text: var(--td-text-color-primary);
+  --mx-menu-disabled-text: var(--td-text-color-disabled);
   --mx-menu-icon-size: 16px;
-  --mx-menu-shadow-color: rgba(93, 64, 55, 0.15);
+  --mx-menu-shadow-color: rgba(45, 40, 38, 0.25);
   --mx-menu-backgroud-radius: 12px;
-  --mx-menu-scrollbar-thumb-color: rgba(93, 64, 55, 0.2);
-  --mx-menu-scrollbar-thumb-color-light: rgba(93, 64, 55, 0.3);
-  --mx-menu-scrollbar-thumb-color-pressed: rgba(93, 64, 55, 0.1);
-  --mx-menu-shortcut-backgroud: #f5f0ee;
-  --mx-menu-shortcut-backgroud-hover: #ffebe8;
-  --mx-menu-shortcut-backgroud-active: #ffd5cc;
-  --mx-menu-shortcut-backgroud-open: #f5f0ee;
-  --mx-menu-shortcut-backgroud-disabled: #f5f0ee;
-  --mx-menu-shortcut-text: #8d6e63;
-  --mx-menu-shortcut-text-hover: #e64a19;
-  --mx-menu-shortcut-text-active: #bf360c;
-  --mx-menu-shortcut-text-open: #8d6e63;
-  --mx-menu-shortcut-text-disabled: #bcaaa4;
+  --mx-menu-scrollbar-thumb-color: rgba(45, 40, 38, 0.3);
+  --mx-menu-scrollbar-thumb-color-light: rgba(45, 40, 38, 0.4);
+  --mx-menu-scrollbar-thumb-color-pressed: rgba(45, 40, 38, 0.2);
+  --mx-menu-shortcut-backgroud: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-hover: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-shortcut-backgroud-active: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent) 100%);
+  --mx-menu-shortcut-backgroud-open: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-disabled: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-text: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
   --mx-menu-placeholder-width: 24px
 }
 
@@ -150,10 +146,10 @@
   display: inline-block;
   overflow: visible;
   position: absolute;
-  background-color: var(--mx-menu-backgroud);
+  background: var(--mx-menu-backgroud);
   border-radius: var(--mx-menu-backgroud-radius);
   padding: 12px 0;
-  box-shadow: 0 10px 40px 10px var(--mx-menu-shadow-color);
+  box-shadow: var(--td-shadow-3);
   opacity: 1;
   transition: opacity .2s ease-in-out;
   --vue-scroll-rect-scrollbar-thumb-color: var(--mx-menu-scrollbar-thumb-color);
@@ -182,7 +178,10 @@
   overflow: visible;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--mx-menu-text)
+  color: var(--mx-menu-text);
+  border-radius: var(--td-radius-small);
+  margin: 0 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3)
 }
 
 .mx-context-menu-item .mx-right-arrow, .mx-context-menu-item .mx-checked-mark {
@@ -190,7 +189,7 @@
 }
 
 .mx-context-menu-item:hover {
-  background-color: var(--mx-menu-hover-backgroud);
+  background: var(--mx-menu-hover-backgroud);
   color: var(--mx-menu-hover-text)
 }
 
@@ -204,7 +203,7 @@
 }
 
 .mx-context-menu-item:active {
-  background-color: var(--mx-menu-active-backgroud);
+  background: var(--mx-menu-active-backgroud);
   color: var(--mx-menu-active-text)
 }
 
@@ -218,12 +217,12 @@
 }
 
 .mx-context-menu-item.open {
-  background-color: var(--mx-menu-open-backgroud);
+  background: var(--mx-menu-open-backgroud);
   color: var(--mx-menu-open-text)
 }
 
 .mx-context-menu-item.open:hover {
-  background-color: var(--mx-menu-open-hover-backgroud);
+  background: var(--mx-menu-open-hover-backgroud);
   color: var(--mx-menu-open-hover-text)
 }
 
@@ -237,7 +236,8 @@
 }
 
 .mx-context-menu-item.keyboard-focus {
-  background-color: var(--mx-menu-active-backgroud)
+  background: var(--mx-menu-active-backgroud);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.08)
 }
 
 .mx-context-menu-item.disabled {
@@ -255,7 +255,7 @@
 
 .mx-context-menu-item.disabled .mx-shortcut {
   background-color: var(--mx-menu-shortcut-backgroud-disabled);
-  color: var(--mx-menu-shortcut-text-second)
+  color: var(--mx-menu-shortcut-text-disabled)
 }
 
 .mx-context-menu-item .mx-item-row {
@@ -328,37 +328,39 @@
   justify-self: flex-end;
   font-size: 11.5px;
   padding: 2px 4px;
-  background-color: var(--mx-menu-shortcut-backgroud);
-  color: var(--mx-menu-shortcut-text)
+  background: var(--mx-menu-shortcut-backgroud);
+  color: var(--mx-menu-shortcut-text);
+  border-radius: var(--td-radius-small);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.05)
 }
 
 .mx-menu-bar.dark, .mx-context-menu.dark {
-  --mx-menu-backgroud: #1e293b;
-  --mx-menu-hover-backgroud: #334155;
-  --mx-menu-active-backgroud: #475569;
-  --mx-menu-open-backgroud: #334155;
-  --mx-menu-open-hover-backgroud: #334155;
-  --mx-menu-divider: rgba(148, 163, 184, 0.25);
-  --mx-menu-text: rgba(248, 250, 252, 0.95);
-  --mx-menu-hover-text: rgba(248, 250, 252, 0.95);
-  --mx-menu-active-text: #818cf8;
-  --mx-menu-open-text: rgba(248, 250, 252, 0.95);
-  --mx-menu-open-hover-text: rgba(248, 250, 252, 0.95);
-  --mx-menu-disabled-text: rgba(248, 250, 252, 0.45);
-  --mx-menu-shadow-color: rgba(99, 102, 241, 0.25);
-  --mx-menu-scrollbar-thumb-color: rgba(255, 255, 255, 0.2);
-  --mx-menu-scrollbar-thumb-color-light: rgba(255, 255, 255, 0.4);
-  --mx-menu-scrollbar-thumb-color-pressed: rgba(255, 255, 255, 0.1);
-  --mx-menu-shortcut-backgroud: #334155;
-  --mx-menu-shortcut-backgroud-hover: #4338ca;
-  --mx-menu-shortcut-backgroud-active: #4f46e5;
-  --mx-menu-shortcut-backgroud-open: #334155;
-  --mx-menu-shortcut-backgroud-disabled: #1e293b;
-  --mx-menu-shortcut-text: rgba(248, 250, 252, 0.65);
-  --mx-menu-shortcut-text-hover: #818cf8;
-  --mx-menu-shortcut-text-active: #a5b4fc;
-  --mx-menu-shortcut-text-open: rgba(248, 250, 252, 0.65);
-  --mx-menu-shortcut-text-disabled: rgba(248, 250, 252, 0.45)
+  --mx-menu-backgroud: linear-gradient(180deg, var(--td-bg-color-container) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-active-backgroud: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent) 100%);
+  --mx-menu-open-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-open-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-text: var(--td-text-color-primary);
+  --mx-menu-hover-text: var(--td-text-color-primary);
+  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-open-text: var(--td-text-color-primary);
+  --mx-menu-open-hover-text: var(--td-text-color-primary);
+  --mx-menu-disabled-text: var(--td-text-color-disabled);
+  --mx-menu-shadow-color: rgba(0, 0, 0, 0.35);
+  --mx-menu-scrollbar-thumb-color: rgba(230, 225, 220, 0.25);
+  --mx-menu-scrollbar-thumb-color-light: rgba(230, 225, 220, 0.45);
+  --mx-menu-scrollbar-thumb-color-pressed: rgba(230, 225, 220, 0.15);
+  --mx-menu-shortcut-backgroud: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-hover: linear-gradient(180deg, var(--td-bg-color-component-hover) 0%, var(--td-bg-color-secondarycomponent-active) 100%);
+  --mx-menu-shortcut-backgroud-active: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent-active) 100%);
+  --mx-menu-shortcut-backgroud-open: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-disabled: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-text: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled)
 }
 
 .mx-menu-bar.flat, .mx-context-menu.flat {
@@ -372,30 +374,27 @@
 }
 
 .mx-menu-bar.win10, .mx-context-menu.win10 {
+  --mx-menu-backgroud: linear-gradient(180deg, var(--td-gray-color-1) 0%, var(--td-gray-color-2) 100%);
+  --mx-menu-hover-backgroud: linear-gradient(180deg, var(--td-gray-color-3) 0%, var(--td-gray-color-4) 100%);
+  --mx-menu-active-backgroud: linear-gradient(180deg, var(--td-gray-color-3) 0%, var(--td-gray-color-4) 100%);
+  --mx-menu-open-backgroud: linear-gradient(180deg, var(--td-gray-color-1) 0%, var(--td-gray-color-2) 100%);
+  --mx-menu-open-hover-backgroud: linear-gradient(180deg, var(--td-gray-color-3) 0%, var(--td-gray-color-4) 100%);
+  --mx-menu-divider: var(--td-gray-color-6);
+  --mx-menu-border-color: var(--td-gray-color-7);
+  --mx-menu-shortcut-backgroud: linear-gradient(180deg, var(--td-gray-color-1) 0%, var(--td-gray-color-2) 100%);
+  --mx-menu-shortcut-backgroud-hover: linear-gradient(180deg, var(--td-gray-color-3) 0%, var(--td-gray-color-4) 100%);
+  --mx-menu-shortcut-backgroud-active: linear-gradient(180deg, var(--td-gray-color-3) 0%, var(--td-gray-color-4) 100%);
+  --mx-menu-shortcut-backgroud-open: linear-gradient(180deg, var(--td-gray-color-1) 0%, var(--td-gray-color-2) 100%);
+  --mx-menu-shortcut-backgroud-disabled: linear-gradient(180deg, var(--td-gray-color-1) 0%, var(--td-gray-color-2) 100%);
+  --mx-menu-shortcut-text: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
   border-radius: 0;
   padding: 8px 0;
   border: 1px solid var(--mx-menu-border-color);
-  box-shadow: 2px 2px 1px 0 var(--mx-menu-shadow-color)
-}
-
-.mx-menu-bar.win10, .mx-context-menu.win10 {
-  --mx-menu-backgroud: #eeeeee;
-  --mx-menu-hover-backgroud: #d8d8d8;
-  --mx-menu-active-backgroud: #dfdfdf;
-  --mx-menu-open-backgroud: #f1f1f1;
-  --mx-menu-open-hover-backgroud: #d8d8d8;
-  --mx-menu-divider: #aaaaaa;
-  --mx-menu-border-color: #b1b1b1;
-  --mx-menu-shortcut-backgroud: transparent;
-  --mx-menu-shortcut-backgroud-hover: transparent;
-  --mx-menu-shortcut-backgroud-active: transparent;
-  --mx-menu-shortcut-backgroud-open: transparent;
-  --mx-menu-shortcut-backgroud-disabled: transparent;
-  --mx-menu-shortcut-text: #272727;
-  --mx-menu-shortcut-text-hover: #272727;
-  --mx-menu-shortcut-text-active: #272727;
-  --mx-menu-shortcut-text-open: #272727;
-  --mx-menu-shortcut-text-disabled: #6b6b6b
+  box-shadow: 2px 2px 1px 0 var(--mx-menu-shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.8)
 }
 
 .mx-menu-bar.win10 .mx-context-menu-item, .mx-context-menu.win10 .mx-context-menu-item {
@@ -408,24 +407,25 @@
 }
 
 .mx-menu-bar.win10.dark, .mx-context-menu.win10.dark {
-  --mx-menu-backgroud: #1e293b;
-  --mx-menu-hover-backgroud: #334155;
-  --mx-menu-active-backgroud: #475569;
-  --mx-menu-open-backgroud: #334155;
-  --mx-menu-open-hover-backgroud: #334155;
-  --mx-menu-divider: rgba(148, 163, 184, 0.25);
-  --mx-menu-border-color: rgba(148, 163, 184, 0.25);
-  --mx-menu-shortcut-backgroud: transparent;
-  --mx-menu-shortcut-backgroud-hover: transparent;
-  --mx-menu-shortcut-backgroud-active: transparent;
-  --mx-menu-shortcut-backgroud-open: transparent;
-  --mx-menu-shortcut-backgroud-disabled: transparent;
-  --mx-menu-shortcut-text: rgba(248, 250, 252, 0.65);
-  --mx-menu-shortcut-text-hover: #818cf8;
-  --mx-menu-shortcut-text-active: #a5b4fc;
-  --mx-menu-shortcut-text-open: rgba(248, 250, 252, 0.65);
-  --mx-menu-shortcut-text-disabled: rgba(248, 250, 252, 0.45);
-  padding: 8px 0
+  --mx-menu-backgroud: linear-gradient(180deg, var(--td-bg-color-container) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-active-backgroud: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent) 100%);
+  --mx-menu-open-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-open-hover-backgroud: linear-gradient(180deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-component-hover) 100%);
+  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-border-color: var(--td-border-level-2-color);
+  --mx-menu-shortcut-backgroud: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-hover: linear-gradient(180deg, var(--td-bg-color-component-hover) 0%, var(--td-bg-color-secondarycomponent-active) 100%);
+  --mx-menu-shortcut-backgroud-active: linear-gradient(180deg, var(--td-bg-color-component-active) 0%, var(--td-bg-color-secondarycomponent-active) 100%);
+  --mx-menu-shortcut-backgroud-open: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-backgroud-disabled: linear-gradient(180deg, var(--td-bg-color-secondarycomponent) 0%, var(--td-bg-color-component) 100%);
+  --mx-menu-shortcut-text: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
+  --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
+  padding: 8px 0;
+  box-shadow: 2px 2px 1px 0 var(--mx-menu-shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.1)
 }
 
 .mx-menu-bar.win10.dark .mx-context-menu-item, .mx-context-menu.win10.dark .mx-context-menu-item {
@@ -439,85 +439,86 @@
 
 .mx-menu-bar.mac, .mx-context-menu.mac {
   padding: 4px 0;
-  box-shadow: var(--fluent-card-shadow);
-  border: 1px solid var(--fluent-border-subtle);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  background-color: var(--fluent-card-bg);
-  transition: box-shadow var(--fluent-transition-normal), border-color var(--fluent-transition-normal)
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.85);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease
 }
 
 .mx-menu-bar.mac, .mx-context-menu.mac {
-  --mx-menu-backgroud: var(--fluent-card-bg);
-  --mx-menu-hover-backgroud: var(--fluent-item-hover);
-  --mx-menu-active-backgroud: var(--fluent-item-active);
-  --mx-menu-open-backgroud: var(--fluent-item-selected);
-  --mx-menu-open-hover-backgroud: var(--fluent-item-hover);
-  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-backgroud: transparent;
+  --mx-menu-hover-backgroud: rgba(0, 0, 0, 0.05);
+  --mx-menu-active-backgroud: rgba(0, 122, 255, 0.9);
+  --mx-menu-open-backgroud: rgba(0, 0, 0, 0.03);
+  --mx-menu-open-hover-backgroud: rgba(0, 0, 0, 0.05);
+  --mx-menu-divider: rgba(0, 0, 0, 0.08);
   --mx-menu-text: var(--td-text-color-primary);
   --mx-menu-hover-text: var(--td-text-color-primary);
-  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-active-text: #fff;
   --mx-menu-open-text: var(--td-text-color-primary);
   --mx-menu-open-hover-text: var(--td-text-color-primary);
   --mx-menu-disabled-text: var(--td-text-color-disabled);
-  --mx-menu-shadow-color: var(--fluent-card-shadow);
-  --mx-menu-backgroud-radius: var(--fluent-radius-card);
-  --mx-menu-shortcut-backgroud: var(--td-bg-color-secondarycomponent);
-  --mx-menu-shortcut-backgroud-hover: var(--td-bg-color-component);
-  --mx-menu-shortcut-backgroud-active: var(--td-bg-color-component-hover);
-  --mx-menu-shortcut-backgroud-open: var(--td-bg-color-secondarycomponent);
-  --mx-menu-shortcut-backgroud-disabled: var(--td-bg-color-component-disabled);
+  --mx-menu-shadow-color: rgba(0, 0, 0, 0.12);
+  --mx-menu-backgroud-radius: 10px;
+  --mx-menu-shortcut-backgroud: rgba(0, 0, 0, 0.05);
+  --mx-menu-shortcut-backgroud-hover: rgba(0, 0, 0, 0.08);
+  --mx-menu-shortcut-backgroud-active: rgba(0, 122, 255, 0.9);
+  --mx-menu-shortcut-backgroud-open: rgba(0, 0, 0, 0.05);
+  --mx-menu-shortcut-backgroud-disabled: rgba(0, 0, 0, 0.03);
   --mx-menu-shortcut-text: var(--td-text-color-secondary);
   --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
-  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: #fff;
   --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
   --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
-  --mx-menu-border-color: var(--fluent-border-subtle)
+  --mx-menu-border-color: rgba(0, 0, 0, 0.08)
 }
 
 .mx-menu-bar.mac.dark, .mx-context-menu.mac.dark {
-  --mx-menu-backgroud: var(--fluent-acrylic-bg-dark);
-  --mx-menu-hover-backgroud: var(--fluent-item-hover);
-  --mx-menu-active-backgroud: var(--fluent-item-active);
-  --mx-menu-open-hover-backgroud: var(--fluent-item-hover);
-  --mx-menu-open-backgroud: var(--fluent-item-selected);
-  --mx-menu-divider: var(--td-border-level-2-color);
+  --mx-menu-backgroud: transparent;
+  --mx-menu-hover-backgroud: rgba(255, 255, 255, 0.08);
+  --mx-menu-active-backgroud: rgba(0, 122, 255, 0.9);
+  --mx-menu-open-hover-backgroud: rgba(255, 255, 255, 0.08);
+  --mx-menu-open-backgroud: rgba(255, 255, 255, 0.05);
+  --mx-menu-divider: rgba(255, 255, 255, 0.1);
   --mx-menu-text: var(--td-text-color-primary);
   --mx-menu-hover-text: var(--td-text-color-primary);
-  --mx-menu-active-text: var(--td-text-color-primary);
+  --mx-menu-active-text: #fff;
   --mx-menu-open-text: var(--td-text-color-primary);
   --mx-menu-open-hover-text: var(--td-text-color-primary);
   --mx-menu-disabled-text: var(--td-text-color-disabled);
-  --mx-menu-shadow-color: var(--fluent-card-shadow);
-  --mx-menu-backgroud-radius: var(--fluent-radius-card);
-  --mx-menu-shortcut-backgroud: var(--td-bg-color-secondarycomponent);
-  --mx-menu-shortcut-backgroud-hover: var(--td-bg-color-component);
-  --mx-menu-shortcut-backgroud-active: var(--td-bg-color-component-hover);
-  --mx-menu-shortcut-backgroud-open: var(--td-bg-color-secondarycomponent);
-  --mx-menu-shortcut-backgroud-disabled: var(--td-bg-color-component-disabled);
+  --mx-menu-shadow-color: rgba(0, 0, 0, 0.3);
+  --mx-menu-backgroud-radius: 10px;
+  --mx-menu-shortcut-backgroud: rgba(255, 255, 255, 0.08);
+  --mx-menu-shortcut-backgroud-hover: rgba(255, 255, 255, 0.12);
+  --mx-menu-shortcut-backgroud-active: rgba(0, 122, 255, 0.9);
+  --mx-menu-shortcut-backgroud-open: rgba(255, 255, 255, 0.08);
+  --mx-menu-shortcut-backgroud-disabled: rgba(255, 255, 255, 0.05);
   --mx-menu-shortcut-text: var(--td-text-color-secondary);
   --mx-menu-shortcut-text-hover: var(--td-text-color-primary);
-  --mx-menu-shortcut-text-active: var(--td-text-color-primary);
+  --mx-menu-shortcut-text-active: #fff;
   --mx-menu-shortcut-text-open: var(--td-text-color-secondary);
   --mx-menu-shortcut-text-disabled: var(--td-text-color-disabled);
-  --mx-menu-border-color: var(--fluent-border-subtle-dark);
-  box-shadow: var(--fluent-card-shadow);
-  border: 1px solid var(--fluent-border-subtle-dark);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  background-color: var(--fluent-acrylic-bg-dark);
-  transition: box-shadow var(--fluent-transition-normal), border-color var(--fluent-transition-normal)
+  --mx-menu-border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(30, 30, 30, 0.85);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease
 }
 
 .mx-menu-bar.mac .mx-context-menu-item, .mx-context-menu.mac .mx-context-menu-item {
-  border-radius: var(--fluent-radius-smooth);
-  margin: 0 4px;
-  transition: background-color var(--fluent-transition-fast), color var(--fluent-transition-fast)
+  border-radius: 6px;
+  margin: 0 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+  box-shadow: none
 }
 
 .mx-menu-bar.mac .mx-context-menu-item.keyboard-focus, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus {
-  background-color: var(--mx-menu-active-backgroud);
+  background: var(--mx-menu-active-backgroud);
   color: var(--mx-menu-active-text);
   outline: none;
-  box-shadow: var(--fluent-focus-ring)
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3)
 }
 
 .mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-right-arrow, .mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-checked-mark, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-right-arrow, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-checked-mark {
@@ -525,19 +526,19 @@
 }
 
 .mx-menu-bar.mac .mx-context-menu-item.keyboard-focus .mx-shortcut, .mx-context-menu.mac .mx-context-menu-item.keyboard-focus .mx-shortcut {
-  background-color: var(--mx-menu-shortcut-backgroud-active);
+  background: var(--mx-menu-shortcut-backgroud-active);
   color: var(--mx-menu-shortcut-text-active)
 }
 
 .mx-menu-bar.mac .mx-context-menu-item-sperator, .mx-context-menu.mac .mx-context-menu-item-sperator {
-  margin: 4px 12px
+  margin: 4px 10px
 }
 
 .mx-context-menu .vue-scroll-rect > .scroll-content {
   overflow-y: scroll;
   height: 100%;
   width: auto;
-  position: relative !important
+  position: relative
 }
 
 .mx-menu-ghost-host {
@@ -559,8 +560,9 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: var(--mx-menu-backgroud);
-  padding: 5px 0
+  background: var(--mx-menu-backgroud);
+  padding: 5px 0;
+  box-shadow: var(--td-shadow-inset-bottom)
 }
 
 .mx-menu-bar.mini {
@@ -578,12 +580,13 @@
   border-radius: 5px;
   -webkit-user-select: none;
   user-select: none;
-  background-color: var(--mx-menu-backgroud);
-  color: var(--mx-menu-text)
+  background: var(--mx-menu-backgroud);
+  color: var(--mx-menu-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.05)
 }
 
 .mx-menu-bar .mx-menu-bar-item:hover {
-  background-color: var(--mx-menu-hover-backgroud);
+  background: var(--mx-menu-hover-backgroud);
   color: var(--mx-menu-hover-text)
 }
 
@@ -592,7 +595,7 @@
 }
 
 .mx-menu-bar .mx-menu-bar-item:active, .mx-menu-bar .mx-menu-bar-item.active {
-  background-color: var(--mx-menu-active-backgroud);
+  background: var(--mx-menu-active-backgroud);
   color: var(--mx-menu-active-text)
 }
 
