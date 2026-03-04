@@ -7,7 +7,7 @@
     </sub-title>
     <t-card>
       <div v-if="list.length > 0" class="flex gap-8px flex-wrap">
-        <t-card v-for="item in list" :key="item.id" :cover="item.cover" theme="poster2" :style="{ width: '320px' }">
+        <t-card v-for="item in list" :key="item.id" theme="poster2" :style="{ width: '320px' }">
           <template #footer>
             <div class="flex items-center gap-8px">
               <lock-on-icon v-if="item.password" style="color: var(--td-error-color)"/>
