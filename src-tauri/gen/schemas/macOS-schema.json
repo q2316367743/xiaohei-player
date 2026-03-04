@@ -6891,6 +6891,36 @@
           "markdownDescription": "Denies the install command without any pre-configured scope."
         },
         {
+          "description": "This permission set configures what kind of\noperations are available from the upload plugin.\n\n#### Granted Permissions\n\nAll operations are enabled by default.\n\n\n#### This default permission set includes:\n\n- `allow-upload`\n- `allow-download`",
+          "type": "string",
+          "const": "upload:default",
+          "markdownDescription": "This permission set configures what kind of\noperations are available from the upload plugin.\n\n#### Granted Permissions\n\nAll operations are enabled by default.\n\n\n#### This default permission set includes:\n\n- `allow-upload`\n- `allow-download`"
+        },
+        {
+          "description": "Enables the download command without any pre-configured scope.",
+          "type": "string",
+          "const": "upload:allow-download",
+          "markdownDescription": "Enables the download command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the upload command without any pre-configured scope.",
+          "type": "string",
+          "const": "upload:allow-upload",
+          "markdownDescription": "Enables the upload command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the download command without any pre-configured scope.",
+          "type": "string",
+          "const": "upload:deny-download",
+          "markdownDescription": "Denies the download command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the upload command without any pre-configured scope.",
+          "type": "string",
+          "const": "upload:deny-upload",
+          "markdownDescription": "Denies the upload command without any pre-configured scope."
+        },
+        {
           "description": "Default permissions for VelesDB plugin - allows all database operations\n#### This default permission set includes:\n\n- `allow-create-collection`\n- `allow-delete-collection`\n- `allow-list-collections`\n- `allow-get-collection`\n- `allow-upsert`\n- `allow-search`\n- `allow-text-search`\n- `allow-hybrid-search`\n- `allow-query`",
           "type": "string",
           "const": "velesdb:default",

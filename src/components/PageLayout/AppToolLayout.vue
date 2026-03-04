@@ -2,7 +2,7 @@
   <div class="app-layout">
     <div class="app-layout-header">
       <slot v-if="slot.title" name="title"/>
-      <div v-else>{{ title }}</div>
+      <div v-else class="title">{{ title }}</div>
       <div class="ml-auto mr-32px">
         <slot name="action"/>
       </div>
@@ -35,19 +35,22 @@ const slot = defineSlots<{
   width: 100%;
   overflow: hidden;
   user-select: none;
-  background-color: var(--td-bg-color-container);
 
   .app-layout-header {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 56px;
+    height: 55px;
     border-bottom: 1px solid var(--td-border-level-1-color);
     display: flex;
     align-items: center;
     padding-left: 16px;
     gap: 8px;
+    background-color: var(--td-bg-color-container);
+
+    font-size: 1.2rem;
+    font-weight: bold;
   }
 
   .app-layout-content {

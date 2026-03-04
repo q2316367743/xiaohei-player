@@ -1,5 +1,5 @@
 <template>
-  <div>最近播放</div>
+  <app-tool-layout title="最近播放"></app-tool-layout>
 </template>
 <script lang="ts" setup>
 </script>

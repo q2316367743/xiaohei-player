@@ -9,8 +9,8 @@ use axum::{
 use percent_encoding::percent_decode_str;
 use serde::Deserialize;
 use std::net::SocketAddr;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU16, Ordering};
+use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 use tokio_util::io::ReaderStream;
 
@@ -32,14 +32,24 @@ fn get_mime_type(path: &str) -> String {
     from_path(path).first_or_octet_stream().to_string()
 }
 
-async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method: Method) -> impl IntoResponse {
+async fn serve_file(
+    AxumPath(path): AxumPath<String>,
+    headers: HeaderMap,
+    method: Method,
+) -> impl IntoResponse {
     if method == Method::OPTIONS {
         return Ok(axum::http::Response::builder()
             .status(StatusCode::OK)
             .header("Access-Control-Allow-Origin", "*")
             .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-            .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
-            .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
+            .header(
+                "Access-Control-Allow-Headers",
+                "Range, Content-Type, Authorization",
+            )
+            .header(
+                "Access-Control-Expose-Headers",
+                "Content-Length, Content-Range, Accept-Ranges",
+            )
             .body(Body::empty())
             .unwrap());
     }
@@ -47,16 +57,17 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method
     let path = match percent_decode_str(&path).decode_utf8() {
         Ok(p) => p.to_string(),
         Err(_) => {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                "Invalid URL encoding".to_string(),
-            ));
+            return Err((StatusCode::BAD_REQUEST, "Invalid URL encoding".to_string()));
         }
     };
-    
-    let path = if path.starts_with('/') { path } else { format!("/{}", path) };
+
+    let path = if path.starts_with('/') {
+        path
+    } else {
+        format!("/{}", path)
+    };
     let mime_type = get_mime_type(&path);
-    
+
     match tokio::fs::File::open(&path).await {
         Ok(mut file) => {
             let metadata = match file.metadata().await {
@@ -68,39 +79,48 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method
                     ));
                 }
             };
-            
+
             let file_size = metadata.len();
             let range = headers.get("range");
-            
+
             if let Some(range_header) = range {
                 if let Ok(range_str) = range_header.to_str() {
                     if let Some((start, end)) = parse_range(range_str, file_size) {
                         let content_length = end - start + 1;
-                        
+
                         if file.seek(std::io::SeekFrom::Start(start)).await.is_err() {
                             return Err((
                                 StatusCode::INTERNAL_SERVER_ERROR,
                                 "Failed to seek file".to_string(),
                             ));
                         }
-                        
+
                         let reader = tokio::io::BufReader::new(file);
                         let stream = ReaderStream::new(reader.take(content_length));
                         let body = Body::from_stream(stream);
-                        
+
                         let response = axum::http::Response::builder()
                             .status(StatusCode::PARTIAL_CONTENT)
                             .header(header::CONTENT_TYPE, mime_type)
                             .header(header::CONTENT_LENGTH, content_length.to_string())
-                            .header(header::CONTENT_RANGE, format!("bytes {}-{}/{}", start, end, file_size))
+                            .header(
+                                header::CONTENT_RANGE,
+                                format!("bytes {}-{}/{}", start, end, file_size),
+                            )
                             .header(header::ACCEPT_RANGES, "bytes")
                             .header("Access-Control-Allow-Origin", "*")
                             .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-                            .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
-                            .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
+                            .header(
+                                "Access-Control-Allow-Headers",
+                                "Range, Content-Type, Authorization",
+                            )
+                            .header(
+                                "Access-Control-Expose-Headers",
+                                "Content-Length, Content-Range, Accept-Ranges",
+                            )
                             .body(body)
                             .unwrap();
-                        
+
                         return Ok(response);
                     } else {
                         return Err((
@@ -110,7 +130,7 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method
                     }
                 }
             }
-            
+
             let builder = axum::http::Response::builder()
                 .status(StatusCode::OK)
                 .header(header::CONTENT_TYPE, mime_type)
@@ -118,22 +138,26 @@ async fn serve_file(AxumPath(path): AxumPath<String>, headers: HeaderMap, method
                 .header(header::ACCEPT_RANGES, "bytes")
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-                .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
-                .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges");
-            
+                .header(
+                    "Access-Control-Allow-Headers",
+                    "Range, Content-Type, Authorization",
+                )
+                .header(
+                    "Access-Control-Expose-Headers",
+                    "Content-Length, Content-Range, Accept-Ranges",
+                );
+
             let stream = ReaderStream::new(tokio::io::BufReader::new(file));
             let body = Body::from_stream(stream);
-            
+
             let response = builder.body(body).unwrap();
-            
+
             Ok(response)
         }
-        Err(e) => {
-            Err((
-                StatusCode::NOT_FOUND,
-                format!("File not found: {} - {}", path, e),
-            ))
-        }
+        Err(e) => Err((
+            StatusCode::NOT_FOUND,
+            format!("File not found: {} - {}", path, e),
+        )),
     }
 }
 
@@ -143,7 +167,7 @@ fn parse_range(range_str: &str, file_size: u64) -> Option<(u64, u64)> {
     if parts.len() != 2 {
         return None;
     }
-    
+
     let (start, end) = match (parts[0].is_empty(), parts[1].is_empty()) {
         (false, false) => {
             let start: u64 = parts[0].parse().ok()?;
@@ -159,37 +183,35 @@ fn parse_range(range_str: &str, file_size: u64) -> Option<(u64, u64)> {
             if end >= file_size {
                 (0, file_size.saturating_sub(1))
             } else {
-                (file_size.saturating_sub(end).saturating_sub(1), file_size.saturating_sub(1))
+                (
+                    file_size.saturating_sub(end).saturating_sub(1),
+                    file_size.saturating_sub(1),
+                )
             }
         }
-        (true, true) => {
-            (0, file_size.saturating_sub(1))
-        }
+        (true, true) => (0, file_size.saturating_sub(1)),
     };
-    
+
     if start > end || start >= file_size {
         return None;
     }
-    
+
     Some((start, end.min(file_size - 1)))
 }
 
 async fn serve_webdav(Query(query): Query<WebDavQuery>, headers: HeaderMap) -> impl IntoResponse {
     let url = query.url.clone();
-    
+
     let client = reqwest::Client::new();
-    
-    let mut request_builder = client.request(
-        reqwest::Method::GET,
-        &url,
-    );
-    
+
+    let mut request_builder = client.request(reqwest::Method::GET, &url);
+
     if let (Some(username), Some(password)) = (&query.username, &query.password) {
         let credentials = format!("{}:{}", username, password);
         let encoded = base64_encode(credentials.as_bytes());
         request_builder = request_builder.header("Authorization", format!("Basic {}", encoded));
     }
-    
+
     for (key, value) in headers.iter() {
         if key.as_str() == "range" || key.as_str() == "authorization" {
             continue;
@@ -198,62 +220,71 @@ async fn serve_webdav(Query(query): Query<WebDavQuery>, headers: HeaderMap) -> i
             request_builder = request_builder.header(key.as_str(), v);
         }
     }
-    
+
     match request_builder.send().await {
         Ok(response) => {
             let status_num = response.status().as_u16();
-            let status = if let Ok(s) = StatusCode::from_u16(status_num) { s } else { StatusCode::INTERNAL_SERVER_ERROR };
+            let status = if let Ok(s) = StatusCode::from_u16(status_num) {
+                s
+            } else {
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
             let mut builder = axum::http::Response::builder().status(status);
-            
+
             for (key, value) in response.headers().iter() {
                 if let Ok(v) = value.to_str() {
                     builder = builder.header(key.as_str(), v);
                 }
             }
-            
+
             let bytes = response.bytes().await.unwrap_or_default();
-            
+
             Ok(builder
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-                .header("Access-Control-Allow-Headers", "Range, Content-Type, Authorization")
-                .header("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges")
-                .body(Body::from(bytes)).unwrap())
+                .header(
+                    "Access-Control-Allow-Headers",
+                    "Range, Content-Type, Authorization",
+                )
+                .header(
+                    "Access-Control-Expose-Headers",
+                    "Content-Length, Content-Range, Accept-Ranges",
+                )
+                .body(Body::from(bytes))
+                .unwrap())
         }
-        Err(e) => {
-            Err((
-                StatusCode::BAD_GATEWAY,
-                format!("Failed to fetch WebDAV: {}", e),
-            ))
-        }
+        Err(e) => Err((
+            StatusCode::BAD_GATEWAY,
+            format!("Failed to fetch WebDAV: {}", e),
+        )),
     }
 }
 
 fn base64_encode(data: &[u8]) -> String {
     const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     let mut result = String::new();
-    
+
     for chunk in data.chunks(3) {
         let b0 = chunk[0] as usize;
         let b1 = chunk.get(1).copied().unwrap_or(0) as usize;
         let b2 = chunk.get(2).copied().unwrap_or(0) as usize;
-        
+
         result.push(CHARSET[b0 >> 2] as char);
         result.push(CHARSET[((b0 & 0x03) << 4) | (b1 >> 4)] as char);
-        
+
         if chunk.len() > 1 {
             result.push(CHARSET[((b1 & 0x0f) << 2) | (b2 >> 6)] as char);
         } else {
             result.push('=');
         }
-        
+
         if chunk.len() > 2 {
             result.push(CHARSET[b2 & 0x3f] as char);
         } else {
             result.push('=');
         }
     }
-    
+
     result
 }
 
@@ -267,17 +298,17 @@ pub async fn start_server() -> Result<u16, Box<dyn std::error::Error + Send + Sy
         .route("/file/:path", get(serve_file).head(serve_file))
         .route("/webdav", get(serve_webdav))
         .with_state(Arc::new(AppState));
-    
+
     let addr = SocketAddr::from(([127, 0, 0, 1], 0));
-    
+
     let listener = tokio::net::TcpListener::bind(addr).await?;
     let port = listener.local_addr()?.port();
-    
+
     SERVER_PORT.store(port, Ordering::SeqCst);
-    
+
     log::info!("HTTP file server started on port {}", port);
-    
+
     axum::serve(listener, app).await?;
-    
+
     Ok(port)
 }

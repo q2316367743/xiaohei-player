@@ -1,28 +1,29 @@
 <template>
-  <div class="library-local-container">
-    <header class="header">收藏库</header>
-    <div class="library-grid" v-if="list.length > 0">
-      <div
-        v-for="item in list"
-        :key="item.id"
-        class="library-card"
-        @click="handleClick(item)"
-      >
-        <div class="library-cover">
-          <lock-on-icon v-if="item.password" class="lock-icon"/>
-          <img v-if="item.cover" :src="item.cover" :alt="item.name" class="cover-image">
-          <div v-else class="default-cover">
-            <video-icon class="default-icon"/>
+  <app-tool-layout title="收藏库">
+    <div class="library-local-container">
+      <div class="library-grid" v-if="list.length > 0">
+        <div
+          v-for="item in list"
+          :key="item.id"
+          class="library-card"
+          @click="handleClick(item)"
+        >
+          <div class="library-cover">
+            <lock-on-icon v-if="item.password" class="lock-icon"/>
+            <img v-if="item.cover" :src="item.cover" :alt="item.name" class="cover-image">
+            <div v-else class="default-cover">
+              <video-icon class="default-icon"/>
+            </div>
+          </div>
+          <div class="library-info">
+            <div class="library-name" :title="item.name">{{ item.name }}</div>
           </div>
         </div>
-        <div class="library-info">
-          <div class="library-name" :title="item.name">{{ item.name }}</div>
-        </div>
       </div>
-    </div>
 
-    <empty-result v-else tip="暂无收藏库"/>
-  </div>
+      <empty-result v-else tip="暂无收藏库"/>
+    </div>
+  </app-tool-layout>
 </template>
 
 <script lang="ts" setup>

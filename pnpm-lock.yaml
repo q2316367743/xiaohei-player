@@ -50,6 +50,9 @@ importers:
       '@tauri-apps/plugin-updater':
         specifier: ~2
         version: 2.9.0
+      '@tauri-apps/plugin-upload':
+        specifier: ~2.4.0
+        version: 2.4.0
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.25(typescript@5.9.3))
@@ -86,6 +89,9 @@ importers:
       hls.js:
         specifier: ^1.6.15
         version: 1.6.15
+      jsonpath-plus:
+        specifier: ^10.4.0
+        version: 10.4.0
       less:
         specifier: ^4.5.1
         version: 4.5.1
@@ -719,6 +725,18 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@jsep-plugin/assignment@1.3.0':
+    resolution: {integrity: sha512-VVgV+CXrhbMI3aSusQyclHkenWSAm95WaiKrMxRFam3JSUiIaQjoMIw2sEs/OX4XifnqeQUN4DYbJjlA8EfktQ==}
+    engines: {node: '>= 10.16.0'}
+    peerDependencies:
+      jsep: ^0.4.0||^1.0.0
+
+  '@jsep-plugin/regex@1.0.4':
+    resolution: {integrity: sha512-q7qL4Mgjs1vByCaTnDFcBnV9HS7GVPJX5vyVoCgZHNSC9rjwIlmbXG5sUuorR5ndfHAIlJ8pVStxvjXHbNvtUg==}
+    engines: {node: '>= 10.16.0'}
+    peerDependencies:
+      jsep: ^0.4.0||^1.0.0
+
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
@@ -985,6 +1003,9 @@ packages:
 
   '@tauri-apps/plugin-updater@2.9.0':
     resolution: {integrity: sha512-j++sgY8XpeDvzImTrzWA08OqqGqgkNyxczLD7FjNJJx/uXxMZFz5nDcfkyoI/rCjYuj2101Tci/r/HFmOmoxCg==}
+
+  '@tauri-apps/plugin-upload@2.4.0':
+    resolution: {integrity: sha512-ebhsqXmiELnpKu2p46EZG14UKxvbVP28BpJBiHzR+quWVrMxm40518PXTDlXXcJUW5CkbmP/6RL5ERSVXBL8sQ==}
 
   '@tdesign-vue-next/auto-import-resolver@0.1.4':
     resolution: {integrity: sha512-3gcMowbe1OGeXPRGLymWNBDHlpCtnYVPQfoG+Fh6kGR/dep/7BSdRBEuSCjMDFqTQGjOb9WiUv1MloEqpiewsQ==}
@@ -1865,6 +1886,10 @@ packages:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
 
+  jsep@1.4.0:
+    resolution: {integrity: sha512-B7qPcEVE3NVkmSJbaYxvv4cHkVW7DQsZz13pUMrfS8z8Q/BuShN+gcTXrUlPiGqM2/t/EEaI030bpxMqY8gMlw==}
+    engines: {node: '>= 10.16.0'}
+
   jsesc@3.1.0:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
     engines: {node: '>=6'}
@@ -1882,6 +1907,11 @@ packages:
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
+    hasBin: true
+
+  jsonpath-plus@10.4.0:
+    resolution: {integrity: sha512-T92WWatJXmhBbKsgH/0hl+jxjdXrifi5IKeMY02DWggRxX0UElcbVzPlmgLTbvsPeW1PasQ6xE2Q75stkhGbsA==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
 
   keyv@4.5.4:
@@ -3011,6 +3041,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@jsep-plugin/assignment@1.3.0(jsep@1.4.0)':
+    dependencies:
+      jsep: 1.4.0
+
+  '@jsep-plugin/regex@1.0.4(jsep@1.4.0)':
+    dependencies:
+      jsep: 1.4.0
+
   '@polka/url@1.0.0-next.29': {}
 
   '@popperjs/core@2.11.8': {}
@@ -3194,6 +3232,10 @@ snapshots:
       '@tauri-apps/api': 2.9.1
 
   '@tauri-apps/plugin-updater@2.9.0':
+    dependencies:
+      '@tauri-apps/api': 2.9.1
+
+  '@tauri-apps/plugin-upload@2.4.0':
     dependencies:
       '@tauri-apps/api': 2.9.1
 
@@ -4230,6 +4272,8 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  jsep@1.4.0: {}
+
   jsesc@3.1.0: {}
 
   json-buffer@3.0.1: {}
@@ -4239,6 +4283,12 @@ snapshots:
   json-stable-stringify-without-jsonify@1.0.1: {}
 
   json5@2.2.3: {}
+
+  jsonpath-plus@10.4.0:
+    dependencies:
+      '@jsep-plugin/assignment': 1.3.0(jsep@1.4.0)
+      '@jsep-plugin/regex': 1.0.4(jsep@1.4.0)
+      jsep: 1.4.0
 
   keyv@4.5.4:
     dependencies:

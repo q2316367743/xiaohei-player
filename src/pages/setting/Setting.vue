@@ -32,5 +32,10 @@ watch(path, value => router.push(value), {immediate: true});
     overflow-y: auto;
     padding: 8px;
   }
+  :deep(.setting-card) {
+    &>.t-card__body {
+      padding-top: 0 !important;
+    }
+  }
 }
 </style>

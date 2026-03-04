@@ -1,5 +1,5 @@
 <template>
-  <t-card size="small">关于</t-card>
+  <t-card size="small" class="setting-card">关于</t-card>
 </template>
 <script lang="ts" setup>
 </script>

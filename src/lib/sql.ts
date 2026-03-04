@@ -15,8 +15,11 @@ type TableName =
   | 'video'
   | 'video_actor'
   | 'video_tag'
+
   | 'folder'
   | 'library'
+
+  | 'download_plugin'
   ;
 
 

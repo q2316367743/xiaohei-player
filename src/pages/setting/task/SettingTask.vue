@@ -1,5 +1,5 @@
 <template>
-  <t-card size="small">
+  <t-card size="small" class="setting-card">
     <sub-title title="任务队列"/>
     <t-card>
       <div v-if="currentTask" class="task-item">

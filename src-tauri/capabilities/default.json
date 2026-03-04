@@ -206,6 +206,7 @@
     "store:allow-load",
     "store:allow-delete",
     "store:allow-entries",
-    "updater:default"
+    "updater:default",
+    "upload:default"
   ]
 }

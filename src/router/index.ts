@@ -82,6 +82,11 @@ export const router = createRouter({
       ]
     },
     {
+      name: "Download",
+      path: '/download',
+      component: () => import('@/pages/download/Download.vue'),
+    },
+    {
       name: "PlayerLibrary",
       path: '/player/library/:id',
       component: () => import('@/pages/player/library/index.vue'),

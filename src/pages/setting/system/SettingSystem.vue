@@ -1,5 +1,5 @@
 <template>
-  <t-card size="small">
+  <t-card size="small" class="setting-card">
     <sub-title title="可执行文件"/>
     <t-card>
       <t-list size="small" split>

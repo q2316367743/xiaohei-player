@@ -1,5 +1,5 @@
 <template>
-  <t-card size="small">
+  <t-card size="small" class="setting-card">
     <sub-title title="收藏库">
       <template #action>
         <t-button class="mt-8px" @click="addLibraryItemAdd()">新增目录</t-button>

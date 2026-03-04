@@ -4,12 +4,10 @@ use std::process::Command;
 pub async fn ffmpeg_command(cmd: String, args: Vec<String>) -> Result<String, String> {
     let cmd_clone = cmd.clone();
     let args_clone = args.clone();
-    
+
     tokio::task::spawn_blocking(move || {
-        let output = Command::new(&cmd_clone)
-            .args(&args_clone)
-            .output();
-        
+        let output = Command::new(&cmd_clone).args(&args_clone).output();
+
         match output {
             Ok(output) => {
                 if output.status.success() {
@@ -20,7 +18,9 @@ pub async fn ffmpeg_command(cmd: String, args: Vec<String>) -> Result<String, St
                     Err(format!("Command failed: {}\nStderr: {}", stdout, stderr))
                 }
             }
-            Err(e) => Err(format!("Failed to execute command: {}", e))
+            Err(e) => Err(format!("Failed to execute command: {}", e)),
         }
-    }).await.map_err(|e| format!("Task failed: {:?}", e))?
+    })
+    .await
+    .map_err(|e| format!("Task failed: {:?}", e))?
 }

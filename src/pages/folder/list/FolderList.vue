@@ -1,50 +1,49 @@
 <template>
-  <div class="folder-local-container">
-    <header class="header">文件夹</header>
-
-    <div class="folder-grid" v-if="list.length > 0">
-      <div
-        v-for="item in list"
-        :key="item.id"
-        class="folder-card"
-        @click="handleClick(item)"
-      >
-        <div class="folder-cover">
-          <lock-on-icon v-if="item.password" class="lock-icon"/>
+  <app-tool-layout title="文件夹">
+    <div class="folder-local-container">
+      <div class="folder-grid" v-if="list.length > 0">
+        <div
+          v-for="item in list"
+          :key="item.id"
+          class="folder-card"
+          @click="handleClick(item)"
+        >
+          <div class="folder-cover">
+            <lock-on-icon v-if="item.password" class="lock-icon"/>
+            <div class="folder-icon-wrapper">
+              <folder-icon class="folder-icon"/>
+            </div>
+            <div class="folder-actions">
+              <t-dropdown trigger="click">
+                <t-button variant="outline" shape="circle" @click.stop>
+                  <more-icon/>
+                </t-button>
+                <t-dropdown-menu>
+                  <t-dropdown-item @click="openUpdateLocalPassword(item, loadList)">修改密码</t-dropdown-item>
+                  <t-dropdown-item theme="error" @click="openDeleteFolderLocal(item, loadList)">删除</t-dropdown-item>
+                </t-dropdown-menu>
+              </t-dropdown>
+            </div>
+          </div>
+          <div class="folder-info">
+            <div class="folder-name" :title="item.name">{{ item.name || item.path }}</div>
+          </div>
+          <div class="folder-type">
+            <t-tag theme="primary" variant="outline">
+              <span v-if="item.type === 'local'">本地</span>
+              <span v-else-if="item.type === 'webdav'">WebDAV</span>
+            </t-tag>
+          </div>
+        </div>
+        <div class="folder-card add" @click="handleContextmenu($event)">
           <div class="folder-icon-wrapper">
-            <folder-icon class="folder-icon"/>
-          </div>
-          <div class="folder-actions">
-            <t-dropdown trigger="click">
-              <t-button variant="outline" shape="circle" @click.stop>
-                <more-icon/>
-              </t-button>
-              <t-dropdown-menu>
-                <t-dropdown-item @click="openUpdateLocalPassword(item, loadList)">修改密码</t-dropdown-item>
-                <t-dropdown-item theme="error" @click="openDeleteFolderLocal(item, loadList)">删除</t-dropdown-item>
-              </t-dropdown-menu>
-            </t-dropdown>
+            <add-icon size="48px" class="folder-icon"/>
           </div>
         </div>
-        <div class="folder-info">
-          <div class="folder-name" :title="item.name">{{ item.name || item.path }}</div>
-        </div>
-        <div class="folder-type">
-          <t-tag theme="primary" variant="outline">
-            <span v-if="item.type === 'local'">本地</span>
-            <span v-else-if="item.type === 'webdav'">WebDAV</span>
-          </t-tag>
-        </div>
       </div>
-      <div class="folder-card add" @click="handleContextmenu($event)">
-        <div class="folder-icon-wrapper">
-          <add-icon size="48px" class="folder-icon"/>
-        </div>
-      </div>
+      <empty-result v-else tip="暂无文件夹"/>
     </div>
-
-    <empty-result v-else tip="暂无文件夹"/>
-  </div>
+  </app-tool-layout>
 </template>
 
 <script lang="ts" setup>
