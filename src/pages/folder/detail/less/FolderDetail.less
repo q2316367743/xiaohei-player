@@ -10,11 +10,12 @@
 .toolbar {
   display: flex;
   align-items: center;
-  padding: var(--td-comp-paddingTB-m) var(--td-comp-paddingLR-l);
+  padding: calc(var(--td-comp-paddingTB-m) - 1px) var(--td-comp-paddingLR-l);
   background: linear-gradient(180deg, var(--td-bg-color-container) 0%, var(--td-bg-color-secondarycontainer) 100%);
   border-bottom: 1px solid var(--td-border-level-1-color);
   box-shadow: var(--td-shadow-1);
   gap: var(--td-comp-margin-m);
+  padding-bottom: calc(var(--td-comp-paddingTB-m) - 2px);
 }
 
 .toolbar-left {

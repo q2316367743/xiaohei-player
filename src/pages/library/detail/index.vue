@@ -1,14 +1,16 @@
 <template>
-  <div class="scene-page">
-    <div class="scene-header">
+  <app-tool-layout>
+    <template #title>
       <div class="header-left">
         <t-button theme="default" shape="square" @click="handleBack">
           <template #icon>
-            <chevron-left-icon />
+            <chevron-left-icon/>
           </template>
         </t-button>
         <div>{{ library?.name }}</div>
       </div>
+    </template>
+    <template #action>
       <div class="header-right">
         <t-radio-group v-model="layout" default-value="grid">
           <t-radio-button value="grid">
@@ -44,44 +46,45 @@
           </t-button>
         </div>
       </div>
+    </template>
+    <div class="scene-page">
+      <div class="scene-content">
+        <t-loading v-if="loading" size="large" class="loading-container"/>
+        <template v-else>
+          <div v-if="layout === 'grid'" class="video-grid">
+            <VideoCard
+              v-for="video in videos"
+              :key="video.id"
+              :video="video"
+            />
+          </div>
+
+          <div v-else class="video-list">
+            <VideoListItem
+              v-for="video in videos"
+              :key="video.id"
+              :video="video"
+            />
+          </div>
+
+          <empty-result v-if="videos.length === 0" tip="暂无视频"/>
+
+        </template>
+      </div>
+
+      <div v-if="total > 0" class="pagination-container">
+        <t-pagination
+          v-model="currentPage"
+          v-model:page-size="pageSize"
+          :total="total"
+          :page-size-options="[15, 30, 50, 80]"
+          @change="handlePageChange"
+          @page-size-change="handlePageSizeChange"
+        />
+      </div>
+      <t-back-top container=".scene-content"/>
     </div>
-
-    <div class="scene-content">
-      <t-loading v-if="loading" size="large" class="loading-container"/>
-      <template v-else>
-        <div v-if="layout === 'grid'" class="video-grid">
-          <VideoCard
-            v-for="video in videos"
-            :key="video.id"
-            :video="video"
-          />
-        </div>
-
-        <div v-else class="video-list">
-          <VideoListItem
-            v-for="video in videos"
-            :key="video.id"
-            :video="video"
-          />
-        </div>
-
-        <empty-result v-if="videos.length === 0" tip="暂无视频"/>
-
-      </template>
-    </div>
-
-    <div v-if="total > 0" class="pagination-container">
-      <t-pagination
-        v-model="currentPage"
-        v-model:page-size="pageSize"
-        :total="total"
-        :page-size-options="[15, 30, 50, 80]"
-        @change="handlePageChange"
-        @page-size-change="handlePageSizeChange"
-      />
-    </div>
-    <t-back-top container=".scene-content"/>
-  </div>
+  </app-tool-layout>
 </template>
 
 <script lang="ts" setup>
@@ -149,6 +152,7 @@ function handleSortOrderChange(s: SortOrder) {
   sortOrder.value = s;
   handleSortChange();
 }
+
 const handleBack = () => router.back();
 </script>
 
@@ -158,23 +162,10 @@ const handleBack = () => router.back();
   width: 100%;
   height: 100%;
 
-  .scene-header {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    height: 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 8px;
-    padding-right: 8px;
-    background-color: var(--td-bg-color-container);
-  }
 
   .scene-content {
     position: absolute;
-    top: 48px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 48px;
