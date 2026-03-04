@@ -82,7 +82,7 @@ import {type DownloadResult, pluginParse} from "@/module/download";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useDownloadStore} from "@/store";
 import {storeToRefs} from "pinia";
-import DownloadList from "@/components/download/DownloadList.vue";
+import DownloadList from "@/pages/download/components/DownloadList.vue";
 
 const url = ref('');
 const platform = ref<DownloadPluginPlatform>('douyin');
