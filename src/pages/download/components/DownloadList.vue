@@ -11,35 +11,33 @@
           <t-icon name="download" size="48px"/>
           <span>暂无下载任务</span>
         </div>
-        <t-list size="small">
+        <t-list size="small" split>
           <t-list-item v-for="task in tasks" :key="task.id" class="download-item">
             <div>
-              <t-list-item-meta :title="task.result.title">
-                <template #description>
-                  <div v-if="task.status === 'downloading'" class="download-item-progress">
-                    <t-progress :percentage="task.progress/task.total" :label="true" size="small">
-                      <template #label>
-                        <div>{{ prettyDataUnit(task.progress) }} / {{ prettyDataUnit(task.total) }}</div>
-                      </template>
-                    </t-progress>
-                    <div class="download-item-info">
-                      <span>{{ task.title }}</span>
-                      <span v-if="task.transferSpeed > 0">{{ formatSpeed(task.transferSpeed) }}</span>
-                    </div>
-                  </div>
-                </template>
-              </t-list-item-meta>
+              <div class="download-item-title">{{ task.result.title }}</div>
+              <div v-if="task.status === 'downloading'" class="download-item-progress">
+                <t-progress :percentage="task.progress/task.total" :label="true" size="small">
+                  <template #label>
+                    <div>{{ prettyDataUnit(task.progress) }} / {{ prettyDataUnit(task.total) }}</div>
+                  </template>
+                </t-progress>
+                <div class="download-item-info">
+                  <span>{{ task.title }}</span>
+                  <span v-if="task.transferSpeed > 0">{{ formatSpeed(task.transferSpeed) }}</span>
+                </div>
+              </div>
               <t-alert theme="error" v-if="task.status === 'failed'">
                 <span>{{ task.error || '下载失败' }}</span>
               </t-alert>
-              <t-tag :theme="getStatusTheme(task.status)" size="small">{{ getStatusText(task.status) }}</t-tag>
-            </div>
-            <template #action>
-              <t-button v-if="task.status === 'failed'" size="small" variant="outline" @click="handleRetry(task)">重试
+              <t-button v-if="task.status === 'failed'" theme="warning" size="small"
+                        @click="handleRetry(task)">重试
               </t-button>
-              <t-button v-else-if="task.status === 'completed'" size="small" variant="text"
+              <t-button v-else-if="task.status === 'completed'" theme="danger" size="small"
                         @click="handleRemoveTask(task.id)">移除
               </t-button>
+            </div>
+            <template #action>
+              <t-tag :theme="getStatusTheme(task.status)" size="small">{{ getStatusText(task.status) }}</t-tag>
             </template>
           </t-list-item>
         </t-list>
@@ -134,7 +132,6 @@ const formatSpeed = (bytesPerSecond: number) => {
 }
 
 .download-list-actions {
-  padding: 12px 16px;
   border-bottom: 1px solid var(--td-component-border);
   background: var(--td-bg-color-container);
 }
@@ -145,7 +142,6 @@ const formatSpeed = (bytesPerSecond: number) => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px;
   overflow-y: auto;
 }
 
@@ -199,6 +195,7 @@ const formatSpeed = (bytesPerSecond: number) => {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  width: 220px;
 }
 
 .download-item-progress {

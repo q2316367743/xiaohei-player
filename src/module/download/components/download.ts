@@ -3,7 +3,7 @@ import {useDownloadSettingStore} from "@/store";
 import {join} from "@/module/file/util.ts";
 import {mkdir, writeTextFile} from "@tauri-apps/plugin-fs";
 import {download} from '@tauri-apps/plugin-upload';
-import {logDebug} from "@/lib/log.ts";
+import {logDebug, logError} from "@/lib/log.ts";
 
 function transferName(name: string): string {
   const n = name.replace(/#\S+/g, '').replace(/[<>:"/\\|?*]/g, '_').trim();
@@ -44,30 +44,39 @@ export async function pluginDownload(
     ...p,
     title: '下载视频中...'
   }) : undefined);
+
   let coverPath: string | undefined = undefined;
-  if (res.cover) {
-    // 获取封面
-    coverPath = join(dir, `${fileName}.jpg`);
-    logDebug('[download] 下载封面', coverPath);
-    await download(res.cover, coverPath, progressHandler ? p => progressHandler({
-      ...p,
-      title: '下载封面中...'
-    }) : undefined);
+  try {
+    if (res.cover) {
+      // 获取封面
+      coverPath = join(dir, `${fileName}.jpg`);
+      logDebug('[download] 下载封面', coverPath);
+      await download(res.cover, coverPath, progressHandler ? p => progressHandler({
+        ...p,
+        title: '下载封面中...'
+      }) : undefined);
+    }
+  } catch (e) {
+    logError('[download] 下载封面失败', e);
   }
-  // 下载 nfo
-  progressHandler?.({
-    progress: 99,
-    progressTotal: 100,
-    total: 100,
-    transferSpeed: 0,
-    title: '下载 nfo'
-  })
-  const nfoPath = join(dir, `${fileName}.nfo`);
-  logDebug('[download] 写入 nfo', nfoPath);
-  await writeTextFile(nfoPath, transferDrToNfo({
-    cover: coverPath,
-    title: res.title,
-    description: res.description,
-    author: res.author,
-  }));
+  try {
+    // 下载 nfo
+    progressHandler?.({
+      progress: 99,
+      progressTotal: 100,
+      total: 100,
+      transferSpeed: 0,
+      title: '下载 nfo'
+    })
+    const nfoPath = join(dir, `${fileName}.nfo`);
+    logDebug('[download] 写入 nfo', nfoPath);
+    await writeTextFile(nfoPath, transferDrToNfo({
+      cover: coverPath,
+      title: res.title,
+      description: res.description,
+      author: res.author,
+    }));
+  } catch (e) {
+    logError('[download] 写入 nfo 失败', e);
+  }
 }

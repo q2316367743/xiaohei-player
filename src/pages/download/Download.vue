@@ -73,6 +73,7 @@
   </app-tool-layout>
 </template>
 <script lang="ts" setup>
+import {storeToRefs} from "pinia";
 import {
   type DownloadPluginPlatform,
   DownloadPluginPlatformOptions, type DownloadPluginView
@@ -81,12 +82,13 @@ import {listDownloadPlugin} from "@/service/DownloadPluginService.ts";
 import {type DownloadResult, pluginParse} from "@/module/download";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useDownloadStore} from "@/store";
-import {storeToRefs} from "pinia";
+import {LocalName} from "@/global/LocalName.ts";
 import DownloadList from "@/pages/download/components/DownloadList.vue";
 
 const url = ref('');
-const platform = ref<DownloadPluginPlatform>('douyin');
-const plugin = ref('');
+const platform = useLocalStorage<DownloadPluginPlatform>(LocalName.PAGE_DOWNLOAD_PLATFORM, 'douyin');
+const plugin = useLocalStorage(LocalName.PAGE_DOWNLOAD_PLUGIN, '');
+
 const result = ref<DownloadResult>();
 const loading = ref(false);
 
