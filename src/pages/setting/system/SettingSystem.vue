@@ -4,7 +4,7 @@
     <t-card>
       <t-list size="small" split>
         <t-list-item>
-          <t-list-item-meta title="FFmpeg可执行路径">
+          <t-list-item-meta title="FFmpeg 可执行路径">
             <template #description>
               ffmpeg可执行文件（不仅仅是文件夹）的路径。如果为空，ffmpeg将通过$PATH、配置目录或$HOME/.stash从环境中解析
               <br/>

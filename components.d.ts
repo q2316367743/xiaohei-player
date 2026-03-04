@@ -14,6 +14,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppToolLayout: typeof import('./src/components/PageLayout/AppToolLayout.vue')['default']
     ArtPlayer: typeof import('./src/components/VideoPlayer/ArtPlayer.vue')['default']
+    DownloadFloatingPanel: typeof import('./src/components/DownloadFloatingPanel.vue')['default']
+    DownloadList: typeof import('./src/components/download/DownloadList.vue')['default']
     EmptyResult: typeof import('./src/components/Result/EmptyResult.vue')['default']
     HorizontalSplitPanel: typeof import('./src/components/common/HorizontalSplitPanel.vue')['default']
     InfoResult: typeof import('./src/components/Result/InfoResult.vue')['default']
@@ -29,6 +31,7 @@ declare module 'vue' {
     TAside: typeof import('tdesign-vue-next')['Aside']
     TAvatar: typeof import('tdesign-vue-next')['Avatar']
     TBackTop: typeof import('tdesign-vue-next')['BackTop']
+    TBadge: typeof import('tdesign-vue-next')['Badge']
     TBreadcrumb: typeof import('tdesign-vue-next')['Breadcrumb']
     TBreadcrumbItem: typeof import('tdesign-vue-next')['BreadcrumbItem']
     TButton: typeof import('tdesign-vue-next')['Button']
@@ -83,6 +86,8 @@ declare module 'vue' {
 declare global {
   const AppToolLayout: typeof import('./src/components/PageLayout/AppToolLayout.vue')['default']
   const ArtPlayer: typeof import('./src/components/VideoPlayer/ArtPlayer.vue')['default']
+  const DownloadFloatingPanel: typeof import('./src/components/DownloadFloatingPanel.vue')['default']
+  const DownloadList: typeof import('./src/components/download/DownloadList.vue')['default']
   const EmptyResult: typeof import('./src/components/Result/EmptyResult.vue')['default']
   const HorizontalSplitPanel: typeof import('./src/components/common/HorizontalSplitPanel.vue')['default']
   const InfoResult: typeof import('./src/components/Result/InfoResult.vue')['default']
@@ -98,6 +103,7 @@ declare global {
   const TAside: typeof import('tdesign-vue-next')['Aside']
   const TAvatar: typeof import('tdesign-vue-next')['Avatar']
   const TBackTop: typeof import('tdesign-vue-next')['BackTop']
+  const TBadge: typeof import('tdesign-vue-next')['Badge']
   const TBreadcrumb: typeof import('tdesign-vue-next')['Breadcrumb']
   const TBreadcrumbItem: typeof import('tdesign-vue-next')['BreadcrumbItem']
   const TButton: typeof import('tdesign-vue-next')['Button']

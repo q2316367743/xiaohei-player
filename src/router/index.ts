@@ -65,9 +65,9 @@ export const router = createRouter({
           component: () => import('@/pages/setting/system/SettingSystem.vue'),
         },
         {
-          name: "SettingPlugin",
-          path: 'plugin',
-          component: () => import('@/pages/setting/plugin/index.vue'),
+          name: "SettingDownload",
+          path: 'download',
+          component: () => import('@/pages/setting/download/index.vue'),
         },
         {
           name: "SettingLog",

@@ -1,1 +1,2 @@
-export * from "./components/InterfaceSettingStore.ts";
+export * from "./components/SettingStore.ts";
+export * from "./components/DownloadStore.ts";

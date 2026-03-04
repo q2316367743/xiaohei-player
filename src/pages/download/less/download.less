@@ -1,0 +1,174 @@
+
+.app-tool-layout :deep(.app-layout-header .t-button) {
+  border-radius: var(--td-radius-medium);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.app-tool-layout :deep(.app-layout-header .t-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.app-tool-layout :deep(.app-layout-header .t-button:active) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-tool-layout :deep(.app-layout-header .t-tag) {
+  border-radius: var(--td-radius-round);
+  box-shadow: 
+    0 2px 4px rgba(45, 102, 215, 0.2),
+    0 4px 8px rgba(45, 102, 215, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  animation: tagPulse 2s ease-in-out infinite;
+}
+
+@keyframes tagPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.result-content {
+  display: flex;
+  gap: 20px;
+  padding: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.result-cover {
+  flex-shrink: 0;
+  width: 240px;
+  height: 135px;
+  border-radius: var(--td-radius-large);
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-secondarycontainer) 100%);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--td-component-border);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.cover-image:hover {
+  transform: scale(1.05);
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--td-text-color-placeholder);
+}
+
+.result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.result-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--td-text-color-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--td-text-color-secondary);
+  padding: 6px 12px;
+  background: linear-gradient(145deg, var(--td-bg-color-container-hover) 0%, var(--td-bg-color-secondarycontainer) 100%);
+  border-radius: var(--td-radius-medium);
+  border: 1px solid var(--td-component-border);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.result-description {
+  font-size: 14px;
+  color: var(--td-text-color-secondary);
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--td-radius-medium);
+  border-left: 3px solid var(--td-brand-color-4);
+}
+
+.result-actions {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.result-actions :deep(.t-button) {
+  border-radius: var(--td-radius-medium);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.result-actions :deep(.t-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.result-actions :deep(.t-button:active) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}

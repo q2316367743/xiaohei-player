@@ -46,7 +46,7 @@ export default {
       cancelButtonText?: string;
     }
   ) {
-    const { confirmButtonText = "确认", cancelButtonText = "取消" } = config || {};
+    const {confirmButtonText = "确认", cancelButtonText = "取消"} = config || {};
     return new Promise<void>((resolve) => {
       const res = DialogPlugin({
         default: () => <Paragraph>{content}</Paragraph>,
@@ -166,7 +166,7 @@ export default {
         confirmBtn: confirmButtonText,
         cancelBtn: cancelButtonText,
         default: () => <FormItem labelAlign={'top'} help={content}>
-          <TagInput v-model={value.value} />
+          <TagInput v-model={value.value}/>
         </FormItem>,
         onConfirm: () => {
           dp.destroy();
@@ -196,6 +196,36 @@ export default {
         default: () => <FormItem labelAlign={'top'} help={content}>
           <XhFileSelect v-model={value.value}/>
         </FormItem>,
+        onConfirm: () => {
+          dp.destroy();
+          resolve(value.value)
+        },
+      })
+    });
+  },
+
+
+  folder(content: string | undefined, title: string, config?: {
+    inputValue: string,
+    confirmButtonText?: string;
+    cancelButtonText?: string;
+  }): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const {
+        inputValue = '',
+        confirmButtonText = "确认",
+        cancelButtonText = "取消",
+      } = config || {};
+
+      const value = ref<string>(inputValue);
+      const dp = DialogPlugin({
+        header: title,
+        confirmBtn: confirmButtonText,
+        cancelBtn: cancelButtonText,
+        default: () => <div>
+          {content && <div>{content}</div>}
+          <XhFileSelect v-model={value.value} directory label={'选择文件夹'}/>
+        </div>,
         onConfirm: () => {
           dp.destroy();
           resolve(value.value)

@@ -45,7 +45,7 @@
           </template>
           视频下载
         </t-menu-item>
-        <t-menu-item to="/setting" value="/setting">
+        <t-menu-item to="/setting/task" value="/setting/task">
           <template #icon>
             <setting-icon/>
           </template>
@@ -69,10 +69,11 @@ import {
   ViewListIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
-import {useInterfaceSettingStore} from "@/store";
+import {useDownloadSettingStore, useInterfaceSettingStore} from "@/store";
 
 onMounted(() => {
   useInterfaceSettingStore().init();
+  useDownloadSettingStore().init();
 })
 </script>
 <style scoped lang="less">

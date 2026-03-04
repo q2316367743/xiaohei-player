@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import type {DownloadPluginView} from "@/entity/main/DownloadPlugin.ts";
 import {listDownloadPlugin} from "@/service";
-import {addDownloadPluginDialog, deleteDownloadPluginDialog, updateDownloadPluginDialog} from "@/pages/setting/plugin/edit.tsx";
+import {addDownloadPluginDialog, deleteDownloadPluginDialog, updateDownloadPluginDialog} from "@/pages/setting/download/edit.tsx";
 
 const plugins = ref(new Array<DownloadPluginView>());
 

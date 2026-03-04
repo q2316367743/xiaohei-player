@@ -1,5 +1,13 @@
 <template>
-  <app-tool-layout title="视频下载">
+  <app-tool-layout title="视频下载" :show-sidebar="sidebarVisible" :sidebar-width="360">
+    <template #action>
+      <t-button variant="text" @click="toggleSidebar">
+        <template #icon>
+          <t-icon name="download-1"/>
+        </template>
+        下载列表
+      </t-button>
+    </template>
     <div class="p-8px">
       <t-card>
         <t-form-item label="视频链接" label-align="top">
@@ -59,6 +67,9 @@
         </div>
       </t-card>
     </div>
+    <template #sidebar>
+      <DownloadList/>
+    </template>
   </app-tool-layout>
 </template>
 <script lang="ts" setup>
@@ -67,8 +78,11 @@ import {
   DownloadPluginPlatformOptions, type DownloadPluginView
 } from "@/entity/main/DownloadPlugin.ts";
 import {listDownloadPlugin} from "@/service/DownloadPluginService.ts";
-import {type DownloadResult, parseDownloadUrl} from "@/module/download";
+import {type DownloadResult, pluginParse} from "@/module/download";
 import MessageUtil from "@/util/model/MessageUtil.ts";
+import {useDownloadStore} from "@/store";
+import {storeToRefs} from "pinia";
+import DownloadList from "@/components/download/DownloadList.vue";
 
 const url = ref('');
 const platform = ref<DownloadPluginPlatform>('douyin');
@@ -77,6 +91,8 @@ const result = ref<DownloadResult>();
 const loading = ref(false);
 
 const plugins = ref(new Array<DownloadPluginView>());
+const downloadStore = useDownloadStore();
+const {sidebarVisible} = storeToRefs(downloadStore);
 
 const options = computed(() => plugins.value.filter(e => e.platform.includes(platform.value)).map(e => ({
   label: e.name,
@@ -90,8 +106,6 @@ const initList = async () => {
 
 const handleReset = () => {
   url.value = '';
-  platform.value = 'douyin';
-  plugin.value = '';
   result.value = undefined;
 }
 
@@ -99,7 +113,7 @@ const parse = async () => {
   const p = plugins.value.find(e => e.id === plugin.value);
   if (!p) return Promise.reject(new Error('插件不存在'));
   result.value = undefined;
-  result.value = await parseDownloadUrl(p, url.value);
+  result.value = await pluginParse(p, url.value, platform.value);
 }
 const handleParse = () => {
   if (loading.value) return MessageUtil.warning('解析中，请稍候');
@@ -115,109 +129,27 @@ const handleParse = () => {
 
 const handleDownload = () => {
   if (!result.value) return;
-  const link = document.createElement('a');
-  link.href = result.value.url;
-  link.download = result.value.title || 'video.mp4';
-  link.target = '_blank';
-  link.click();
-  MessageUtil.success('开始下载');
+  downloadStore.startDownload(result.value);
+  url.value = '';
+  result.value = undefined;
 }
 
 const handleCopyUrl = async () => {
   if (!result.value) return;
   try {
-    await navigator.clipboard.writeText(result.value.url);
+    await navigator.clipboard.writeText(result.value.video);
     MessageUtil.success('链接已复制到剪贴板');
   } catch (e) {
     MessageUtil.error('复制失败', e);
   }
 }
 
+const toggleSidebar = () => {
+  downloadStore.toggleSidebar();
+}
+
 onMounted(initList);
 </script>
 <style scoped lang="less">
-.mt-16px {
-  margin-top: 16px;
-}
-
-.result-content {
-  display: flex;
-  gap: 20px;
-  padding: 16px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-}
-
-.result-cover {
-  flex-shrink: 0;
-  width: 240px;
-  height: 135px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--td-bg-color-container-hover);
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 200px;
-  }
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-}
-
-.cover-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--td-text-color-placeholder);
-}
-
-.result-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-
-.result-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--td-text-color-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.result-author {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--td-text-color-secondary);
-}
-
-.result-description {
-  font-size: 14px;
-  color: var(--td-text-color-secondary);
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-.result-actions {
-  margin-top: auto;
-  padding-top: 12px;
-}
+@import "less/download.less";
 </style>
