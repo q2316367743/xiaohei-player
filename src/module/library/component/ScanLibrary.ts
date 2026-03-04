@@ -10,9 +10,10 @@ import {sha256} from "@/util/lang/CryptoUtil.ts";
 import {generatorLibrary} from "@/module/library/component/GenerateLibrary.ts";
 import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import {parseLibrary} from "@/module/library/component/ParseLibrary.ts";
-import type {VideoAddForm} from "@/entity/domain/Video.ts";
-import {listLibrary} from "@/service";
+import type {Video, VideoAddForm} from "@/entity/domain/Video.ts";
+import {listLibrary, updateLibraryCover} from "@/service";
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
+import {draw, group} from "@/util";
 
 /**
  * 扫描视频文件
@@ -86,7 +87,7 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
     if (!task.reScanFile) {
       // 不重新扫描，跳过
       logDebug("视频已存在，跳过:", fileName);
-      return;
+      return old;
     }
   }
 
@@ -132,6 +133,8 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
     await saveVideo(form, hash);
   }
 
+  return form;
+
 }
 
 /**
@@ -165,15 +168,17 @@ export async function scanLibrary(
   const generatePathResult = await generatePath(system);
 
   let processedCount = 0;
+  const processVideos = new Array<Video | VideoAddForm>();
   for (const file of foundFiles.values()) {
     try {
-      await processVideoFile({
+      const res = await processVideoFile({
         file,
         system,
         task,
         onProgress,
         generatePath: generatePathResult
       });
+      processVideos.push(res);
     } catch (e) {
       logError("处理视频文件出错:", file.filePath, e);
     }
@@ -193,6 +198,15 @@ export async function scanLibrary(
       await deleteVideo(video.id);
       deletedCount++;
     }
+  }
+
+  // 随机封面
+  const coverMap = group(processVideos, 'library_id');
+  for (const fromElement of Array.from(coverMap.entries())) {
+    const [libraryId, videos] = fromElement;
+    const target = draw(videos);
+    if (!target.cover_path) continue;
+    await updateLibraryCover(libraryId, target.cover_path);
   }
 
   logInfo("清理完成，删除了", deletedCount, "个不存在的视频记录");

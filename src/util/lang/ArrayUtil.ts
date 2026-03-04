@@ -190,3 +190,14 @@ export function generatePlaceholders(n: number, offset = 0): string {
   }
 
 }
+
+/**
+ * 抽奖
+ * @param list
+ */
+export function draw<T>(list: Array<T>): T {
+  if (list.length === 0) {
+    throw new Error("Array is empty");
+  }
+  return list[Math.floor(Math.random() * list.length)]!;
+}

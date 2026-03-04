@@ -75,7 +75,7 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Pro
         // 不覆盖
         if (existSprite && existVtt) {
           // 文件还存在，直接返回
-          return {sprite_path, vtt_path};
+          return {sprite_path: sprite, vtt_path: vtt};
         }
       }
       // 覆盖或者文件不全

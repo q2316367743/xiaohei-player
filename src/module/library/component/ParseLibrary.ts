@@ -9,6 +9,7 @@ interface ParseLibraryProp {
 }
 
 interface ParseLibraryResult extends VideoMetadata, VideoEdit {
+  cover?: string;
 }
 
 interface NfoData {
@@ -81,6 +82,10 @@ export async function parseLibrary(prop: ParseLibraryProp): Promise<ParseLibrary
 
         if (movie.studio) {
           result.studio = movie.studio;
+        }
+
+        if (movie.thumb) {
+          result.cover = movie.thumb;
         }
 
         if (movie.year) {

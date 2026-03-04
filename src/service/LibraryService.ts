@@ -38,6 +38,12 @@ export async function updateLibraryPassword(id: string, old: string, password: s
   });
 }
 
+export function updateLibraryCover(id: string, cover: string) {
+  return useSql().mapper<LibraryEntity>('library').updateById(id, {
+    cover
+  });
+}
+
 export async function removeLibrary(id: string) {
   await useSql().mapper<LibraryEntity>('library').deleteById(id);
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_LAYOUT(id));

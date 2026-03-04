@@ -10,7 +10,20 @@
         >
           <div class="library-cover">
             <lock-on-icon v-if="item.password" class="lock-icon"/>
-            <img v-if="item.cover" :src="item.cover" :alt="item.name" class="cover-image">
+            <template v-if="!item.password && item.cover">
+              <t-image
+                :src="convertFileSrcToUrl(item.cover)"
+                fit="cover"
+                class="cover-image"
+                @error="handleImageError(item)"
+              >
+                <template #error>
+                  <div class="default-cover">
+                    <video-icon class="default-icon"/>
+                  </div>
+                </template>
+              </t-image>
+            </template>
             <div v-else class="default-cover">
               <video-icon class="default-icon"/>
             </div>
@@ -33,6 +46,7 @@ import {listLibrary} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 const router = useRouter();
 
@@ -60,6 +74,10 @@ const handleClick = (item: LibraryEntity) => {
   } else {
     router.push(`/library/detail/${item.id}`);
   }
+}
+
+const handleImageError = (item: LibraryEntity) => {
+  item.cover = '';
 }
 </script>
 

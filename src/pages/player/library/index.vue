@@ -2,7 +2,7 @@
   <div class="player-page">
     <header class="player-header">
       <div class="player-header__left">
-        <t-button theme="primary" variant="text" shape="square" @click="goBack">
+        <t-button theme="default" shape="square" @click="goBack">
           <template #icon>
             <chevron-left-icon/>
           </template>
