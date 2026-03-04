@@ -1,0 +1,33 @@
+{
+  "$schema": "../node_modules/utools-api-types/resource/utools.schema.json",
+  "main": "dist/index.html",
+  "preload": "index.js",
+  "logo": "public/logo.png",
+  "platform": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "development": {
+    "main": "http://localhost:5123/"
+  },
+  "pluginSetting": {
+    "single": true,
+    "height": 0
+  },
+  "features": [
+    {
+      "code": "launch",
+      "explain": "亦无悔",
+      "icon": "public/logo.png",
+      "platform": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "cmds": [
+        "亦无悔"
+      ]
+    }
+  ]
+}
