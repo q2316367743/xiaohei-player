@@ -39,7 +39,7 @@ export async function saveVideoTag(videoId: string, tagIds: Array<string>) {
     const now = Date.now();
     await useSql().mapper<VideoTag>('video_tag').insertBatch(tagIds.map((tagId) => ({
       video_id: videoId,
-      actor_id: tagId,
+      tag_id: tagId,
       created_at: now,
       updated_at: now
     })))

@@ -235,7 +235,7 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
           <Button onClick={() => openAddStudio(refreshOptions)}>添加</Button>
         </div>
       </FormItem>
-      <FormItem label={'演员'} labelAlign={'top'}>
+      <FormItem label={'演员'} labelAlign={'top'} help={'已选演员可在下方编辑角色名'}>
         <div style={{display: 'flex', gap: '8px'}}>
           <Select 
             v-model={data.value.actorIds} 
@@ -253,9 +253,6 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
             style={{flex: 1}}
           />
           <Button onClick={() => openAddActor(refreshOptions)}>添加</Button>
-        </div>
-        <div style={{marginTop: '8px', fontSize: '12px', color: '#999'}}>
-          已选演员可在下方编辑角色名
         </div>
       </FormItem>
       {data.value.actorIds.length > 0 && (
