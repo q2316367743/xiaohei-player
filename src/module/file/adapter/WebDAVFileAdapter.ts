@@ -29,7 +29,7 @@ export class WebDAVFileAdapter implements FileBrowser {
     const target = this.base + item.path;
 
     const url = this.client.getFileDownloadLink(target);
-    return convertWebDavToUrl(url, this.username, this.password, this.type);
+    return convertWebDavToUrl(item.name, url, this.username, this.password, this.type);
   }
 
   async list(path: string): Promise<FileItem[]> {

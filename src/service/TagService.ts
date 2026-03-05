@@ -1,7 +1,7 @@
 import type {VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
-import type {Tag} from "@/entity/domain/Tag.ts";
+import type {Tag, TagCore} from "@/entity/domain/Tag.ts";
 import {map} from "@/util";
 
 export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string) {
@@ -30,4 +30,31 @@ export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: strin
       tag_id
     })
   }
+}
+
+export async function saveVideoTag(videoId: string, tagIds: Array<string>) {
+  // 删除旧的
+  await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
+  if (tagIds.length > 0) {
+    const now = Date.now();
+    await useSql().mapper<VideoTag>('video_tag').insertBatch(tagIds.map((tagId) => ({
+      video_id: videoId,
+      actor_id: tagId,
+      created_at: now,
+      updated_at: now
+    })))
+  }
+}
+
+export function listTag() {
+  return useSql().query<Tag>('tag').list();
+}
+
+export function addTag(form: TagCore) {
+  const now = Date.now();
+  return useSql().mapper<Tag>('tag').insert({
+    ...form,
+    created_at: now,
+    updated_at: now
+  });
 }

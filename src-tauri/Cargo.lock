@@ -4349,10 +4349,12 @@ dependencies = [
  "system-configuration 0.5.1",
  "tokio",
  "tokio-native-tls",
+ "tokio-util",
  "tower-service",
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "wasm-streams",
  "web-sys",
  "winreg 0.50.0",
 ]
@@ -7767,6 +7769,7 @@ name = "xiaoheiplayer"
 version = "1.0.0"
 dependencies = [
  "axum",
+ "futures",
  "log",
  "mime_guess",
  "percent-encoding",

@@ -112,7 +112,7 @@ import {MessagePlugin} from 'tdesign-vue-next';
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import {revealItemInDir} from "@tauri-apps/plugin-opener";
-import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import {convertFileSrcToUrl, convertProxyToUrl} from "@/lib/FileSrc.ts";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -136,7 +136,7 @@ onMounted(() => {
   if (type.value === 'file') {
     url.value = convertFileSrcToUrl(src.value);
   } else {
-    url.value = src.value;
+    url.value = convertProxyToUrl(src.value);
   }
   initPlayer();
 });

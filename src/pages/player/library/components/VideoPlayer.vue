@@ -389,5 +389,5 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="less">
-@import "less/VideoPlayer.less";
+@import "../less/VideoPlayer.less";
 </style>

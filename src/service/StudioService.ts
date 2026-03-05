@@ -1,5 +1,5 @@
 import {useSql} from "@/lib/sql.ts";
-import type {Studio} from "@/entity/domain/Studio.ts";
+import type {Studio, StudioCore} from "@/entity/domain/Studio.ts";
 
 export async function saveOrUpdateStudio(studio: string) {
   if (!studio) return '';
@@ -18,4 +18,17 @@ export async function saveOrUpdateStudio(studio: string) {
     studio_id = id;
   }
   return studio_id
+}
+
+export function listStudio() {
+  return useSql().query<Studio>('studio').list();
+}
+
+export function addStudio(form: StudioCore) {
+  const now = Date.now();
+  return useSql().mapper<Studio>('studio').insert({
+    ...form,
+    created_at: now,
+    updated_at: now
+  });
 }

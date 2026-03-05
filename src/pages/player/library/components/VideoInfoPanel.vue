@@ -44,17 +44,21 @@
           <wd-cell title="比特率" :value="formatBitrate(video?.bit_rate || 0)"/>
         </wd-cell-group>
 
-        <wd-cell-group title="编码信息" border>
-          <wd-cell title="视频编码" :value="video?.video_codec || '-'"/>
-          <wd-cell title="音频编码" :value="video?.audio_codec || '-'"/>
-          <wd-cell title="容器格式" :value="video?.container_format || '-'"/>
-        </wd-cell-group>
+        <div class="mt-8px">
+          <wd-cell-group title="编码信息" border>
+            <wd-cell title="视频编码" :value="video?.video_codec || '-'"/>
+            <wd-cell title="音频编码" :value="video?.audio_codec || '-'"/>
+            <wd-cell title="容器格式" :value="video?.container_format || '-'"/>
+          </wd-cell-group>
+        </div>
 
-        <wd-cell-group title="文件路径" border>
-          <wd-cell title="文件名" :value="video?.file_name || '-'" ellipsis/>
-          <wd-cell title="文件路径" :value="video?.file_path || '-'" ellipsis/>
-          <wd-cell title="文件创建时间" :value="formatDate(video?.file_birthtime)"/>
-        </wd-cell-group>
+        <div class="mt-8px">
+          <wd-cell-group title="文件路径" border>
+            <wd-cell title="文件名" :value="video?.file_name || '-'" ellipsis/>
+            <wd-cell title="文件路径" :value="video?.file_path || '-'" ellipsis/>
+            <wd-cell title="文件创建时间" :value="formatDate(video?.file_birthtime)"/>
+          </wd-cell-group>
+        </div>
       </t-tab-panel>
 
       <t-tab-panel label="历史记录" value="history">
@@ -64,11 +68,13 @@
           <wd-cell title="恢复播放时间" :value="formatDuration(video?.resume_time || 0)"/>
         </wd-cell-group>
 
-        <wd-cell-group title="状态信息" border>
-          <wd-cell title="扫描状态" :value="scanStatusText"/>
-          <wd-cell title="删除状态" :value="video?.is_deleted ? '已删除' : '正常'"/>
-          <wd-cell v-if="video?.error_message" title="错误信息" :value="video?.error_message" ellipsis/>
-        </wd-cell-group>
+        <div class="mt-8px">
+          <wd-cell-group title="状态信息" border>
+            <wd-cell title="扫描状态" :value="scanStatusText"/>
+            <wd-cell title="删除状态" :value="video?.is_deleted ? '已删除' : '正常'"/>
+            <wd-cell v-if="video?.error_message" title="错误信息" :value="video?.error_message" ellipsis/>
+          </wd-cell-group>
+        </div>
       </t-tab-panel>
 
     </t-tabs>
@@ -141,5 +147,5 @@ function formatBitrate(bitrate?: number): string {
 </script>
 
 <style scoped lang="less">
-@import "less/VideoInfoPanel";
+@import "../less/VideoInfoPanel";
 </style>

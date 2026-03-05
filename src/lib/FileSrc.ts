@@ -18,13 +18,34 @@ export function convertFileSrcToUrl(filePath: string): string {
 }
 
 export function convertWebDavToUrl(
+  filename: string,
   url: string,
   username?: string,
   password?: string,
   type?: string
 ): string {
+  const encodedFilename = encodeURIComponent(filename);
   const encodedUrl = encodeURIComponent(url);
   const encodedUsername = encodeURIComponent(username || '');
   const encodedPassword = encodeURIComponent(password || '');
-  return `http://127.0.0.1:${serverPort}/webdav?url=${encodedUrl}&username=${encodedUsername}&password=${encodedPassword}&type=${type}`;
+  const encodedType = type ? `&type=${encodeURIComponent(type)}` : '';
+  return `http://127.0.0.1:${serverPort}/webdav/${encodedFilename}?url=${encodedUrl}&username=${encodedUsername}&password=${encodedPassword}${encodedType}`;
+}
+
+export function convertProxyToUrl(
+  url: string,
+  headers?: Record<string, string>
+): string {
+  const encodedUrl = encodeURIComponent(url);
+  let queryString = '';
+  
+  if (headers) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(headers)) {
+      params.append(key, value);
+    }
+    queryString = `?${params.toString()}`;
+  }
+  
+  return `http://127.0.0.1:${serverPort}/proxy/${encodedUrl}${queryString}`;
 }

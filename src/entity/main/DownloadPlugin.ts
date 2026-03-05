@@ -14,6 +14,11 @@ export const DownloadPluginPlatformOptions: Array<CommonOption> = [{
   value: 'bilibili'
 }];
 
+export const DownloadPluginPlatformMap: Record<string, string> = {
+  'douyin': '抖音',
+  'bilibili': '哔哩哔哩'
+}
+
 export interface DownloadPluginCore {
   name: string;
   description: string;

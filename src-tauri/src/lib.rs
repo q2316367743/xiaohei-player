@@ -6,6 +6,7 @@
 use tauri_plugin_log::{Target, TargetKind};
 
 mod commands;
+mod server;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

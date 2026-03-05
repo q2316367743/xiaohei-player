@@ -58,9 +58,18 @@ export interface VideoCore extends VideoFile, VideoInfo, VideoMetadata, VideoSta
 export interface Video extends BaseEntity, VideoCore {
 }
 
+export interface VideoActorForm {
+  name: string,
+  role: string
+}
+export interface VideoActorIdForm {
+  id: string,
+  role_name: string
+}
+
 export interface VideoEdit {
   // 演员, 角色
-  actors: Array<{ name: string, role: string }>;
+  actors: Array<VideoActorForm>;
   // 标签
   tags: Array<string>;
   studio: string;

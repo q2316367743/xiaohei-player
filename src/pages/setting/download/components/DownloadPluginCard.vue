@@ -1,10 +1,10 @@
 <template>
   <t-card>
-    <t-table :columns="columns" :data="plugins" stripe>
+    <t-table :columns="columns" :data="plugins">
       <template #platform="{ row }">
-        <t-space>
+        <t-space size="small" wrap>
           <t-tag v-for="platform in row.platform" :key="platform" size="small">
-            {{ platform === 'douyin' ? '抖音' : '哔哩哔哩' }}
+            {{ DownloadPluginPlatformMap[platform] }}
           </t-tag>
         </t-space>
       </template>
@@ -23,9 +23,13 @@
   </t-card>
 </template>
 <script lang="ts" setup>
-import type {DownloadPluginView} from "@/entity/main/DownloadPlugin.ts";
+import {DownloadPluginPlatformMap, type DownloadPluginView} from "@/entity/main/DownloadPlugin.ts";
 import {listDownloadPlugin} from "@/service";
-import {addDownloadPluginDialog, deleteDownloadPluginDialog, updateDownloadPluginDialog} from "@/pages/setting/download/edit.tsx";
+import {
+  addDownloadPluginDialog,
+  deleteDownloadPluginDialog,
+  updateDownloadPluginDialog
+} from "@/pages/setting/download/edit.tsx";
 
 const plugins = ref(new Array<DownloadPluginView>());
 

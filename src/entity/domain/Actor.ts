@@ -1,6 +1,6 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
 
-export interface Actor extends BaseEntity {
+export interface ActorCore {
   name: string;          // 演员姓名 (如: "张彪")
   original_name: string; // 原名/英文名
   gender: 'male' | 'female' | 'other';        // 性别: 'male', 'female', 'other'
@@ -8,4 +8,7 @@ export interface Actor extends BaseEntity {
   death_date: string;    // 逝世日期 (可选)
   biography: string;     // 简介
   photo_path: string;    // 头像本地路径
+}
+
+export interface Actor extends BaseEntity, ActorCore {
 }

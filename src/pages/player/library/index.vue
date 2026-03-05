@@ -10,7 +10,7 @@
         <div class="player-header__title">
           <span>{{ video?.title }}</span>
         </div>
-        <t-button theme="primary" variant="text" shape="square">
+        <t-button theme="primary" variant="text" shape="square" @click="handleEdit">
           <template #icon>
             <edit-icon/>
           </template>
@@ -36,6 +36,7 @@ import type {Tag} from '@/entity/domain/Tag.ts';
 import {getVideoById, updateVideoStatus} from '@/service/VideoService.ts';
 import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
+import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
 
 defineOptions({
   name: 'PlayerPage'
@@ -77,8 +78,15 @@ onMounted(async () => {
     await router.replace('/');
   }
 });
+
+const handleEdit = () => {
+  openLibraryVideoEdit(videoId, async () => {
+    const videoData = await getVideoById(videoId);
+    video.value = videoData!;
+  })
+}
 </script>
 
 <style scoped lang="less">
-@import "player.less";
+@import "less/player.less";
 </style>
