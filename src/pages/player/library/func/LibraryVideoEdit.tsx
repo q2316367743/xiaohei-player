@@ -1,19 +1,31 @@
 import {DrawerPlugin, Form, FormItem, Input, Select, Tag, Textarea, DatePicker, Button} from "tdesign-vue-next";
-import {addActor, addStudio, addTag, getVideoMetadataById, listActor, listStudio, listTag, updateVideoMetadata, type VideoMetadataForm} from "@/service";
+import {
+  addActor,
+  addStudio,
+  addTag,
+  getVideoMetadataById,
+  listActor,
+  listStudio,
+  listTag,
+  updateVideoMetadata,
+  type VideoMetadataForm
+} from "@/service";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import type {CommonOption} from "@/global/CommonType.ts";
-import type { ActorCore } from "@/entity/domain/Actor";
-import type { StudioCore } from "@/entity/domain/Studio";
-import type { TagCore } from "@/entity/domain/Tag";
+import type {ActorAddForm} from "@/entity/domain/Actor";
+import type {StudioAddForm} from "@/entity/domain/Studio";
+import type {TagAddForm} from "@/entity/domain/Tag";
 import XhAvatar from "@/components/xiaohei/XhAvatar.vue";
+import {logDebug} from "@/lib/log.ts";
 
-function openAddStudio(onUpdate: () => void) {
-  const data = ref<StudioCore>({
+function openAddStudio(onUpdate: () => void, libraryId: string) {
+  const data = ref<StudioAddForm>({
     name: "",
     country: "",
     founded_year: 0,
     website: "",
     logo_path: "",
+    library_id: libraryId
   });
   const dp = DrawerPlugin({
     header: "添加工作室",
@@ -48,10 +60,11 @@ function openAddStudio(onUpdate: () => void) {
   })
 }
 
-function openAddTag(onUpdate: () => void) {
-  const data = ref<TagCore>({
+function openAddTag(onUpdate: () => void, libraryId: string) {
+  const data = ref<TagAddForm>({
     name: "",
     color: "",
+    library_id: libraryId
   });
   const dp = DrawerPlugin({
     header: "添加标签",
@@ -77,8 +90,8 @@ function openAddTag(onUpdate: () => void) {
   })
 }
 
-function openAddActor(onUpdate: () => void) {
-  const data = ref<ActorCore>({
+function openAddActor(onUpdate: () => void, libraryId: string) {
+  const data = ref<ActorAddForm>({
     name: "",
     original_name: "",
     gender: "other",
@@ -86,6 +99,7 @@ function openAddActor(onUpdate: () => void) {
     death_date: "",
     biography: "",
     photo_path: "",
+    library_id: libraryId
   });
   const dp = DrawerPlugin({
     header: "添加演员",
@@ -118,16 +132,16 @@ function openAddActor(onUpdate: () => void) {
         ]}/>
       </FormItem>
       <FormItem label={'出生日期'} labelAlign={'top'}>
-        <DatePicker 
-          v-model={data.value.birth_date} 
+        <DatePicker
+          v-model={data.value.birth_date}
           placeholder={'请选择出生日期'}
           format={'YYYY-MM-DD'}
           enableTimePicker={false}
         />
       </FormItem>
       <FormItem label={'逝世日期'} labelAlign={'top'}>
-        <DatePicker 
-          v-model={data.value.death_date} 
+        <DatePicker
+          v-model={data.value.death_date}
           placeholder={'请选择逝世日期'}
           format={'YYYY-MM-DD'}
           enableTimePicker={false}
@@ -140,7 +154,7 @@ function openAddActor(onUpdate: () => void) {
   })
 }
 
-export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
+export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
   const data = ref<VideoMetadataForm>({
     title: "",
     description: "",
@@ -155,11 +169,21 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
   const tagOptions = ref<Array<CommonOption>>([]);
   const studioOptions = ref<Array<CommonOption>>([]);
 
+
+  const video = await getVideoMetadataById(videoId)
+  if (!video) {
+    MessageUtil.error("视频不存在");
+    return;
+  }
+  const {library_id, ...other} = video;
+  data.value = other;
+  const libraryId = ref(library_id);
+
   const refreshOptions = async () => {
     const [tags, actors, studios] = await Promise.all([
-      listTag(),
-      listActor(),
-      listStudio()
+      listTag(libraryId.value),
+      listActor(libraryId.value),
+      listStudio(libraryId.value)
     ]);
     tagOptions.value = tags.map(tag => ({
       label: tag.name,
@@ -175,17 +199,7 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
     }));
   };
 
-  Promise.all([
-    getVideoMetadataById(videoId),
-    refreshOptions()
-  ]).then(res => {
-    const [video] = res;
-    if (!video) {
-      MessageUtil.error("视频不存在");
-      return;
-    }
-    data.value = video;
-  })
+  refreshOptions().finally(() => logDebug("初始数刷新"));
 
   const dp = DrawerPlugin({
     header: "编辑视频信息",
@@ -213,8 +227,8 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
         <Input v-model={data.value.link} placeholder={'请输入视频链接'}/>
       </FormItem>
       <FormItem label={'发行日期'} labelAlign={'top'}>
-        <DatePicker 
-          v-model={data.value.release_date} 
+        <DatePicker
+          v-model={data.value.release_date}
           placeholder={'请选择发行日期'}
           format={'YYYY-MM-DD'}
           enableTimePicker={false}
@@ -225,22 +239,22 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
       </FormItem>
       <FormItem label={'工作室'} labelAlign={'top'}>
         <div style={{display: 'flex', gap: '8px'}}>
-          <Select 
-            v-model={data.value.studio_id} 
-            options={studioOptions.value} 
-            placeholder={'请选择工作室'} 
+          <Select
+            v-model={data.value.studio_id}
+            options={studioOptions.value}
+            placeholder={'请选择工作室'}
             clearable
             style={{flex: 1}}
           />
-          <Button onClick={() => openAddStudio(refreshOptions)}>添加</Button>
+          <Button onClick={() => openAddStudio(refreshOptions, libraryId.value)}>添加</Button>
         </div>
       </FormItem>
       <FormItem label={'演员'} labelAlign={'top'} help={'已选演员可在下方编辑角色名'}>
         <div style={{display: 'flex', gap: '8px'}}>
-          <Select 
-            v-model={data.value.actorIds} 
-            options={actorOptions.value} 
-            placeholder={'请选择演员'} 
+          <Select
+            v-model={data.value.actorIds}
+            options={actorOptions.value}
+            placeholder={'请选择演员'}
             multiple
             clearable
             valueDisplay={() => {
@@ -252,7 +266,7 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
             }}
             style={{flex: 1}}
           />
-          <Button onClick={() => openAddActor(refreshOptions)}>添加</Button>
+          <Button onClick={() => openAddActor(refreshOptions, libraryId.value)}>添加</Button>
         </div>
       </FormItem>
       {data.value.actorIds.length > 0 && (
@@ -263,9 +277,9 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
               return (
                 <div key={actor.id} style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                   <Tag theme="primary" style={{flexShrink: 0}}>{option?.label || actor.id}</Tag>
-                  <Input 
-                    value={actor.role_name || ''} 
-                    placeholder="角色名" 
+                  <Input
+                    value={actor.role_name || ''}
+                    placeholder="角色名"
                     style={{flex: 1}}
                     onChange={(val) => {
                       if (data.value.actorIds[index]) {
@@ -281,15 +295,15 @@ export function openLibraryVideoEdit(videoId: string, onUpdate: () => void) {
       )}
       <FormItem label={'标签'} labelAlign={'top'}>
         <div style={{display: 'flex', gap: '8px'}}>
-          <Select 
-            v-model={data.value.tagIds} 
-            options={tagOptions.value} 
-            placeholder={'请选择标签'} 
+          <Select
+            v-model={data.value.tagIds}
+            options={tagOptions.value}
+            placeholder={'请选择标签'}
             multiple
             clearable
             style={{flex: 1}}
           />
-          <Button onClick={() => openAddTag(refreshOptions)}>添加</Button>
+          <Button onClick={() => openAddTag(refreshOptions, libraryId.value)}>添加</Button>
         </div>
       </FormItem>
     </Form>,

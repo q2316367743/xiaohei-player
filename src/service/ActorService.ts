@@ -1,10 +1,10 @@
 import type {VideoActorIdForm, VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoActor} from "@/entity/domain/VideoActor.ts";
-import type {Actor, ActorCore} from "@/entity/domain/Actor.ts";
+import type {Actor, ActorAddForm} from "@/entity/domain/Actor.ts";
 import {map} from "@/util";
 
-export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId: string) {
+export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId: string, libraryId: string) {
   // 删除旧的
   await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).delete();
   const actorNames = actors.map(actor => actor.name);
@@ -21,6 +21,7 @@ export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId:
       } else {
         // 新增
         const {id} = await useSql().mapper<Actor>('actor').insert({
+          library_id: libraryId,
           name: actorName,
           original_name: actorName,
           gender: 'other',
@@ -57,11 +58,11 @@ export async function saveVideoActor(videoId: string, actorIds: Array<VideoActor
   }
 }
 
-export function listActor() {
-  return useSql().query<Actor>('actor').list();
+export function listActor(libraryId: string) {
+  return useSql().query<Actor>('actor').eq('library_id', libraryId).list();
 }
 
-export function addActor(form: ActorCore) {
+export function addActor(form: ActorAddForm) {
   const now = Date.now();
   return useSql().mapper<Actor>('actor').insert({
     ...form,

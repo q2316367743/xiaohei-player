@@ -1,10 +1,10 @@
 import type {VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
-import type {Tag, TagCore} from "@/entity/domain/Tag.ts";
+import type {Tag, TagAddForm} from "@/entity/domain/Tag.ts";
 import {map} from "@/util";
 
-export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string) {
+export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string, libraryId: string) {
   await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
 
   if (tags.length === 0) return;
@@ -20,7 +20,8 @@ export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: strin
     } else {
       const {id} = await useSql().mapper<Tag>('tag').insert({
         name: tag,
-        color: ''
+        color: '',
+        library_id: libraryId
       });
       tag_id = id;
     }
@@ -46,11 +47,11 @@ export async function saveVideoTag(videoId: string, tagIds: Array<string>) {
   }
 }
 
-export function listTag() {
-  return useSql().query<Tag>('tag').list();
+export function listTag(libraryId: string) {
+  return useSql().query<Tag>('tag').eq('library_id', libraryId).list();
 }
 
-export function addTag(form: TagCore) {
+export function addTag(form: TagAddForm) {
   const now = Date.now();
   return useSql().mapper<Tag>('tag').insert({
     ...form,

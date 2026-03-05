@@ -33,10 +33,10 @@
 import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
 import type {Video} from '@/entity/domain/Video.ts';
 import type {Tag} from '@/entity/domain/Tag.ts';
-import {getVideoById, updateVideoStatus} from '@/service/VideoService.ts';
+import {getVideoById, updateVideoStatus} from '@/service';
+import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
 import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
-import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
 
 defineOptions({
   name: 'PlayerPage'

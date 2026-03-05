@@ -48,10 +48,10 @@ CREATE TABLE IF NOT EXISTS video
 );
 
 -- 创建常用查询索引
-CREATE INDEX IF NOT EXISTS idx_videos_library ON video (library_id);
-CREATE INDEX IF NOT EXISTS idx_videos_title ON video (title);
-CREATE INDEX IF NOT EXISTS idx_videos_last_played ON video (last_played_at DESC);
-CREATE INDEX IF NOT EXISTS idx_videos_file_path ON video (file_path);
+CREATE INDEX IF NOT EXISTS idx_video_library ON video (library_id);
+CREATE INDEX IF NOT EXISTS idx_video_title ON video (title);
+CREATE INDEX IF NOT EXISTS idx_video_last_played ON video (last_played_at DESC);
+CREATE INDEX IF NOT EXISTS idx_video_file_path ON video (file_path);
 
 -- 演员
 CREATE TABLE IF NOT EXISTS actor
@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS actor
     id            TEXT PRIMARY KEY,
     created_at    INTEGER NOT NULL DEFAULT 0,
     updated_at    INTEGER NOT NULL DEFAULT 0,
+
+    library_id    TEXT    NOT NULL DEFAULT '',        -- 所属媒体库
+
     name          TEXT    NOT NULL DEFAULT '' UNIQUE, -- 演员姓名 (如: "张彪")
     original_name TEXT    NOT NULL DEFAULT '',        -- 原名/英文名
     gender        TEXT    NOT NULL DEFAULT '',        -- 性别: 'male', 'female', 'other'
@@ -68,7 +71,8 @@ CREATE TABLE IF NOT EXISTS actor
     photo_path    TEXT    NOT NULL DEFAULT ''         -- 头像本地路径
 );
 
-CREATE INDEX IF NOT EXISTS idx_actors_name ON actor (name);
+CREATE INDEX IF NOT EXISTS idx_actor_name ON actor (name);
+CREATE INDEX IF NOT EXISTS idx_actor_library ON actor (library_id);
 
 -- 工作室
 CREATE TABLE IF NOT EXISTS studio
@@ -76,6 +80,9 @@ CREATE TABLE IF NOT EXISTS studio
     id           TEXT PRIMARY KEY,
     created_at   INTEGER NOT NULL DEFAULT 0,
     updated_at   INTEGER NOT NULL DEFAULT 0,
+
+    library_id   TEXT    NOT NULL DEFAULT '',        -- 所属媒体库
+
     name         TEXT    NOT NULL DEFAULT '' UNIQUE, -- 工作室名称
     country      TEXT    NOT NULL DEFAULT '',        -- 所属国家
     founded_year INTEGER NOT NULL DEFAULT 0,         -- 成立年份
@@ -83,7 +90,8 @@ CREATE TABLE IF NOT EXISTS studio
     logo_path    TEXT    NOT NULL DEFAULT ''         -- Logo 本地路径
 );
 
-CREATE INDEX IF NOT EXISTS idx_studios_name ON studio (name);
+CREATE INDEX IF NOT EXISTS idx_studio_name ON studio (name);
+CREATE INDEX IF NOT EXISTS idx_studio_library ON studio (library_id);
 
 CREATE TABLE IF NOT EXISTS video_actor
 (
@@ -91,12 +99,9 @@ CREATE TABLE IF NOT EXISTS video_actor
     created_at  INTEGER NOT NULL DEFAULT 0,
     updated_at  INTEGER NOT NULL DEFAULT 0,
     video_id    TEXT    NOT NULL DEFAULT '', -- 对应 videos.id (Hash)
-    actor_id    INTEGER NOT NULL DEFAULT 0,  -- 对应 actors.id
+    actor_id    TEXT    NOT NULL DEFAULT '',  -- 对应 actors.id
     role_name   TEXT    NOT NULL DEFAULT '', -- 在该视频中饰演的角色名
-    order_index INTEGER NOT NULL DEFAULT 0,  -- 演员排序 (主演在前)
-
-    FOREIGN KEY (video_id) REFERENCES video (id) ON DELETE CASCADE,
-    FOREIGN KEY (actor_id) REFERENCES actor (id) ON DELETE CASCADE
+    order_index INTEGER NOT NULL DEFAULT 0   -- 演员排序 (主演在前)
 );
 
 CREATE INDEX IF NOT EXISTS idx_video_actors_actor ON video_actor (actor_id);
@@ -109,9 +114,14 @@ CREATE TABLE IF NOT EXISTS tag
     id         TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL DEFAULT 0,
     updated_at INTEGER NOT NULL DEFAULT 0,
+
+    library_id TEXT    NOT NULL DEFAULT '', -- 所属媒体库
+
     name       TEXT    NOT NULL DEFAULT '' UNIQUE,
     color      TEXT    NOT NULL DEFAULT ''-- 标签显示颜色 (hex)
 );
+
+CREATE INDEX IF NOT EXISTS idx_tag_library ON tag (library_id);
 
 CREATE TABLE IF NOT EXISTS video_tag
 (
@@ -119,9 +129,7 @@ CREATE TABLE IF NOT EXISTS video_tag
     created_at INTEGER NOT NULL DEFAULT 0,
     updated_at INTEGER NOT NULL DEFAULT 0,
     video_id   TEXT    NOT NULL DEFAULT '',
-    tag_id     INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY (video_id) REFERENCES video (id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
+    tag_id     TEXT    NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS idx_video_tags_tag ON video_tag (tag_id);

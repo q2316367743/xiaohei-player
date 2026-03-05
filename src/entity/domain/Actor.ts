@@ -1,6 +1,6 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
 
-export interface ActorCore {
+export interface ActorUpdateForm {
   name: string;          // 演员姓名 (如: "张彪")
   original_name: string; // 原名/英文名
   gender: 'male' | 'female' | 'other';        // 性别: 'male', 'female', 'other'
@@ -10,5 +10,10 @@ export interface ActorCore {
   photo_path: string;    // 头像本地路径
 }
 
-export interface Actor extends BaseEntity, ActorCore {
+export interface ActorAddForm extends ActorUpdateForm{
+  // 所属收藏库
+  library_id: string;
+}
+
+export interface Actor extends BaseEntity, ActorAddForm {
 }

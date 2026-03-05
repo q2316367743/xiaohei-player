@@ -81,3 +81,7 @@ export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadat
   vtt_path?: string;         // vtt文件路径
   cover_path?: string;       // 封面文件路径
 }
+
+export interface VideoView extends Video {
+  studio?: string;
+}

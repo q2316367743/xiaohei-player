@@ -13,16 +13,16 @@ import type {VideoActor} from "@/entity/domain/VideoActor.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
 
 
-export async function saveVideo(from: VideoAddForm, hash: string) {
+export async function saveVideo(form: VideoAddForm, hash: string) {
   const now = Date.now();
-  const {actors, tags, studio, ...video} = from;
+  const {actors, tags, studio, ...video} = form;
 
   // 先处理工作室
-  const studio_id = await saveOrUpdateStudio(studio);
+  const studio_id = await saveOrUpdateStudio(studio, form.library_id);
   // 处理演员
-  await saveOrUpdateActor(actors, hash);
+  await saveOrUpdateActor(actors, hash, form.library_id);
   // 处理标签
-  await saveOrUpdateTag(tags, hash);
+  await saveOrUpdateTag(tags, hash, form.library_id);
 
   await useSql().mapper<Video>('video').insertSelf({
     ...video,
@@ -43,15 +43,19 @@ export async function updateVideo(id: string, form: Partial<VideoAddForm>) {
   const now = Date.now();
   const {actors, tags, studio, ...video} = form;
 
+  // 获取旧的
+  const old = await getVideoById(id);
+  if (!old) return Promise.reject(new Error("视频不存在"));
+
   let studio_id: string | undefined = undefined;
   // 先处理工作室
   if (studio) {
-    studio_id = await saveOrUpdateStudio(studio);
+    studio_id = await saveOrUpdateStudio(studio, old.library_id);
   }
   // 处理演员
-  if (actors) await saveOrUpdateActor(actors, id);
+  if (actors) await saveOrUpdateActor(actors, id, old.library_id);
   // 处理标签
-  if (tags) await saveOrUpdateTag(tags, id);
+  if (tags) await saveOrUpdateTag(tags, id, old.library_id);
 
   await useSql().mapper<Video>('video').updateById(id, {
     ...video,
@@ -82,13 +86,6 @@ export async function updateVideoStatus(id: string, form: Partial<VideoStatusInf
 
 export async function deleteVideo(id: string) {
   await useSql().mapper<Video>('video').updateById(id, {is_deleted: 1});
-}
-
-export async function deleteVideoByPath(filePath: string) {
-  const videos = await useSql().query<Video>('video').eq('file_path', filePath).list();
-  for (const video of videos) {
-    await deleteVideo(video.id);
-  }
 }
 
 export async function cleanDeletedVideo() {
@@ -144,15 +141,19 @@ export interface VideoMetadataForm extends VideoMetadata {
   tagIds: Array<string>
 }
 
-export async function getVideoMetadataById(id: string): Promise<VideoMetadataForm | undefined> {
+interface VideoMetadataFormWrap extends VideoMetadataForm {
+  library_id: string
+}
+
+export async function getVideoMetadataById(id: string): Promise<VideoMetadataFormWrap | undefined> {
   const video = await useSql().query<Video>('video')
     .eq('id', id)
     .eq('is_deleted', 0)
     .get();
   if (!video) return undefined;
   const [tags, actors] = await Promise.all([
-    useSql().query<VideoTag>('video_tag').eq('video_id', id).select('tag_id').list(),
-    useSql().query<VideoActor>('video_actor').eq('video_id', id).select('actor_id', 'role_name').list()
+    useSql().query<VideoTag>('video_tag').eq('video_id', id).list(),
+    useSql().query<VideoActor>('video_actor').eq('video_id', id).list()
   ])
   return {
     title: video.title,
@@ -161,7 +162,10 @@ export async function getVideoMetadataById(id: string): Promise<VideoMetadataFor
     release_date: video.release_date,
     director: video.director,
     studio_id: video.studio_id,
+    library_id: video.library_id,
     actorIds: actors.map(it => ({id: it.actor_id, role_name: it.role_name})),
     tagIds: tags.map(it => it.tag_id)
   }
 }
+
+export async function getVideoInfoById(id:string): Video {}
