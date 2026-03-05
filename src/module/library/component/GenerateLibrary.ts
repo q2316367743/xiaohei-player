@@ -52,7 +52,7 @@ async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo
   return videoInfo;
 }
 
-async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Promise<{
+async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, videoInfo: VideoInfo): Promise<{
   sprite_path: string | undefined,
   vtt_path: string | undefined
 }> {
@@ -87,7 +87,8 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number): Pro
         durationMs: durationMs,
         path: filePath,
         sprite,
-        vtt
+        vtt,
+        videoInfo
       });
       sprite_path = sprite;
       vtt_path = vtt;
@@ -160,7 +161,7 @@ export async function generatorLibrary(props: GenerateLibraryOneProp): Promise<G
 
   const videoInfo = await handleVideoInfo(props);
   const [{vtt_path, sprite_path}, screenshot_path, cover_path] = await Promise.all([
-    handleVtt(props, videoInfo.duration_ms),
+    handleVtt(props, videoInfo.duration_ms, videoInfo),
     handleScreenshot(props, videoInfo.duration_ms),
     handleCover(props)
   ]);

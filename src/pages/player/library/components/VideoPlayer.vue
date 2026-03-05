@@ -355,17 +355,13 @@ function getKeyframeStyle(cue: VttCue) {
     return {};
   }
 
-  const scale = 64 / cue.height;
-  const displayWidth = cue.width * scale;
-  const spriteWidth = 2880;
-  const spriteHeight = 1620;
 
   return {
     backgroundImage: `url(${spriteUrl.value})`,
-    backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
-    backgroundSize: `${spriteWidth * scale}px ${spriteHeight * scale}px`,
-    width: `${displayWidth.toFixed(2)}px`,
-    height: '64px'
+    backgroundPosition: `-${cue.x}px -${cue.y}px`,
+    backgroundSize: `${cue.width * 9}px auto`,
+    width: `${cue.width}px`,
+    height: `${cue.height}px`
   };
 }
 

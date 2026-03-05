@@ -23,7 +23,7 @@ export function createXMLParser(context: WebDAVParsingContext): XMLParser {
   const options = {
     ...XML_PARSER_OPTIONS,
     attributeNamePrefix: context.attributeNamePrefix || "@_",
-    attributeValueProcessor: (name: string, value: string, jPath: string) => {
+    attributeValueProcessor: (_name: string, value: string, jPath: string) => {
       for (const parser of context.attributeParsers) {
         const result = parser(jPath, value);
         if (result !== undefined) {
@@ -32,7 +32,7 @@ export function createXMLParser(context: WebDAVParsingContext): XMLParser {
       }
       return value;
     },
-    tagValueProcessor: (name: string, value: string, jPath: string) => {
+    tagValueProcessor: (_name: string, value: string, jPath: string) => {
       for (const parser of context.tagParsers) {
         const result = parser(jPath, value);
         if (result !== undefined) {

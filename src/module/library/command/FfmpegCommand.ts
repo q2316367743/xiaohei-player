@@ -38,20 +38,24 @@ interface GenerateVttProp {
   path: string;
   sprite: string;
   vtt: string;
+  videoInfo: VideoInfo;
 }
 
 export async function generateVtt(prop: GenerateVttProp) {
-  const {ffmpeg, durationMs, path, sprite, vtt} = prop;
+  const {ffmpeg, durationMs, path, sprite, vtt, videoInfo} = prop;
 
   await ensureDir(sprite);
 
   const duration = durationMs / 1000;
 
+  const thumbHeight = 64;
+  const thumbWidth = Math.round(videoInfo.width * (thumbHeight / videoInfo.height));
+
   await execFfmepgCommand(ffmpeg, [
     "-i",
     path,
     "-vf",
-    "fps=1/5,scale=320:-1:flags=lanczos,tile=9x9",
+    `fps=1/5,scale=${thumbWidth}:-1:flags=lanczos,tile=9x9`,
     "-q:v",
     "2",
     "-frames:v",
@@ -62,8 +66,6 @@ export async function generateVtt(prop: GenerateVttProp) {
 
   const fps = 1 / 5;
   const interval = 1 / fps;
-  const thumbWidth = 320;
-  const thumbHeight = 180;
 
   const spriteFileName = sprite.split(/[/\\]/).pop() || 'sprite.jpg';
 
