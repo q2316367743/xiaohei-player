@@ -141,13 +141,19 @@ async function processVideoFile(prop: ProcessVideoFileProp) {
  * 任务 - 扫描收藏库
  */
 export async function scanLibrary(
-  onProgress: (progress: number, total: number, message: string) => void
+  onProgress: (progress: number, total: number, message: string) => void,
+  filterIds?: Array<string>
 ) {
   logInfo("开始扫描收藏库");
   const library = await useLibrarySettingStore().get();
   const system = await useSystemSettingStore().get();
   const task = await useTaskSettingStore().get();
-  const items = await listLibrary();
+  let items = await listLibrary();
+
+  if (filterIds) {
+    items = items.filter(item => filterIds.includes(item.id));
+  }
+
   if (items.length === 0) {
     logWarning("收藏库为空，没有配置任何扫描路径");
     return;

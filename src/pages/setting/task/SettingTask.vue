@@ -32,6 +32,7 @@
         </div>
         <div class="flex gap-8px">
           <t-button :disabled="isRunning" @click="handleScan">扫描</t-button>
+          <t-button :disabled="isRunning" @click="handleScanSelective">选择性扫描</t-button>
         </div>
       </div>
       <t-list size="small" split>
@@ -158,6 +159,7 @@ import {scanLibrary} from "@/module/library/index.ts";
 import {cleanDeletedDb} from "@/module/clean/CleanDeletedDb.ts";
 import {cleanDeletedVideo} from "@/module/clean/CleanDeletedVideo.ts";
 import {cleanGenerateFile} from "@/module/clean/CleanGenerateFile.ts";
+import {openFilterScan} from "@/pages/setting/task/func/SettingTaskFilterScan.tsx";
 
 const data = ref<TaskSetting>(getTaskSetting());
 const currentTask = taskManager.currentTask;
@@ -220,13 +222,34 @@ async function handleScan() {
   try {
     console.log('开始添加扫描任务');
     const task = taskManager.addTask('扫描收藏库', async (onProgress) => {
-      console.log('scanLibrary 回调被调用');
       await scanLibrary(onProgress);
     });
     console.log('任务已添加:', task);
   } catch (e) {
     MessageUtil.error('扫描失败', e);
   }
+}
+
+// 选择性扫描
+async function handleScanSelective() {
+
+  if (isRunning.value) {
+    MessageUtil.warning('任务正在执行中，请稍候');
+    return;
+  }
+
+  openFilterScan().then(res => {
+    try {
+      console.log('开始添加扫描任务');
+      const task = taskManager.addTask('扫描收藏库', async (onProgress) => {
+        await scanLibrary(onProgress, res);
+      });
+      console.log('任务已添加:', task);
+    } catch (e) {
+      MessageUtil.error('扫描失败', e);
+    }
+  })
+
 }
 
 async function handleCleanDeletedVideo() {
