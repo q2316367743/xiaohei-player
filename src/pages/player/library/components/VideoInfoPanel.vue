@@ -82,21 +82,36 @@
 </template>
 
 <script lang="ts" setup>
-import type {Video} from '@/entity/domain/Video.ts';
-import type {Tag} from '@/entity/domain/Tag.ts';
+import type {VideoView} from '@/entity/domain/Video.ts';
 
 defineOptions({
   name: 'VideoInfoPanel'
 });
 
 const props = defineProps<{
-  video?: Video;
-  tags?: Tag[];
-  actors?: string;
-  studio?: string;
+  video: VideoView;
 }>();
 
 const activeTab = ref('intro');
+
+const studio = computed(() => props.video?.studio?.name || '-');
+
+const actors = computed(() => {
+  if (!props.video?.actors?.length) return '-';
+  return props.video.actors
+    .map(item => {
+      const actorName = item.actor?.name || '';
+      const roleName = item.role_name;
+      return roleName ? `${actorName} (${roleName})` : actorName;
+    })
+    .filter(name => name)
+    .join(', ') || '-';
+});
+
+const tags = computed(() => {
+  if (!props.video?.tags?.length) return [];
+  return props.video.tags.map(item => item.tag).filter(tag => tag);
+});
 
 const scanStatusText = computed(() => {
   const statusMap: Record<string, string> = {

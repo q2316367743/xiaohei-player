@@ -4,13 +4,13 @@ import type {
   VideoActorIdForm,
   VideoAddForm,
   VideoMetadata,
-  VideoStatusInfo
+  VideoStatusInfo, VideoView
 } from "@/entity/domain/Video.ts";
-import {saveOrUpdateActor, saveVideoActor} from "@/service/ActorService.ts";
-import {saveOrUpdateTag, saveVideoTag} from "@/service/TagService.ts";
-import {saveOrUpdateStudio} from "@/service/StudioService.ts";
 import type {VideoActor} from "@/entity/domain/VideoActor.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
+import {listActorView, saveOrUpdateActor, saveVideoActor} from "@/service/ActorService.ts";
+import {listTagView, saveOrUpdateTag, saveVideoTag} from "@/service/TagService.ts";
+import {getStudio, saveOrUpdateStudio} from "@/service/StudioService.ts";
 
 
 export async function saveVideo(form: VideoAddForm, hash: string) {
@@ -129,11 +129,10 @@ export async function listVideo() {
 }
 
 export async function getVideoById(id: string) {
-  const videos = await useSql().query<Video>('video')
+  return useSql().query<Video>('video')
     .eq('id', id)
     .eq('is_deleted', 0)
-    .list();
-  return videos.length > 0 ? videos[0] : null;
+    .get();
 }
 
 export interface VideoMetadataForm extends VideoMetadata {
@@ -168,4 +167,20 @@ export async function getVideoMetadataById(id: string): Promise<VideoMetadataFor
   }
 }
 
-export async function getVideoInfoById(id:string): Video {}
+export async function getVideoInfoById(id: string): Promise<VideoView | undefined> {
+  const video = await getVideoById(id);
+  if (!video) return undefined;
+  // 获取关联信息
+  const [actors, tags, studio] = await Promise.all([
+    listActorView(id),
+    listTagView(id),
+    getStudio(video.studio_id)
+  ]);
+
+  return {
+    ...video,
+    actors,
+    tags,
+    studio
+  };
+}

@@ -1,6 +1,6 @@
 import type {VideoActorIdForm, VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
-import type {VideoActor} from "@/entity/domain/VideoActor.ts";
+import type {VideoActor, VideoActorView} from "@/entity/domain/VideoActor.ts";
 import type {Actor, ActorAddForm} from "@/entity/domain/Actor.ts";
 import {map} from "@/util";
 
@@ -58,10 +58,6 @@ export async function saveVideoActor(videoId: string, actorIds: Array<VideoActor
   }
 }
 
-export function listActor(libraryId: string) {
-  return useSql().query<Actor>('actor').eq('library_id', libraryId).list();
-}
-
 export function addActor(form: ActorAddForm) {
   const now = Date.now();
   return useSql().mapper<Actor>('actor').insert({
@@ -69,4 +65,26 @@ export function addActor(form: ActorAddForm) {
     created_at: now,
     updated_at: now
   });
+}
+
+export function listActor(libraryId: string) {
+  return useSql().query<Actor>('actor').eq('library_id', libraryId).list();
+}
+
+export async function listActorView(videoId: string): Promise<Array<VideoActorView>> {
+  const actorIds = await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).list();
+  const actor = new Array<VideoActorView>();
+  if (actorIds.length > 0) {
+    const actorItems = await useSql().query<Actor>('actor').in('id', actorIds.map(e => e.actor_id)).list();
+    const actorMap = map(actorItems, 'id');
+    for (const actorId of actorIds) {
+      const t = actorMap.get(actorId.actor_id);
+      if (!t) continue;
+      actor.push({
+        ...actorId,
+        actor: t
+      })
+    }
+  }
+  return actor;
 }

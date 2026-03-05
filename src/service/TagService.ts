@@ -1,6 +1,6 @@
 import type {VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
-import type {VideoTag} from "@/entity/domain/VideoTag.ts";
+import type {VideoTag, VideoTagView} from "@/entity/domain/VideoTag.ts";
 import type {Tag, TagAddForm} from "@/entity/domain/Tag.ts";
 import {map} from "@/util";
 
@@ -47,10 +47,6 @@ export async function saveVideoTag(videoId: string, tagIds: Array<string>) {
   }
 }
 
-export function listTag(libraryId: string) {
-  return useSql().query<Tag>('tag').eq('library_id', libraryId).list();
-}
-
 export function addTag(form: TagAddForm) {
   const now = Date.now();
   return useSql().mapper<Tag>('tag').insert({
@@ -58,4 +54,29 @@ export function addTag(form: TagAddForm) {
     created_at: now,
     updated_at: now
   });
+}
+
+export function listTag(libraryId: string) {
+  return useSql().query<Tag>('tag').eq('library_id', libraryId).list();
+}
+
+export async function listTagView(videoId: string) {
+  const tagIds = await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).list();
+
+  const tags = new Array<VideoTagView>();
+
+  if (tagIds.length > 0) {
+    const tagItems = await useSql().query<Tag>('tag').in('id', tagIds.map(e => e.tag_id)).list();
+    const tagMap = map(tagItems, 'id');
+    for (const tagId of tagIds) {
+      const t = tagMap.get(tagId.tag_id);
+      if (!t) continue;
+      tags.push({
+        ...tagId,
+        tag: t
+      })
+    }
+  }
+
+  return tags;
 }

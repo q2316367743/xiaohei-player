@@ -1,4 +1,7 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
+import type {Studio} from "@/entity/domain/Studio.ts";
+import type {VideoActorView} from "@/entity/domain/VideoActor.ts";
+import type {VideoTagView} from "@/entity/domain/VideoTag.ts";
 
 export interface VideoOriginalFile {
   library_id: string;       // 所属收藏库
@@ -62,6 +65,7 @@ export interface VideoActorForm {
   name: string,
   role: string
 }
+
 export interface VideoActorIdForm {
   id: string,
   role_name: string
@@ -83,5 +87,7 @@ export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadat
 }
 
 export interface VideoView extends Video {
-  studio?: string;
+  studio?: Studio;
+  actors: Array<VideoActorView>;
+  tags: Array<VideoTagView>;
 }

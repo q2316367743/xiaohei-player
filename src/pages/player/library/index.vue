@@ -20,7 +20,7 @@
 
     <div class="player-container">
       <div class="video-info-panel-container">
-        <VideoInfoPanel :video="video" :tags="tags" :actors="actors" :studio="studio"/>
+        <VideoInfoPanel v-if="video" :video="video"/>
       </div>
       <div class="video-content-container">
         <VideoPlayer v-if="video" :video="video"/>
@@ -31,9 +31,8 @@
 
 <script lang="ts" setup>
 import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
-import type {Video} from '@/entity/domain/Video.ts';
-import type {Tag} from '@/entity/domain/Tag.ts';
-import {getVideoById, updateVideoStatus} from '@/service';
+import type {VideoView} from '@/entity/domain/Video.ts';
+import {getVideoInfoById, updateVideoStatus} from '@/service';
 import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
 import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
@@ -46,10 +45,7 @@ const route = useRoute();
 const router = useRouter();
 const videoId = route.params.id as string;
 
-const video = ref<Video>();
-const tags = ref<Tag[]>([]);
-const actors = ref<string>('');
-const studio = ref<string>('');
+const video = ref<VideoView>();
 
 function goBack() {
   router.back();
@@ -57,7 +53,7 @@ function goBack() {
 
 onMounted(async () => {
   try {
-    const videoData = await getVideoById(videoId);
+    const videoData = await getVideoInfoById(videoId);
 
     if (!videoData) {
       await router.replace('/');
@@ -81,7 +77,7 @@ onMounted(async () => {
 
 const handleEdit = () => {
   openLibraryVideoEdit(videoId, async () => {
-    const videoData = await getVideoById(videoId);
+    const videoData = await getVideoInfoById(videoId);
     video.value = videoData!;
   })
 }
