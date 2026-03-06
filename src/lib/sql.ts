@@ -20,6 +20,7 @@ type TableName =
   | 'library'
 
   | 'download_plugin'
+  | 'history'
   ;
 
 

@@ -42,3 +42,20 @@ create table download_plugin
     rule_description text    not null default '',
     rule_url         text    not null default ''
 );
+
+
+create table history
+(
+    id               text primary key,
+    created_at       integer not null default 0,
+    updated_at       integer not null default 0,
+    title            text    not null default '',
+    path             text    not null default '',
+    type             text    not null default '',
+    last_played_time integer not null default 0,
+    progress_second  integer not null default 0
+);
+
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_history_path ON history (path);
+CREATE INDEX IF NOT EXISTS idx_history_lpt ON history (last_played_time);

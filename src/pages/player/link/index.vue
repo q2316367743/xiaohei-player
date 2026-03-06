@@ -113,6 +113,10 @@ import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import {revealItemInDir} from "@tauri-apps/plugin-opener";
 import {convertFileSrcToUrl, convertProxyToUrl} from "@/lib/FileSrc.ts";
+import {addOrUpdateHistory, updateHistoryProcess} from "@/service/HistoryService.ts";
+import {basename} from "@/module/file/util.ts";
+import {parseUrlTitle} from "@/util";
+import {debounce} from "es-toolkit";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -128,8 +132,13 @@ const showSidebar = ref(false);
 const loading = ref(false);
 const videoFiles = ref<Array<{ name: string; path: string }>>([]);
 
+const historyId = ref<string>();
+
 const type = ref(route.query.type as string);
 const src = ref(route.query.src as string);
+// 是否被加密，加密的不需要保存历史记录
+const crypto = ref((route.query.crypto as string) === '1');
+// 播放链接
 const url = ref('');
 
 onMounted(() => {
@@ -139,12 +148,22 @@ onMounted(() => {
     url.value = convertProxyToUrl(src.value);
   }
   initPlayer();
+  if (!crypto.value) {
+    addOrUpdateHistory({
+      path: src.value,
+      type: type.value as any,
+      title: type.value === 'file' ? basename(src.value) : parseUrlTitle(src.value)
+    }).then(id => {
+      historyId.value = id;
+    })
+  }
 });
 
 // 切换侧边栏
 const toggleSidebar = async () => {
   showSidebar.value = !showSidebar.value;
-  if (showSidebar.value && type.value === 'file' && src.value) {
+  // 显示侧边栏 & 文件类型 & 存在链接 & 未加密
+  if (showSidebar.value && type.value === 'file' && src.value && !crypto.value) {
     await loadVideoFiles();
   }
 };
@@ -213,6 +232,13 @@ const goBack = () => {
 const initPlayer = () => {
   if (!playerRef.value || !url.value) return;
 
+  const updateCurrentTime = debounce((currentTime: number) => {
+    if (!historyId.value) return;
+    return updateHistoryProcess(historyId.value, {
+      progress_second: currentTime
+    })
+  }, 300);
+
   player.value = new Artplayer({
     container: playerRef.value,
     url: url.value,
@@ -256,11 +282,13 @@ const initPlayer = () => {
         });
       }
     }]
+  }, art => {
+    // 监听进度
+    art.on('seek', (currentTime) => {
+      updateCurrentTime(currentTime);
+    })
   });
 
-  player.value.on('ready', () => {
-    console.log('Link Player is ready');
-  });
 
   player.value.on('fullscreenWeb', e => {
     if (!e) {
