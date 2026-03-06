@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "小黑影音",
   "version": "1.0.0",
-  "identifier": "xyz.esion.xiaoheiplayer",
+  "identifier": "xyz.esion.xiaohei-player",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5124",
@@ -50,17 +50,16 @@
     "macOS": {
       "entitlements": "./Entitlements.plist",
       "files": {
-        "embedded.provisionprofile": "/Users/esion/Documents/workspace/xiaohei-player/src-tauri/mac_installer.cer"
+        "embedded.provisionprofile": "/Users/esion/Documents/app/xiaohei-player/mac_app.cer"
       }
     }
   },
   "plugins": {
     "updater": {
       "dangerousInsecureTransportProtocol": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVEMDRDRkNEOTNENkVBNTYKUldSVzZ0YVR6YzhFN1FXemdoQ3daTWp1U3BNeHIyRlIrZTdaTXJxODNWeUFvZ2pLVzZGbkY2dzAK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJDQ0JENkQ5QTA3QjAzOTcKUldTWEEzdWcyZGJMdkE3NFdJQTllckNJeENwZC83emNRSG93MkZqMXRjYXNSWEY4MWxDWFBoRVYK",
       "endpoints": [
-        "https://github.com/q2316367743/omni-player/releases/latest/download/latest.json",
-        "https://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=QNvZIeOs3vczr-8gwyhlgg&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
+        "https://github.com/q2316367743/xiaohei-player/releases/latest/download/latest.json"
       ],
       "windows": {
         "installMode": "passive"

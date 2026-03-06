@@ -5,7 +5,7 @@ import {useBoolState} from "@/hooks";
 import {logDebug} from "@/lib/log.ts";
 import {LocalName} from "@/global/LocalName.ts";
 
-export const APP_ID = 'com.esion.xiaohei-player';
+export const APP_ID = 'xyz.esion.xiaohei-player';
 export const APP_NAME = "小黑影音";
 export const APP_DESC = "小黑影音是一个本地影音管理软件";
 export const APP_AUTHOR = "Esion";

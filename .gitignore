@@ -3,3 +3,4 @@
 /src-utools/node_modules
 .idea
 .DS_store
+dist
