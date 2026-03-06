@@ -18,7 +18,7 @@
               </template>
             </t-button>
           </div>
-          <div class="header-title">链接播放器</div>
+          <div class="header-title">播放器</div>
           <div class="header-actions">
           </div>
         </div>

@@ -35,7 +35,7 @@
             </t-tag>
           </div>
         </div>
-        <div class="folder-card add" @click="handleContextmenu($event)">
+        <div class="folder-card add" @click="handleContextmenu()">
           <div class="folder-icon-wrapper">
             <add-icon size="48px" class="folder-icon"/>
           </div>
@@ -47,7 +47,6 @@
 </template>
 
 <script lang="ts" setup>
-import Cxt from '@imengyu/vue3-context-menu';
 import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "../components/edit.tsx";
 import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
 import type {FolderType, FolderView} from "@/entity/main/Folder.ts";
@@ -55,7 +54,6 @@ import {listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
-import {isDark} from "@/global/Constants.ts";
 
 const router = useRouter();
 
@@ -87,25 +85,26 @@ const handleClick = (item: FolderView) => {
   }
 }
 
-const handleContextmenu = (e: PointerEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-  Cxt.showContextMenu({
-    x: e.x,
-    y: e.y,
-    theme: isDark.value ? 'mac dark' : 'mac',
-    items: [{
-      label: 'WebDAV',
-      onClick: () => {
-        handleAddFolder('webdav')
-      }
-    }, {
-      label: '本地',
-      onClick: () => {
-        handleAddFolder('local')
-      }
-    }]
-  })
+const handleContextmenu = () => {
+  // e.preventDefault();
+  // e.stopPropagation();
+  // Cxt.showContextMenu({
+  //   x: e.x,
+  //   y: e.y,
+  //   theme: isDark.value ? 'mac dark' : 'mac',
+  //   items: [{
+  //     label: 'WebDAV',
+  //     onClick: () => {
+  //       handleAddFolder('webdav')
+  //     }
+  //   }, {
+  //     label: '本地',
+  //     onClick: () => {
+  //       handleAddFolder('local')
+  //     }
+  //   }]
+  // })
+  handleAddFolder('local');
 }
 </script>
 

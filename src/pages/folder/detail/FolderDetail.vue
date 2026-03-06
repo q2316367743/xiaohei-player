@@ -122,6 +122,14 @@ function handleFileClick(item: FileItem) {
   if (item.isDirectory) {
     currentPath.value = item.path;
     loadFiles();
+  } else if (item.isFile) {
+    router.push({
+      path: '/player/link',
+      query: {
+        type: 'file',
+        src: props.adapter.getLink(item)
+      }
+    });
   }
 }
 
