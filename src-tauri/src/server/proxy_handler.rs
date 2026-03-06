@@ -55,9 +55,10 @@ async fn serve_proxy(
                 }
             }
 
-            let bytes = response.bytes().await.unwrap_or_default();
+            let stream = response.bytes_stream();
+            let body = Body::from_stream(stream);
 
-            builder
+            builder = builder
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS")
                 .header(
@@ -67,9 +68,9 @@ async fn serve_proxy(
                 .header(
                     "Access-Control-Expose-Headers",
                     "Content-Length, Content-Range, Accept-Ranges",
-                )
-                .body(Body::from(bytes))
-                .unwrap()
+                );
+
+            builder.body(body).unwrap()
         }
         Err(e) => (
             StatusCode::BAD_GATEWAY,

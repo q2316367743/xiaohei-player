@@ -1,6 +1,6 @@
 use axum::{
     body::Body,
-    extract::{Path as AxumPath, Request},
+    extract::{Path as AxumPath},
     http::{header, HeaderMap, Method, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
@@ -57,7 +57,6 @@ async fn serve_file(
     AxumPath(path): AxumPath<String>,
     headers: HeaderMap,
     method: Method,
-    _request: Request,
 ) -> Response {
     if method == Method::OPTIONS {
         return axum::http::Response::builder()
@@ -121,8 +120,8 @@ async fn serve_file(
 
                         let reader = tokio::io::BufReader::new(file);
                         let stream = ReaderStream::with_capacity(reader.take(content_length), 8192);
+                        
                         let body = Body::from_stream(stream);
-
                         let response = axum::http::Response::builder()
                             .status(StatusCode::PARTIAL_CONTENT)
                             .header(header::CONTENT_TYPE, mime_type)
