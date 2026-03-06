@@ -41,7 +41,14 @@
           </div>
         </div>
       </div>
-      <empty-result v-else tip="暂无文件夹"/>
+      <empty-result v-else tip="暂无文件夹">
+        <t-button theme="primary" @click="handleContextmenu()">
+          <template #icon>
+            <add-icon/>
+          </template>
+          新增文件夹
+        </t-button>
+      </empty-result>
     </div>
   </app-tool-layout>
 </template>
