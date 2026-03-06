@@ -8,7 +8,7 @@ module.exports = (cmd, args) => {
     const {url} = args;
     utools.shellOpenExternal(url);
     return Promise.resolve();
-  }else if (cmd === 'plugin:opener|reveal_item_in_dir') {
+  } else if (cmd === 'plugin:opener|reveal_item_in_dir') {
     /** @type {Array<string>} */
     const {paths} = args;
     for (const path of paths) {

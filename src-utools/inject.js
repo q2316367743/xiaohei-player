@@ -31,7 +31,12 @@ const browserWindowMap = new Map();
 const eventMap = new Map();
 const eventEmitter = new TaskEventEmitter(eventMap);
 
-module.exports = (label) => {
+/**
+ * 插件入口
+ * @param label {string} 标签
+ * @param [invoke_handler] {Record<string, (args) => Promise<void>>} 执行命令的回调
+ */
+module.exports = (label, invoke_handler) => {
 
   ipcRenderer.on('tauri', (_e, message) => {
     const {event, payload} = message
@@ -81,6 +86,9 @@ module.exports = (label) => {
         else if (level === 4) console.warn(msg);
         else if (level === 5) console.error(msg);
         else console.trace(msg);
+      }
+      if (invoke_handler) {
+        return invoke_handler[cmd](args);
       }
     },
     /**
