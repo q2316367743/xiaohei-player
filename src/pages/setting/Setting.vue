@@ -10,7 +10,7 @@
       <t-tab-panel label="日志" value="/setting/log"></t-tab-panel>
       <t-tab-panel label="关于" value="/setting/about"></t-tab-panel>
     </t-tabs>
-    <div class="setting-content">
+    <div class="setting-content" :style="contentStyle">
       <router-view/>
     </div>
     <t-back-top container=".setting-content" />
@@ -22,6 +22,17 @@ const router = useRouter();
 const path = ref('/setting/task');
 
 watch(path, value => router.push(value), {immediate: true});
+
+const contentStyle = computed(() => {
+  if (path.value === '/setting/about') {
+    return {
+      overflow: 'hidden',
+      padding: 0,
+      height: 'calc(100vh - 48px)'
+    }
+  }
+  return {};
+})
 </script>
 <style scoped lang="less">
 .setting {

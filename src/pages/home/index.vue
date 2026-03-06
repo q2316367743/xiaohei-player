@@ -55,7 +55,7 @@ const handleOpenUrl = () => {
   MessageBoxUtil.prompt("请输入您要播放的资源链接地址，一次仅可以识别1个链接", "打开链接", {
     confirmButtonText: '播放',
     cancelButtonText: '取消',
-    inputPlaceholder: '支持HTTP、HTTPS、FTP、磁力链、电驴链接、迅雷链接等'
+    inputPlaceholder: '支持HTTP、HTTPS链接'
   }).then(url => {
     if (!url) return;
     router.push({

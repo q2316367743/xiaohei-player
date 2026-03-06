@@ -5,8 +5,13 @@ import {useBoolState} from "@/hooks";
 import {logDebug} from "@/lib/log.ts";
 import {LocalName} from "@/global/LocalName.ts";
 
-export const APP_NAME = "xiaoheiplayer";
+export const APP_ID = 'com.esion.xiaohei-player';
+export const APP_NAME = "小黑影音";
+export const APP_DESC = "小黑影音是一个本地影音管理软件";
+export const APP_AUTHOR = "Esion";
+export const APP_GITHUB = 'https://github.com/q2316367743/xiaohei-player'
 export const APP_VERSION = "1.0.0";
+
 export const APP_PASSWORD = "6NU74Lx3gqKO5t"
 
 export const APP_DATA_DIR = () => appDataDir();
