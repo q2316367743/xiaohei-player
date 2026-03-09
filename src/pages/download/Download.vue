@@ -8,12 +8,8 @@
         下载列表
       </t-button>
     </template>
-    <t-tabs v-model="activeKey">
-      <t-tab-panel label="短视频" value="short"></t-tab-panel>
-      <t-tab-panel label="央视频" value="央视频"></t-tab-panel>
-    </t-tabs>
-    <div style="height: calc(100vh - 116px);overflow: auto">
-      <DownloadShortVideo v-if="activeKey === 'short'"/>
+    <div style="height: calc(100vh - 56px);overflow: auto">
+      <DownloadShortVideo />
     </div>
     <template #sidebar>
       <DownloadList/>
@@ -28,7 +24,6 @@ import DownloadShortVideo from "@/pages/download/components/DownloadShortVideo.v
 
 const downloadStore = useDownloadStore();
 const {sidebarVisible} = storeToRefs(downloadStore);
-const activeKey = ref('short');
 
 const toggleSidebar = () => {
   downloadStore.toggleSidebar();

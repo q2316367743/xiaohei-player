@@ -85,7 +85,8 @@ export async function updateVideoStatus(id: string, form: Partial<VideoStatusInf
 }
 
 export async function deleteVideo(id: string) {
-  await useSql().mapper<Video>('video').updateById(id, {is_deleted: 1});
+  // 非 0 则是删除
+  await useSql().mapper<Video>('video').updateById(id, {is_deleted: Date.now()});
 }
 
 export async function cleanDeletedVideo() {
