@@ -2,6 +2,7 @@ import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 import {readDir} from "@tauri-apps/plugin-fs";
 import {extname, join} from "@/module/file/util.ts";
 import type {FolderViewCoreLocal} from "@/entity/main/Folder.ts";
+import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 export class LocalFileAdapter implements FileBrowser {
 
@@ -12,9 +13,9 @@ export class LocalFileAdapter implements FileBrowser {
   }
 
 
-  getLink(item: FileItem): string {
-    if (!item.isFile) throw new Error("只能打开文件");
-    return join(this.base, item.path);
+  getLink(path: string): string {
+    const target = join(this.base, path);
+    return convertFileSrcToUrl(target);
   }
 
   async list(path: string): Promise<FileItem[]> {

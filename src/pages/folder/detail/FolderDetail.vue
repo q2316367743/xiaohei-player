@@ -2,9 +2,14 @@
   <div class="folder-detail-container">
     <div class="toolbar">
       <div class="toolbar-left">
-        <t-button variant="outline" shape="circle" @click="handleGoBack">
+        <t-button variant="outline" shape="circle" :disabled="isRootPath" @click="handleGoBack">
           <template #icon>
             <t-icon name="chevron-left"></t-icon>
+          </template>
+        </t-button>
+        <t-button variant="outline" shape="circle" @click="handleGoHome">
+          <template #icon>
+            <t-icon name="home"></t-icon>
           </template>
         </t-button>
         <t-button variant="outline" shape="circle" @click="handleRefresh">
@@ -33,7 +38,11 @@
       <div v-else class="file-grid">
         <div v-for="item in filteredFiles" :key="item.path" class="file-item" @click="handleFileClick(item)">
           <div class="file-icon-wrapper">
-            <t-icon :name="getFileIcon(item)" class="file-icon"></t-icon>
+            <folder-icon v-if="item.isDirectory" class="file-icon"/>
+            <template v-else-if="item.isFile">
+              <img v-if="item.cover" :src="item.cover" class="file-cover" alt=""/>
+              <file-icon v-else class="file-icon"/>
+            </template>
           </div>
           <div class="file-name" :title="item.name">{{ item.name }}</div>
         </div>
@@ -45,6 +54,8 @@
 <script lang="ts" setup>
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
+import { FileIcon, FolderIcon } from "tdesign-icons-vue-next";
+import {filterVideoFileList} from "@/module/file/util.ts";
 
 const router = useRouter();
 
@@ -52,6 +63,10 @@ const props = defineProps({
   adapter: {
     type: Object as PropType<FileBrowser>,
     required: true
+  },
+  folderId: {
+    type: String,
+    default: ''
   }
 });
 
@@ -68,14 +83,12 @@ const pathSegments = computed(() => {
   return ['/', ...parts];
 });
 
+const isRootPath = computed(() => {
+  return currentPath.value === '/' || currentPath.value === '';
+});
+
 const filteredFiles = computed(() => {
-  return files.value.filter(item => {
-    if (item.isDirectory) {
-      return true;
-    }
-    const ext = item.extname.toLowerCase().replace('.', '');
-    return folderExtname.value.includes(ext);
-  });
+  return filterVideoFileList(files.value, folderExtname.value, props.adapter);
 });
 
 onMounted(async () => {
@@ -101,6 +114,19 @@ async function loadFiles() {
 }
 
 function handleGoBack() {
+  if (currentPath.value === '/' || currentPath.value === '') {
+    return;
+  }
+  const parts = currentPath.value.split('/').filter(p => p);
+  if (parts.length === 1) {
+    currentPath.value = '/';
+  } else {
+    currentPath.value = '/' + parts.slice(0, -1).join('/');
+  }
+  loadFiles();
+}
+
+function handleGoHome() {
   router.back();
 }
 
@@ -124,20 +150,13 @@ function handleFileClick(item: FileItem) {
     loadFiles();
   } else if (item.isFile) {
     router.push({
-      path: '/player/link',
+      path: '/player/folder',
       query: {
-        type: 'file',
-        src: props.adapter.getLink(item)
+        folderId: props.folderId,
+        src: item.path
       }
     });
   }
-}
-
-function getFileIcon(item: FileItem): string {
-  if (item.isDirectory) {
-    return 'folder';
-  }
-  return 'video';
 }
 </script>
 

@@ -1,6 +1,9 @@
 import type {Folder, FolderType, FolderView, FolderViewCore} from "@/entity/main/Folder.ts";
 import {useSql} from "@/lib/sql.ts";
 import {checkMd5Password, md5} from "@/util/lang/CryptoUtil.ts";
+import {createFileAdapter, type FileBrowser} from "@/module/file";
+
+const fileBrowserMap = new Map<string, FileBrowser>();
 
 export async function listFolder(type?: FolderType): Promise<Array<FolderView>> {
   const list = await useSql().query<Folder>('folder')
@@ -54,5 +57,14 @@ export async function updateFolderPassword(id: string, old: string, password: st
 }
 
 export function removeFolder(id: string) {
+  fileBrowserMap.delete(id);
   return useSql().mapper<Folder>('folder').deleteById(id);
+}
+
+export async function createFileBrowser(id: string): Promise<FileBrowser | null> {
+  const cache = fileBrowserMap.get(id);
+  if (cache) return cache;
+  const folder = await getFolder(id);
+  if (!folder) return null;
+  return createFileAdapter(folder);
 }

@@ -7,12 +7,15 @@ export interface FileItem {
   isFile: boolean;
   isDirectory: boolean;
   isSymlink: boolean;
+
+  // 封面路径
+  cover?: string;
 }
 
 export interface FileBrowser {
 
   list(path: string): Promise<FileItem[]>;
 
-  getLink(item: FileItem): string;
+  getLink(path: string): string;
 
 }

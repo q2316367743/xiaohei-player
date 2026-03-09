@@ -24,12 +24,11 @@ export class WebDAVFileAdapter implements FileBrowser {
     this.base = prop.path;
   }
 
-  getLink(item: FileItem): string {
-    if (!item.isFile) throw new Error("只能打开文件");
-    const target = this.base + item.path;
+  getLink(path: string): string {
+    const target = this.base + path;
 
     const url = this.client.getFileDownloadLink(target);
-    return convertWebDavToUrl(item.name, url, this.username, this.password, this.type);
+    return convertWebDavToUrl('xxx.mp4', url, this.username, this.password, this.type);
   }
 
   async list(path: string): Promise<FileItem[]> {

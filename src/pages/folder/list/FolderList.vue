@@ -88,8 +88,10 @@ const handleClick = (item: FolderView) => {
           MessageUtil.error("密码错误");
         }
       })
-    })
+    });
+    return;
   }
+  router.push(`/folder/detail/${item.id}`);
 }
 
 const handleContextmenu = () => {

@@ -95,6 +95,11 @@ export const router = createRouter({
       name: "PlayerLink",
       path: '/player/link',
       component: () => import('@/pages/player/link/index.vue'),
+    },
+    {
+      name: "PlayerFolder",
+      path: '/player/folder',
+      component: () => import('@/pages/player/folder/index.vue'),
     }
   ]
 });
