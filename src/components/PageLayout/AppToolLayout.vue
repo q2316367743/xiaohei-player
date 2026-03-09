@@ -12,7 +12,8 @@
         <t-content class="h-full overflow-y-auto">
           <slot/>
         </t-content>
-        <t-aside v-if="slot.sidebar" class="h-full overflow-y-auto" :width="showSidebar ? `${sidebarWidth}px` : '0'">
+        <t-aside v-if="slot.sidebar" class="h-full overflow-y-auto" :width="showSidebar ? `${sidebarWidth}px` : '0'"
+                 style="border-left: 1px solid var(--td-border-level-1-color)">
           <slot name="sidebar"/>
         </t-aside>
       </t-layout>

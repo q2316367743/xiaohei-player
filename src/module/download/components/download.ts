@@ -5,6 +5,16 @@ import {mkdir, writeTextFile} from "@tauri-apps/plugin-fs";
 import {download} from '@tauri-apps/plugin-upload';
 import {logDebug, logError} from "@/lib/log.ts";
 
+function getDownloadHeaders(): Map<string, string> {
+  const headers = new Map<string, string>();
+  headers.set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  headers.set('Accept', '*/*');
+  headers.set('Accept-Language', 'zh-CN,zh;q=0.9,en;q=0.8');
+  headers.set('Accept-Encoding', 'gzip, deflate, br');
+  headers.set('Connection', 'keep-alive');
+  return headers;
+}
+
 function transferName(name: string): string {
   const n = name.replace(/#\S+/g, '').replace(/[<>:"/\\|?*]/g, '_').trim();
   return n || `${Date.now()}`;
@@ -40,10 +50,11 @@ export async function pluginDownload(
   // 下载视频
   const videoPath = join(dir, `${fileName}.mp4`);
   logDebug('[download] 下载视频', videoPath);
+  const headers = getDownloadHeaders();
   await download(res.video, videoPath, progressHandler ? p => progressHandler({
     ...p,
     title: '下载视频中...'
-  }) : undefined);
+  }) : undefined, headers);
 
   let coverPath: string | undefined = undefined;
   try {
@@ -54,7 +65,7 @@ export async function pluginDownload(
       await download(res.cover, coverPath, progressHandler ? p => progressHandler({
         ...p,
         title: '下载封面中...'
-      }) : undefined);
+      }) : undefined, headers);
     }
   } catch (e) {
     logError('[download] 下载封面失败', e);

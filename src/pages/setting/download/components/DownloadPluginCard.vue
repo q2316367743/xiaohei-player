@@ -1,6 +1,7 @@
 <template>
   <t-card>
-    <t-table :columns="columns" :data="plugins">
+    <t-empty v-if="plugins.length === 0" description="暂无插件"/>
+    <t-table v-else :columns="columns" :data="plugins" row-key="id">
       <template #platform="{ row }">
         <t-space size="small" wrap>
           <t-tag v-for="platform in row.platform" :key="platform" size="small">
@@ -19,7 +20,6 @@
         </t-space>
       </template>
     </t-table>
-    <t-empty v-if="plugins.length === 0" description="暂无插件"/>
   </t-card>
 </template>
 <script lang="ts" setup>

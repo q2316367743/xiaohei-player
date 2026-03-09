@@ -48,12 +48,11 @@
 </template>
 
 <script lang="ts" setup>
-import {useDownloadStore} from "@/store";
-import {storeToRefs} from "pinia";
+import {type DownloadTask, useDownloadStore} from "@/store";
 import {prettyDataUnit} from "@/util/lang/FormatUtil.ts";
 
 const downloadStore = useDownloadStore();
-const {tasks} = storeToRefs(downloadStore);
+const tasks = computed<Array<DownloadTask>>(() => downloadStore.tasks);
 
 const hasCompleted = computed(() => tasks.value.some((t: any) => t.status === 'completed'));
 
@@ -90,171 +89,9 @@ const getStatusText = (status: string) => {
   return texts[status] || status;
 };
 
-const formatSpeed = (bytesPerSecond: number) => {
-  if (bytesPerSecond < 1024) {
-    return `${bytesPerSecond.toFixed(2)} B/s`;
-  } else if (bytesPerSecond < 1024 * 1024) {
-    return `${(bytesPerSecond / 1024).toFixed(2)} KB/s`;
-  } else {
-    return `${(bytesPerSecond / (1024 * 1024)).toFixed(2)} MB/s`;
-  }
-};
+const formatSpeed = (bytesPerSecond: number) => `${prettyDataUnit(bytesPerSecond)}/s`;
 </script>
 
 <style scoped lang="less">
-.download-list-card {
-  height: 100%;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
-
-
-.download-list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--td-component-border);
-  background: linear-gradient(180deg, var(--td-bg-color-container) 0%, var(--td-bg-color-secondarycontainer) 100%);
-  box-shadow: var(--td-shadow-2);
-}
-
-
-.download-list-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--td-text-color-primary);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.download-list-actions {
-  border-bottom: 1px solid var(--td-component-border);
-  background: var(--td-bg-color-container);
-}
-
-
-.download-list-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
-}
-
-.download-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  color: var(--td-text-color-placeholder);
-  gap: 12px;
-  animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInItem {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.download-item-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.download-item-title {
-  flex: 1;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--td-text-color-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  width: 220px;
-}
-
-.download-item-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.download-item-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--td-text-color-secondary);
-  padding: 6px 10px;
-  background: linear-gradient(145deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.04) 100%);
-  border-radius: var(--td-radius-small);
-  border: 1px solid var(--td-component-border);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.download-item-error {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--td-error-color);
-  padding: 12px;
-  background: linear-gradient(145deg, var(--td-error-color-1) 0%, var(--td-error-color-2) 100%);
-  border-radius: var(--td-radius-medium);
-  border: 1px solid var(--td-error-color-3);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.download-item-success {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--td-success-color);
-  padding: 12px;
-  background: linear-gradient(145deg, var(--td-success-color-1) 0%, var(--td-success-color-2) 100%);
-  border-radius: var(--td-radius-medium);
-  border: 1px solid var(--td-success-color-3);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-  animation: successPulse 0.5s ease-out;
-}
-
-@keyframes successPulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+@import "less/DownloadList.less";
 </style>
