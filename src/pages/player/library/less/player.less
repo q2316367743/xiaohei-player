@@ -49,9 +49,10 @@
     overflow: hidden;
 
     .video-info-panel-container {
-      width: 320px;
-      min-width: 280px;
-      max-width: 400px;
+      flex: 310px;
+      width: 310px;
+      min-width: 310px;
+      max-width: 310px;
       padding: 8px;
       background: var(--td-bg-color-page);
       overflow-y: hidden;
@@ -59,8 +60,8 @@
     }
 
     .video-content-container {
-      width: calc(100% - 320px);
       flex: 1;
+      width: calc(100% - 326px);
       display: flex;
       flex-direction: column;
       background: var(--td-bg-color-page);
@@ -68,19 +69,3 @@
   }
 }
 
-:deep(.t-layout) {
-  background: var(--td-bg-color-page);
-}
-
-:deep(.t-layout-header) {
-  background: var(--td-bg-color-container);
-  box-shadow: var(--td-shadow-1);
-}
-
-:deep(.t-layout-sider) {
-  background: var(--td-bg-color-page);
-}
-
-:deep(.t-layout-content) {
-  background: var(--td-bg-color-page);
-}

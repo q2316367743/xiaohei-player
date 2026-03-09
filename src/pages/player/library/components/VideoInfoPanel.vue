@@ -35,7 +35,7 @@
         </div>
       </t-tab-panel>
 
-      <t-tab-panel label="文件信息" value="file">
+      <t-tab-panel label="文件" value="file">
         <wd-cell-group title="视频信息" border>
           <wd-cell title="时长" :value="formatDuration(video?.duration_ms || 0)"/>
           <wd-cell title="大小" :value="formatSize(video?.file_size || 0)"/>
@@ -61,7 +61,7 @@
         </div>
       </t-tab-panel>
 
-      <t-tab-panel label="历史记录" value="history">
+      <t-tab-panel label="历史" value="history">
         <wd-cell-group title="播放统计" border>
           <wd-cell title="播放次数" :value="video?.play_count?.toString() || '0'"/>
           <wd-cell title="最后播放时间" :value="formatDate(video?.last_played_at)"/>
@@ -75,6 +75,12 @@
             <wd-cell v-if="video?.error_message" title="错误信息" :value="video?.error_message" ellipsis/>
           </wd-cell-group>
         </div>
+      </t-tab-panel>
+
+      <t-tab-panel label="标记" value="marker">
+      </t-tab-panel>
+
+      <t-tab-panel label="队列" value="list">
       </t-tab-panel>
 
     </t-tabs>
