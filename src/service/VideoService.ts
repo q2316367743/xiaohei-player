@@ -11,6 +11,8 @@ import type {VideoTag} from "@/entity/domain/VideoTag.ts";
 import {listActorView, saveOrUpdateActor, saveVideoActor} from "@/service/ActorService.ts";
 import {listTagView, saveOrUpdateTag, saveVideoTag} from "@/service/TagService.ts";
 import {getStudio, saveOrUpdateStudio} from "@/service/StudioService.ts";
+import {useSnowflake} from "@/util";
+import type {Marker} from "@/entity/domain/Marker.ts";
 
 
 export async function saveVideo(form: VideoAddForm, hash: string) {
@@ -33,7 +35,7 @@ export async function saveVideo(form: VideoAddForm, hash: string) {
     // 状态信息
     last_played_at: 0,
     play_count: 0,
-    is_deleted: 0,
+    is_deleted: '0',
     scan_status: 'completed',
     error_message: '',
   });
@@ -45,7 +47,7 @@ export async function updateVideo(id: string, form: Partial<VideoAddForm>) {
 
   // 获取旧的
   const old = await getVideoById(id);
-  if (!old) return Promise.reject(new Error("视频不存在"));
+  if (!old) return Promise.reject("视频不存在");
 
   let studio_id: string | undefined = undefined;
   // 先处理工作室
@@ -86,16 +88,17 @@ export async function updateVideoStatus(id: string, form: Partial<VideoStatusInf
 
 export async function deleteVideo(id: string) {
   // 非 0 则是删除
-  await useSql().mapper<Video>('video').updateById(id, {is_deleted: Date.now()});
+  await useSql().mapper<Video>('video').updateById(id, {is_deleted: useSnowflake().nextId()});
 }
 
 export async function cleanDeletedVideo() {
-  const deletedVideos = await useSql().query<Video>('video').eq('is_deleted', 1).list();
+  const deletedVideos = await useSql().query<Video>('video').ne('is_deleted', '').list();
 
   for (const video of deletedVideos) {
     await useSql().query<VideoActor>('video_actor').eq('video_id', video.id).delete();
     await useSql().query<VideoTag>('video_tag').eq('video_id', video.id).delete();
     await useSql().mapper<Video>('video').deleteById(video.id);
+    await useSql().mapper<Marker>('marker').deleteById(video.id);
   }
 
   return deletedVideos.length;
@@ -115,7 +118,7 @@ export async function pageVideo(
   type: SortOrder = 'ASC'
 ) {
   return useSql().query<Video>('video')
-    .eq('is_deleted', 0)
+    .eq('is_deleted', '0')
     .eq('library_id', libraryId)
     .order(order, type)
     .page(page, size);
@@ -126,13 +129,13 @@ export async function listAllVideo() {
 }
 
 export async function listVideo() {
-  return await useSql().query<Video>('video').eq('is_deleted', 0).list();
+  return await useSql().query<Video>('video').eq('is_deleted', '0').list();
 }
 
 export async function getVideoById(id: string) {
   return useSql().query<Video>('video')
     .eq('id', id)
-    .eq('is_deleted', 0)
+    .eq('is_deleted', '0')
     .get();
 }
 
@@ -148,7 +151,7 @@ interface VideoMetadataFormWrap extends VideoMetadataForm {
 export async function getVideoMetadataById(id: string): Promise<VideoMetadataFormWrap | undefined> {
   const video = await useSql().query<Video>('video')
     .eq('id', id)
-    .eq('is_deleted', 0)
+    .eq('is_deleted', '0')
     .get();
   if (!video) return undefined;
   const [tags, actors] = await Promise.all([

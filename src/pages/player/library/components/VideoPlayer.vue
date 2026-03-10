@@ -2,41 +2,14 @@
   <div class="video-content">
     <div ref="playerRef" class="artplayer"></div>
 
-    <div class="keyframes-timeline" v-if="vttCues.length > 0">
-      <div class="timeline-indicator-fixed">
-        <div class="indicator-line"></div>
-        <div class="indicator-head"></div>
-      </div>
-      <div
-        class="timeline-container"
-        ref="timelineRef"
-        @mousedown="onTimelineMouseDown"
-        @mousemove="onTimelineMouseMove"
-        @mouseup="onTimelineMouseUp"
-        @mouseleave="onTimelineMouseLeave"
-        @wheel.prevent="onTimelineWheel"
-      >
-        <div
-          class="timeline-track"
-          :style="{ transform: `translateX(${-scrollOffset}px)` }"
-        >
-          <div
-            v-for="(cue, index) in vttCues"
-            :key="index"
-            class="keyframe-item"
-            :style="getKeyframeStyle(cue)"
-            @click="seekToTime(cue.startTime)"
-          />
-        </div>
-      </div>
-      <div
-        class="timeline-tooltip"
-        v-if="isDragging || hoverCue"
-        :style="{ left: '50%' }"
-      >
-        {{ hoverCue ? formatTime(hoverCue.startTime) : formatTime(currentTime) }}
-      </div>
-    </div>
+    <KeyframesTimeline
+      v-if="vttCues.length > 0"
+      :vttCues="vttCues"
+      :currentTime="currentTime"
+      :duration="duration"
+      :spriteUrl="spriteUrl"
+      @seek="seekToTime"
+    />
   </div>
 </template>
 
@@ -49,7 +22,8 @@ import {getCurrentWindow} from "@tauri-apps/api/window";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {getVideoType, playFlv, playM3u8, playTs} from "@/lib/artplayer.ts";
 import {debounce} from "es-toolkit";
-import {updateVideoStatus} from "@/service";
+import {listMarker, updateVideoStatus} from "@/service";
+import KeyframesTimeline from "./KeyframesTimeline.vue";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -61,108 +35,11 @@ const props = defineProps<{
 
 const currentWindow = getCurrentWindow();
 const playerRef = ref<HTMLDivElement>();
-const timelineRef = ref<HTMLDivElement>();
 const player = ref<Artplayer>();
 const vttCues = ref<VttCue[]>([]);
 const currentTime = ref(0);
 const duration = ref(0);
-const scrollOffset = ref(0);
-const hoverCue = ref<VttCue | null>(null);
-const isDragging = ref(false);
-const dragStartX = ref(0);
-const dragStartOffset = ref(0);
 const spriteUrl = ref('');
-
-function formatTime(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  const ms = Math.floor((seconds % 1) * 100);
-
-  if (hours > 0) {
-    return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
-  }
-  return `${minutes}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
-}
-
-function updateScrollOffset() {
-  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return false;
-
-  const containerWidth = timelineRef.value.clientWidth;
-  const currentPercent = currentTime.value / duration.value;
-  const totalWidth = timelineRef.value.scrollWidth;
-
-  const targetOffset = currentPercent * totalWidth - containerWidth / 2;
-  const newOffset = Math.max(0, Math.min(totalWidth - containerWidth, targetOffset));
-
-  if (scrollOffset.value !== newOffset) {
-    scrollOffset.value = newOffset;
-    return true;
-  }
-  return false;
-}
-
-function getCueAtCenter(): VttCue | null {
-  if (!timelineRef.value || vttCues.value.length === 0 || duration.value === 0) return null;
-
-  const containerWidth = timelineRef.value.clientWidth;
-  const centerPercent = (scrollOffset.value + containerWidth / 2) / timelineRef.value.scrollWidth;
-  const centerTime = centerPercent * duration.value;
-
-  return vttCues.value.find(cue =>
-    centerTime >= cue.startTime && centerTime <= cue.endTime
-  ) || null;
-}
-
-function onTimelineMouseDown(event: MouseEvent) {
-  isDragging.value = true;
-  dragStartX.value = event.clientX;
-  dragStartOffset.value = scrollOffset.value;
-  hoverCue.value = getCueAtCenter();
-}
-
-function onTimelineMouseMove(event: MouseEvent) {
-  if (!timelineRef.value) return;
-
-  if (isDragging.value) {
-    const deltaX = event.clientX - dragStartX.value;
-    const newOffset = dragStartOffset.value - deltaX;
-    const maxOffset = timelineRef.value.scrollWidth - timelineRef.value.clientWidth;
-    scrollOffset.value = Math.max(0, Math.min(maxOffset, newOffset));
-
-    hoverCue.value = getCueAtCenter();
-  } else {
-    const rect = timelineRef.value.getBoundingClientRect();
-    const scrollPos = scrollOffset.value + (event.clientX - rect.left);
-    const totalWidth = timelineRef.value.scrollWidth;
-    const percent = scrollPos / totalWidth;
-    const hoverTimeSec = percent * duration.value;
-
-    hoverCue.value = vttCues.value.find(cue =>
-      hoverTimeSec >= cue.startTime && hoverTimeSec <= cue.endTime
-    ) || null;
-  }
-}
-
-function onTimelineMouseUp() {
-  if (hoverCue.value) {
-    seekToTime(hoverCue.value.startTime);
-  }
-  isDragging.value = false;
-}
-
-function onTimelineMouseLeave() {
-  isDragging.value = false;
-  hoverCue.value = null;
-}
-
-function onTimelineWheel(event: WheelEvent) {
-  if (!timelineRef.value) return;
-  const delta = event.deltaY > 0 ? 100 : -100;
-  const maxOffset = timelineRef.value.scrollWidth - timelineRef.value.clientWidth;
-  scrollOffset.value = Math.max(0, Math.min(maxOffset, scrollOffset.value + delta));
-  hoverCue.value = getCueAtCenter();
-}
 
 async function loadVtt() {
   if (!props.video?.vtt_path) {
@@ -202,6 +79,12 @@ function findCueByTime(time: number): VttCue | null {
     time >= cue.startTime && time <= cue.endTime
   ) || null;
 }
+
+
+const updateResumeTime = debounce(async rt => {
+  if (!props.video) return;
+  await updateVideoStatus(props.video.id, {resume_time: rt})
+}, 300);
 
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
@@ -309,7 +192,7 @@ function initPlayer() {
         }
       }
     ]
-  }, () => {
+  }, art => {
     console.log('Player is ready');
     if (props.video?.resume_time) {
       seekToTime(props.video.resume_time);
@@ -317,31 +200,24 @@ function initPlayer() {
     if (player.value?.video) {
       duration.value = player.value.video.duration || 0;
     }
+    listMarker(props.video!.id).then(() => {
+    })
+    art.on('video:timeupdate', () => {
+      currentTime.value = art.currentTime;
+    });
+    art.on('seek', res => {
+      updateResumeTime(res);
+    });
+    art.on('fullscreenWeb', e => {
+      if (!e) {
+        currentWindow.setFullscreen(false);
+      }
+    });
+    art.on('error', (error) => {
+      console.error('Player error:', error);
+    });
   });
 
-
-  player.value.on('fullscreenWeb', e => {
-    if (!e) {
-      currentWindow.setFullscreen(false);
-    }
-  })
-
-  player.value.on('error', (error) => {
-    console.error('Player error:', error);
-  });
-
-  const updateResumeTime = debounce(async rt => {
-    if (!props.video) return;
-    await updateVideoStatus(props.video.id, {resume_time: rt})
-  }, 300);
-
-  player.value.on('seek', res => {
-    currentTime.value = res;
-    updateResumeTime(res)
-    if (!isDragging.value) {
-      updateScrollOffset();
-    }
-  });
 }
 
 function seekToTime(time: number) {
@@ -350,30 +226,12 @@ function seekToTime(time: number) {
   }
 }
 
-function getKeyframeStyle(cue: VttCue) {
-  if (!props.video?.sprite_path || !spriteUrl.value) {
-    return {};
-  }
-
-
-  return {
-    backgroundImage: `url(${spriteUrl.value})`,
-    backgroundPosition: `-${cue.x}px -${cue.y}px`,
-    backgroundSize: `${cue.width * 9}px auto`,
-    width: `${cue.width}px`,
-    height: `${cue.height}px`
-  };
-}
-
 function init() {
   if (props.video?.sprite_path) {
     spriteUrl.value = convertFileSrcToUrl(props.video.sprite_path);
   }
   loadVtt().then(() => {
     initPlayer();
-    nextTick(() => {
-      updateScrollOffset();
-    });
   });
 }
 

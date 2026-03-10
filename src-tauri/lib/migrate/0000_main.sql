@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS video
 
     library_id       TEXT    NOT NULL DEFAULT '',        -- 所属媒体库
 
-    file_path        TEXT    NOT NULL DEFAULT '' UNIQUE, -- 当前绝对文件路径 (UNIQUE 约束防止同一路径重复插入，但允许 Hash 相同路径不同？需业务逻辑控制)
+    file_path        TEXT    NOT NULL DEFAULT '',        -- 当前绝对文件路径 (UNIQUE 约束防止同一路径重复插入，但允许 Hash 相同路径不同？需业务逻辑控制)
     screenshot_path  TEXT    NOT NULL DEFAULT '',
     sprite_path      TEXT    NOT NULL DEFAULT '',
     vtt_path         TEXT    NOT NULL DEFAULT '',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS video
     resume_time      INTEGER NOT NULL DEFAULT 0,         -- 续播位置
 
     -- 状态标记
-    is_deleted       INTEGER NOT NULL DEFAULT 0,         -- 软删除标记 (0:正常, 1:已删除)
+    is_deleted       TEXT    NOT NULL DEFAULT '0',       -- 软删除标记 (0:正常, 1:已删除)
     scan_status      TEXT    NOT NULL DEFAULT 'pending', -- 扫描状态: 'pending', 'scanning', 'completed', 'error'
     error_message    TEXT    NOT NULL DEFAULT ''         -- 扫描或处理错误信息
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS video
 CREATE INDEX IF NOT EXISTS idx_video_library ON video (library_id);
 CREATE INDEX IF NOT EXISTS idx_video_title ON video (title);
 CREATE INDEX IF NOT EXISTS idx_video_last_played ON video (last_played_at DESC);
-CREATE INDEX IF NOT EXISTS idx_video_file_path ON video (file_path);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_video_file_path ON video (file_path, is_deleted);
 
 -- 演员
 CREATE TABLE IF NOT EXISTS actor
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS video_actor
     created_at  INTEGER NOT NULL DEFAULT 0,
     updated_at  INTEGER NOT NULL DEFAULT 0,
     video_id    TEXT    NOT NULL DEFAULT '', -- 对应 videos.id (Hash)
-    actor_id    TEXT    NOT NULL DEFAULT '',  -- 对应 actors.id
+    actor_id    TEXT    NOT NULL DEFAULT '', -- 对应 actors.id
     role_name   TEXT    NOT NULL DEFAULT '', -- 在该视频中饰演的角色名
     order_index INTEGER NOT NULL DEFAULT 0   -- 演员排序 (主演在前)
 );
@@ -133,3 +133,21 @@ CREATE TABLE IF NOT EXISTS video_tag
 );
 
 CREATE INDEX IF NOT EXISTS idx_video_tags_tag ON video_tag (tag_id);
+
+CREATE TABLE IF NOT EXISTS marker
+(
+    id          TEXT PRIMARY KEY,
+    created_at  INTEGER NOT NULL DEFAULT 0,
+    updated_at  INTEGER NOT NULL DEFAULT 0,
+    library_id  TEXT    NOT NULL DEFAULT '',
+    video_id    TEXT    NOT NULL DEFAULT '',
+
+    name        TEXT    NOT NULL DEFAULT '',
+    time        INTEGER NOT NULL DEFAULT 0,
+    description TEXT    NOT NULL DEFAULT '',
+    image       TEXT    NOT NULL DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS idx_marker_video ON marker (video_id);
+CREATE INDEX IF NOT EXISTS idx_marker_library ON marker (library_id);
+
