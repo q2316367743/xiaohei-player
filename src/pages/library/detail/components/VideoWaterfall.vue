@@ -111,7 +111,6 @@ function formatSize(bytes: number): string {
 
   &:hover {
     box-shadow: var(--td-shadow-3);
-    transform: translateY(-4px) scale(1.02);
   }
 }
 
