@@ -5,6 +5,7 @@
     "types": [
       "vite/client"
     ],
+    "lib": ["ESNext"],
     "jsx": "preserve",
     "jsxImportSource": "vue",
     /* Linting */

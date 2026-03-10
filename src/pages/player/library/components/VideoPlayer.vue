@@ -22,8 +22,9 @@ import {getCurrentWindow} from "@tauri-apps/api/window";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {getVideoType, playFlv, playM3u8, playTs} from "@/lib/artplayer.ts";
 import {debounce} from "es-toolkit";
-import {listMarker, updateVideoStatus} from "@/service";
+import {updateVideoStatus} from "@/service";
 import KeyframesTimeline from "./KeyframesTimeline.vue";
+import type {Marker} from "@/entity/domain/Marker.ts";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -31,6 +32,7 @@ defineOptions({
 
 const props = defineProps<{
   video?: Video;
+  markers: Array<Marker>;
 }>();
 
 const currentWindow = getCurrentWindow();
@@ -64,7 +66,7 @@ function getThumbnailStyle(cue: VttCue) {
   const displayWidth = cue.width * scale;
   const spriteWidth = 2880;
   const spriteHeight = 1620;
-  
+
   return {
     backgroundImage: `url(${spriteUrl.value})`,
     backgroundPosition: `-${cue.x * scale}px -${cue.y * scale}px`,
@@ -142,12 +144,12 @@ function initPlayer() {
         },
         mounted($control: HTMLElement) {
           const art = this as unknown as Artplayer;
-          
+
           art.on('setBar', (type: string, percentage: number) => {
             if (type === 'hover') {
               const second = percentage * art.duration;
               const cue = findCueByTime(second);
-              
+
               if (cue) {
                 const style = getThumbnailStyle(cue);
                 $control.style.display = 'flex';
@@ -156,12 +158,12 @@ function initPlayer() {
                 $control.style.backgroundSize = style.backgroundSize as string;
                 $control.style.width = style.width as string;
                 $control.style.height = style.height as string;
-                
+
                 const progressWidth = art.template.$progress.clientWidth;
                 const width = progressWidth * percentage;
                 const scale = THUMBNAIL_HEIGHT / cue.height;
                 const thumbWidth = cue.width * scale;
-                
+
                 if (width <= thumbWidth / 2) {
                   $control.style.left = '0px';
                 } else if (width > progressWidth - thumbWidth / 2) {
@@ -174,10 +176,105 @@ function initPlayer() {
               }
             }
           });
-          
+
           art.template.$progress.addEventListener('mouseleave', () => {
             $control.style.display = 'none';
           });
+        }
+      }] : []),
+      ...(props.markers.length > 0 ? [{
+        name: 'markers',
+        position: 'top' as const,
+        index: 21,
+        html: '<div class="art-control-markers"></div>',
+        style: {
+          position: 'absolute',
+          bottom: '100%',
+          left: '0',
+          right: '0',
+          height: '12px',
+          pointerEvents: 'none',
+          zIndex: '50',
+        },
+        mounted($control: HTMLElement) {
+          const art = this as unknown as Artplayer;
+
+          function renderMarkers() {
+            $control.innerHTML = '';
+            const progressWidth = art.template.$progress.clientWidth;
+
+            props.markers.forEach(marker => {
+              const percentage = marker.time / art.duration;
+              const left = percentage * progressWidth;
+
+              const markerEl = document.createElement('div');
+              markerEl.className = 'art-marker-point';
+              markerEl.style.cssText = `
+                position: absolute;
+                left: ${left}px;
+                top: 0;
+                width: 8px;
+                height: 8px;
+                background: #ff6b6b;
+                border-radius: 50%;
+                transform: translateX(-50%);
+                cursor: pointer;
+                pointer-events: auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                transition: transform 0.2s, box-shadow 0.2s;
+              `;
+
+              markerEl.addEventListener('mouseenter', () => {
+                markerEl.style.transform = 'translateX(-50%) scale(1.5)';
+                markerEl.style.boxShadow = '0 4px 8px rgba(255, 107, 107, 0.5)';
+              });
+
+              markerEl.addEventListener('mouseleave', () => {
+                markerEl.style.transform = 'translateX(-50%) scale(1)';
+                markerEl.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+              });
+
+              markerEl.addEventListener('click', () => {
+                art.seek = marker.time;
+              });
+
+              const tooltip = document.createElement('div');
+              tooltip.className = 'art-marker-tooltip';
+              tooltip.textContent = marker.name;
+              tooltip.style.cssText = `
+                position: absolute;
+                bottom: 14px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: #fff;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                white-space: nowrap;
+                opacity: 0;
+                transition: opacity 0.2s;
+                pointer-events: none;
+              `;
+
+              markerEl.appendChild(tooltip);
+
+              markerEl.addEventListener('mouseenter', () => {
+                tooltip.style.opacity = '1';
+              });
+
+              markerEl.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+              });
+
+              $control.appendChild(markerEl);
+            });
+          }
+
+          art.on('video:loadedmetadata', renderMarkers);
+          art.on('resize', renderMarkers);
+
+          setTimeout(renderMarkers, 100);
         }
       }] : []),
       {
@@ -200,8 +297,6 @@ function initPlayer() {
     if (player.value?.video) {
       duration.value = player.value.video.duration || 0;
     }
-    listMarker(props.video!.id).then(() => {
-    })
     art.on('video:timeupdate', () => {
       currentTime.value = art.currentTime;
     });
@@ -244,6 +339,13 @@ onBeforeUnmount(() => {
     player.value.destroy();
   }
 });
+defineExpose({
+  getCurrentTime: () => currentTime.value,
+  seekTo: (time: number) => {
+    if (!player.value) return;
+    player.value.seek = time;
+  }
+})
 </script>
 
 <style scoped lang="less">

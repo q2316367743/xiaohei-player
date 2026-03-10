@@ -12,8 +12,8 @@ export interface MarkerUpdateForm {
 }
 
 export interface MarkerAddForm extends MarkerUpdateForm {
-  library_id: number;
-  video_id: number;
+  library_id: string;
+  video_id: string;
 }
 
 export interface Marker extends BaseEntity, MarkerAddForm {

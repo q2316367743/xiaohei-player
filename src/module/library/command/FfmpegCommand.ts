@@ -308,3 +308,31 @@ export async function getVideoInfo(ffprobe: string, path: string): Promise<Video
     container_format: format.format_name?.split(",")[0] || ""
   };
 }
+
+/**
+ * 生成视频标记
+ * @param ffmpeg ffmpeg 路径
+ * @param video 视频路径
+ * @param marker 生成的标记路径
+ * @param time 标记时间（秒）
+ */
+export async function generateMarker(
+  ffmpeg: string,
+  video: string,
+  marker: string,
+  time: number
+) {
+  await ensureDir(marker);
+  await execFfmepgCommand(ffmpeg, [
+    "-ss",
+    String(time),
+    "-i",
+    video,
+    "-vframes",
+    "1",
+    "-f",
+    "image2",
+    "-y",
+    marker
+  ]);
+}

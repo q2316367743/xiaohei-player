@@ -1,8 +1,9 @@
 import {listAllVideo} from "@/service";
-import {appDataDir, join} from "@tauri-apps/api/path";
+import {join} from "@tauri-apps/api/path";
 import {useSystemSettingStore} from "@/lib/store.ts";
 import {readDir, remove} from "@tauri-apps/plugin-fs";
 import {logError} from "@/lib/log.ts";
+import {APP_DATA_DIR} from "@/global/Constants.ts";
 
 async function handleFolder(path: string, videoNames: Array<string>, extname: string) {
   const files = await readDir(path);
@@ -34,7 +35,7 @@ export async function cleanGenerateFile(
   const videoNames = videos.map(v => v.id);
 
   // 获取生成目录
-  const app = await appDataDir();
+  const app = await APP_DATA_DIR();
   const generateDir = await join(app, system.dataPath);
 
   const coverDir = await join(generateDir, "cover");

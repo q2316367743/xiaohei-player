@@ -1,5 +1,5 @@
 import {useSql} from "@/lib/sql.ts";
-import type {Marker} from "@/entity/domain/Marker.ts";
+import type {Marker, MarkerAddForm} from "@/entity/domain/Marker.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 
@@ -10,4 +10,13 @@ export async function listMarker(videoId: string): Promise<Array<Marker>> {
     ...e,
     image: convertFileSrcToUrl(e.image)
   }))
+}
+
+export function addMarker(form: MarkerAddForm) {
+  const now = Date.now();
+  return useSql().mapper<Marker>('marker').insert({
+    ...form,
+    created_at: now,
+    updated_at: now
+  })
 }

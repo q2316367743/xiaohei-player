@@ -78,6 +78,13 @@
       </t-tab-panel>
 
       <t-tab-panel label="标记" value="marker">
+        <t-button theme="primary" @click="handleAddMarker()">创建标记</t-button>
+        <t-empty v-if="markers.length === 0" title="暂无标记" class="mt-15vh"/>
+        <t-list split>
+          <t-list-item v-for="marker in markers" :key="marker.id" @click="handleClickMarker(marker)">
+            <t-list-item-meta :image="marker.image" :title="marker.name" :description="marker.description"/>
+          </t-list-item>
+        </t-list>
       </t-tab-panel>
 
       <t-tab-panel label="队列" value="list">
@@ -89,6 +96,7 @@
 
 <script lang="ts" setup>
 import type {VideoView} from '@/entity/domain/Video.ts';
+import type {Marker} from "@/entity/domain/Marker.ts";
 
 defineOptions({
   name: 'VideoInfoPanel'
@@ -96,7 +104,10 @@ defineOptions({
 
 const props = defineProps<{
   video: VideoView;
+  markers: Array<Marker>;
 }>();
+
+const emit = defineEmits(['addMarker', 'clickMarker']);
 
 const activeTab = ref('intro');
 
@@ -164,6 +175,13 @@ function formatBitrate(bitrate?: number): string {
     return `${(bitrate / 1000).toFixed(0)} kbps`;
   }
   return `${(bitrate / 1000000).toFixed(1)} Mbps`;
+}
+
+function handleAddMarker() {
+  emit('addMarker');
+}
+function handleClickMarker(marker: Marker) {
+  emit('clickMarker', marker);
 }
 </script>
 
