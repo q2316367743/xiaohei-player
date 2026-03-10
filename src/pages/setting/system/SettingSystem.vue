@@ -49,30 +49,6 @@
     <t-card>
       <t-list size="small" split>
         <t-list-item>
-          <t-list-item-meta title="生成数据的存储路径">
-            <template #description>
-              生成数据的存储目录（短片标记，短片预览，预览图等）
-              <br/>
-              <t-link theme="primary">{{ data.dataPath || '未设置' }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-button theme="primary" @click="onPathEdit('dataPath')">编辑</t-button>
-          </template>
-        </t-list-item>
-        <t-list-item>
-          <t-list-item-meta title="缓存路径">
-            <template #description>
-              缓存的目录位置。如果使用 HLS（例如在 Apple 设备上）或 DASH 进行流传输，则需要该位置。
-              <br/>
-              <t-link theme="primary">{{ data.cachePath || '未设置' }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-button theme="primary" @click="onPathEdit('cachePath')">编辑</t-button>
-          </template>
-        </t-list-item>
-        <t-list-item>
           <t-list-item-meta title="刮削器路径">
             <template #description>
               含有刮削器配置文件的路径

@@ -26,16 +26,6 @@ export interface SystemPreviewSetting {
 
 export interface SystemSetting {
   /**
-   * 生成数据的存储路径
-   * 生成数据的存储目录（短片标记，短片预览，预览图等）
-   */
-  dataPath: string;
-  /**
-   * 缓存路径
-   * 缓存的目录位置。如果使用 HLS（例如在 Apple 设备上）或 DASH 进行流传输，则需要该位置。
-   */
-  cachePath: string;
-  /**
    * 刮削器路径
    * 含有刮削器配置文件的路径
    */
@@ -153,8 +143,6 @@ export interface SystemSetting {
 export function getSystemSetting(): SystemSetting {
   return {
     // 这些目录都是相对于$APPDATA 的
-    dataPath: '/generated/',
-    cachePath: '/cache/',
     scraperPath: '/root/.stash/scrapers',
     pluginPath: '/root/.stash/plugins',
     metaPath: '/metadata/',
@@ -168,7 +156,7 @@ export function getSystemSetting(): SystemSetting {
     transcoderHardwareEncoding: false,
     transcoderParallelTasks: 0,
     transcoderPreset: 'slow',
-    transcoderIncludeAudio: true,
+    transcoderIncludeAudio: false,
     preview: {
       segments: 12,
       segmentDuration: 0.75,
@@ -184,8 +172,6 @@ export function getSystemSetting(): SystemSetting {
 }
 
 export const SystemSettingTitle: Record<keyof SystemSetting, string> = {
-  dataPath: '生成数据的存储路径',
-  cachePath: '缓存路径',
   scraperPath: '刮削器路径',
   pluginPath: '插件文件路径',
   metaPath: '元数据存储路径',

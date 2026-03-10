@@ -5,7 +5,7 @@ import {addMarker} from "@/service";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useSystemSettingStore} from "@/lib/store.ts";
 import {join} from "@tauri-apps/api/path";
-import {APP_DATA_DIR} from "@/global/Constants.ts";
+import {APP_DATA_GENERATE_DIR} from "@/global/Constants.ts";
 import {generateMarker} from "@/module/library/command/FfmpegCommand.ts";
 
 export function openAddVideoMarker(video: VideoView, time: number, onUpdate: () => void) {
@@ -31,10 +31,10 @@ export function openAddVideoMarker(video: VideoView, time: number, onUpdate: () 
     onConfirm: async () => {
       try {
         // 获取 ffmpeg
-        const {ffmpegPath, dataPath} = await useSystemSettingStore().get();
+        const ffmpegPath = await useSystemSettingStore().getItem('ffmpegPath');
         // 处理标记目录
-        const appDataDir = await APP_DATA_DIR();
-        const markerPath = await join(appDataDir, dataPath, "marker", video.id, `${time}.jpg`);
+        const dataPath = await APP_DATA_GENERATE_DIR();
+        const markerPath = await join(dataPath, "marker", video.id, `${time}.jpg`);
         // 生成标记
         await generateMarker(ffmpegPath, video.file_path, markerPath, time);
         // 设置标记图片路径

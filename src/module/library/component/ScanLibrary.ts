@@ -2,7 +2,7 @@ import {logDebug, logError, logInfo, logTrace, logWarning} from "@/lib/log.ts";
 import {useLibrarySettingStore, useSystemSettingStore, useTaskSettingStore} from "@/lib/store.ts";
 import {extname, join} from "@tauri-apps/api/path";
 import {readDir, stat} from "@tauri-apps/plugin-fs";
-import {deleteVideo, getVideoById, listVideo, saveVideo, updateVideo} from "@/service/VideoService.ts";
+import {getVideoById, saveVideo, updateVideo} from "@/service/VideoService.ts";
 import type {LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
 import {generatePath, type GeneratePathResult} from "@/module/library/util.ts";
 import type {SystemSetting} from "@/entity/setting/SystemSetting.ts";
@@ -171,7 +171,7 @@ export async function scanLibrary(
   onProgress(0, foundFiles.size, "扫描完成，共发现" + foundFiles.size + "个视频文件");
 
   // 生成指定目录
-  const generatePathResult = await generatePath(system);
+  const generatePathResult = await generatePath();
 
   let processedCount = 0;
   const processVideos = new Array<Video | VideoAddForm>();
@@ -192,19 +192,7 @@ export async function scanLibrary(
     onProgress(processedCount, foundFiles.size, `正在处理: ${file.fileName}`);
   }
 
-  onProgress(foundFiles.size, foundFiles.size, "正在清理已删除的视频...");
-
-  const allVideos = await listVideo();
-  logDebug("数据库中共有", allVideos.length, "个视频记录");
-  let deletedCount = 0;
-
-  for (const video of allVideos) {
-    if (!foundFiles.has(video.file_path)) {
-      logWarning("视频文件不存在，标记为已删除:", video.file_path);
-      await deleteVideo(video.id);
-      deletedCount++;
-    }
-  }
+  onProgress(foundFiles.size, foundFiles.size, "正在处理封面...");
 
   // 随机封面
   const coverMap = group(processVideos, 'library_id');
@@ -215,6 +203,4 @@ export async function scanLibrary(
     await updateLibraryCover(libraryId, target.cover_path);
   }
 
-  logInfo("清理完成，删除了", deletedCount, "个不存在的视频记录");
-  onProgress(foundFiles.size, foundFiles.size, `扫描完成，发现 ${foundFiles.size} 个视频，清理 ${deletedCount} 个已删除的视频`);
 }

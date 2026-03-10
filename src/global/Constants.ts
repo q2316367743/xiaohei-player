@@ -14,14 +14,21 @@ export const APP_VERSION = "1.0.0";
 
 export const APP_PASSWORD = "6NU74Lx3gqKO5t"
 
-export const APP_DATA_DIR = () => appDataDir();
-export const APP_DATA_ASSET_DIR = async () => join(await APP_DATA_DIR(), "asset");
-export const APP_DATA_DB_DIR = async () => join(await APP_DATA_DIR(), "db");
-export const APP_DATA_STORE_DIR = async () => join(await APP_DATA_DIR(), "store");
-export const APP_DATA_HOLD_DIR = async () => join(await APP_DATA_DIR(), "hold");
+let appData = '';
+export const initAppDataDir = async () => {
+  appData = await appDataDir();
+}
 
+export const APP_DATA_DIR = () => appData;
+export const APP_DATA_ASSET_DIR = async () => join(APP_DATA_DIR(), "asset");
+export const APP_DATA_DB_DIR = async () => join(APP_DATA_DIR(), "db");
+export const APP_DATA_STORE_DIR = async () => join(APP_DATA_DIR(), "store");
+export const APP_DATA_HOLD_DIR = async () => join(APP_DATA_DIR(), "hold");
 
-export const APP_DATA_DB_PATH = async (fileName:string) => join(await APP_DATA_DB_DIR(), `${fileName}.sqlite`);
+export const APP_DATA_GENERATE_DIR = async () => join(APP_DATA_DIR(), "generate");
+export const APPDATA_CACHE_DIR = async () => join(APP_DATA_DIR(), "cache");
+
+export const APP_DATA_DB_PATH = async (fileName: string) => join(await APP_DATA_DB_DIR(), `${fileName}.sqlite`);
 export const APP_DATA_VAULT_PATH = async (vaultName: string) => join(await APP_DATA_HOLD_DIR(), `${vaultName}.hold`);
 export const APP_DATA_STORE_PATH = async (storeName: string) => join(await APP_DATA_STORE_DIR(), `${storeName}.json`);
 
@@ -53,4 +60,4 @@ export const MAIN_MIGRATE_FILES = [{
 
 export const {colorMode, isDark} = useColorMode();
 
-export const [collapsed, toggleCollapsed] = useBoolState( false, LocalName.KEY_COLLAPSED);
+export const [collapsed, toggleCollapsed] = useBoolState(false, LocalName.KEY_COLLAPSED);
