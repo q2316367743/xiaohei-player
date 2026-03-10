@@ -12,14 +12,11 @@
     </template>
     <template #action>
       <div class="header-right">
-        <t-radio-group v-model="layout" default-value="grid">
-          <t-radio-button value="grid">
-            <app-icon/>
-          </t-radio-button>
-          <t-radio-button value="list">
-            <view-list-icon/>
-          </t-radio-button>
-        </t-radio-group>
+        <t-select v-model="layout" style="width: 124px;">
+          <t-option value="grid" label="网格"/>
+          <t-option value="list" label="列表"/>
+          <t-option value="waterfall" label="瀑布流"/>
+        </t-select>
         <t-divider layout="vertical"/>
         <t-select v-model="sortField" :style="{ width: '140px' }" @change="handleSortChange">
           <t-option value="file_name" label="名称"/>
@@ -59,12 +56,19 @@
             />
           </div>
 
-          <div v-else class="video-list">
+          <div v-else-if="layout === 'list'" class="video-list">
             <VideoListItem
               v-for="video in videos"
               :key="video.id"
               :video="video"
             />
+          </div>
+
+          <div v-else-if="layout==='waterfall'" class="video-waterfall">
+            <VideoWaterfall
+              v-for="video in videos"
+              :key="video.id"
+              :video="video"/>
           </div>
 
           <empty-result v-if="videos.length === 0" tip="暂无视频"/>
@@ -90,12 +94,13 @@
 <script lang="ts" setup>
 import {pageVideo, type VideoSortField, type SortOrder} from '@/service/VideoService.ts';
 import type {Video} from '@/entity/domain/Video.ts';
-import {AppIcon, ViewListIcon, ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon} from "tdesign-icons-vue-next";
+import {ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
 import VideoCard from './components/VideoCard.vue';
 import VideoListItem from './components/VideoListItem.vue';
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
 import {getLibrary} from "@/service";
+import VideoWaterfall from "@/pages/library/detail/components/VideoWaterfall.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -208,6 +213,12 @@ const handleBack = () => router.back();
 .video-list {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.video-waterfall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
 }
 
