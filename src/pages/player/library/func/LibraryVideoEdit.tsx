@@ -165,6 +165,9 @@ export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void
     actorIds: [],
     tagIds: []
   });
+  const actorIds = ref(new Array<string>());
+  const roleNames = ref(new Array<string>());
+
   const actorOptions = ref<Array<CommonOption>>([]);
   const tagOptions = ref<Array<CommonOption>>([]);
   const studioOptions = ref<Array<CommonOption>>([]);
@@ -177,6 +180,8 @@ export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void
   }
   const {library_id, ...other} = video;
   data.value = other;
+  actorIds.value = data.value.actorIds.map(e => e.id);
+  roleNames.value = data.value.actorIds.map(e => e.role_name);
   const libraryId = ref(library_id);
 
   const refreshOptions = async () => {
@@ -206,7 +211,10 @@ export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void
     size: '800px',
     confirmBtn: '保存',
     onConfirm: () => {
-      updateVideoMetadata(videoId, data.value)
+      updateVideoMetadata(videoId, {
+        ...data.value,
+        actorIds: actorIds.value.map(e => ({id: e, role_name: roleNames.value[actorIds.value.indexOf(e)] || ''}))
+      })
         .then(() => {
           MessageUtil.success('修改成功');
           dp.destroy?.();
@@ -252,39 +260,31 @@ export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void
       <FormItem label={'演员'} labelAlign={'top'} help={'已选演员可在下方编辑角色名'}>
         <div style={{display: 'flex', gap: '8px'}}>
           <Select
-            v-model={data.value.actorIds}
+            v-model={actorIds.value}
             options={actorOptions.value}
             placeholder={'请选择演员'}
             multiple
             clearable
-            valueDisplay={() => {
-              const selectedActors = data.value.actorIds.map(actor => {
-                const option = actorOptions.value.find(opt => opt.value === actor.id);
-                return option ? `${option.label} (${actor.role_name || '无角色'})` : '';
-              }).filter(Boolean);
-              return selectedActors.join(', ');
-            }}
+            filterable
             style={{flex: 1}}
           />
           <Button onClick={() => openAddActor(refreshOptions, libraryId.value)}>添加</Button>
         </div>
       </FormItem>
-      {data.value.actorIds.length > 0 && (
+      {actorIds.value.length > 0 && (
         <FormItem label={'演员角色'} labelAlign={'top'}>
           <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-            {data.value.actorIds.map((actor, index) => {
-              const option = actorOptions.value.find(opt => opt.value === actor.id);
+            {actorIds.value.map((actorId, index) => {
+              const option = actorOptions.value.find(opt => opt.value === actorId);
               return (
-                <div key={actor.id} style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                  <Tag theme="primary" style={{flexShrink: 0}}>{option?.label || actor.id}</Tag>
+                <div key={actorId} style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                  <Tag theme="primary" style={{flexShrink: 0}}>{option?.label || actorId}</Tag>
                   <Input
-                    value={actor.role_name || ''}
+                    value={roleNames.value[index]}
                     placeholder="角色名"
                     style={{flex: 1}}
                     onChange={(val) => {
-                      if (data.value.actorIds[index]) {
-                        data.value.actorIds[index].role_name = String(val);
-                      }
+                      roleNames.value[index] = String(val);
                     }}
                   />
                 </div>
@@ -301,6 +301,7 @@ export async function openLibraryVideoEdit(videoId: string, onUpdate: () => void
             placeholder={'请选择标签'}
             multiple
             clearable
+            filterable
             style={{flex: 1}}
           />
           <Button onClick={() => openAddTag(refreshOptions, libraryId.value)}>添加</Button>

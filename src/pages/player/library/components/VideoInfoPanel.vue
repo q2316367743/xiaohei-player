@@ -80,11 +80,23 @@
       <t-tab-panel label="标记" value="marker">
         <t-button theme="primary" @click="handleAddMarker()">创建标记</t-button>
         <t-empty v-if="markers.length === 0" title="暂无标记" class="mt-15vh"/>
-        <t-list split>
-          <t-list-item v-for="marker in markers" :key="marker.id" @click="handleClickMarker(marker)">
-            <t-list-item-meta :image="marker.image" :title="marker.name" :description="marker.description"/>
-          </t-list-item>
-        </t-list>
+        <div v-else class="marker-list">
+          <div v-for="marker in markers" :key="marker.id" class="marker-item" @click="handleClickMarker(marker)">
+            <div class="marker-image">
+              <img :src="marker.image" :alt="marker.name" @error="handleImageError"/>
+            </div>
+            <div class="marker-content">
+              <div class="marker-name">{{ marker.name }}</div>
+              <div class="marker-description">{{ marker.description || '暂无描述' }}</div>
+              <div class="marker-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" :style="{ width: getProgressWidth(marker.time) }"></div>
+                </div>
+                <div class="progress-text">{{ formatDuration(marker.time) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </t-tab-panel>
 
       <t-tab-panel label="队列" value="list">
@@ -146,15 +158,14 @@ function formatDate(timestamp?: number): string {
   return date.toLocaleDateString('zh-CN');
 }
 
-function formatDuration(ms: number): string {
-  const seconds = Math.floor(ms / 1000);
+function formatDuration(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
 
   if (hours > 0) {
-    return `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    return `${hours}:${String((minutes % 60).toFixed(0)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   }
-  return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
+  return `${minutes}:${String((seconds % 60).toFixed(0)).padStart(2, '0')}`;
 }
 
 function formatSize(bytes: number): string {
@@ -182,6 +193,17 @@ function handleAddMarker() {
 }
 function handleClickMarker(marker: Marker) {
   emit('clickMarker', marker);
+}
+
+function handleImageError(event: Event) {
+  const img = event.target as HTMLImageElement;
+  img.src = '/placeholder.png';
+}
+
+function getProgressWidth(markerTime: number): string {
+  const totalDuration = props.video?.duration_ms || 1;
+  const percentage = (markerTime / totalDuration) * 100;
+  return `${Math.min(percentage, 100)}%`;
 }
 </script>
 
