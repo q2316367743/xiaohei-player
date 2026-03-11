@@ -55,11 +55,6 @@ export const router = createRouter({
           component: () => import('@/pages/setting/interface/index.vue'),
         },
         {
-          name: "SettingMetadata",
-          path: 'metadata',
-          component: () => import('@/pages/setting/metadata/index.vue'),
-        },
-        {
           name: "SettingSystem",
           path: 'system',
           component: () => import('@/pages/setting/system/SettingSystem.vue'),

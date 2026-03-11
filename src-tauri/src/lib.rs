@@ -3,7 +3,7 @@
 //     tray::TrayIconBuilder,
 //     Manager,
 // };
-use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_log::{Target, TargetKind, RotationStrategy};
 
 mod commands;
 mod server;
@@ -12,11 +12,6 @@ mod server;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_upload::init())
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .level(tauri_plugin_log::log::LevelFilter::Info)
-                .build(),
-        )
         .plugin(tauri_plugin_sql::Builder::default().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -28,9 +23,10 @@ pub fn run() {
             tauri_plugin_log::Builder::new()
                 .targets([
                     Target::new(TargetKind::Stdout),
-                    Target::new(TargetKind::LogDir { file_name: None }),
+                    Target::new(TargetKind::LogDir { file_name: Some("app.log".to_string()) }),
                     Target::new(TargetKind::Webview),
                 ])
+                .rotation_strategy(RotationStrategy::KeepSome(10))
                 .level(log::LevelFilter::Info)
                 .build(),
         )
@@ -54,6 +50,8 @@ pub fn run() {
             let _ = app
                 .handle()
                 .plugin(tauri_plugin_updater::Builder::new().build());
+
+            
 
             //             let show_i = MenuItem::with_id(app, "show", "显示", true, None::<&str>)?;
             //             let quit_i = MenuItem::with_id(app, "quit", "关闭", true, None::<&str>)?;

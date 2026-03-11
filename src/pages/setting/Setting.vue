@@ -4,7 +4,6 @@
       <t-tab-panel label="任务" value="/setting/task"></t-tab-panel>
       <t-tab-panel label="收藏库" value="/setting/library"></t-tab-panel>
       <t-tab-panel label="界面" value="/setting/interface"></t-tab-panel>
-      <t-tab-panel label="元数据提供者" value="/setting/metadata"></t-tab-panel>
       <t-tab-panel label="系统" value="/setting/system"></t-tab-panel>
       <t-tab-panel label="日志" value="/setting/log"></t-tab-panel>
       <t-tab-panel label="关于" value="/setting/about"></t-tab-panel>
