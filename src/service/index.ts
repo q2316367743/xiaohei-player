@@ -6,5 +6,3 @@ export * from "./MarkerService.ts";
 
 export * from "./FolderService.ts";
 export * from "./LibraryService.ts";
-
-export * from "./DownloadPluginService.ts";

@@ -6,7 +6,6 @@
       <t-tab-panel label="界面" value="/setting/interface"></t-tab-panel>
       <t-tab-panel label="元数据提供者" value="/setting/metadata"></t-tab-panel>
       <t-tab-panel label="系统" value="/setting/system"></t-tab-panel>
-      <t-tab-panel label="下载" value="/setting/download"></t-tab-panel>
       <t-tab-panel label="日志" value="/setting/log"></t-tab-panel>
       <t-tab-panel label="关于" value="/setting/about"></t-tab-panel>
     </t-tabs>

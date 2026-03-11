@@ -39,12 +39,6 @@
           </template>
           媒体库
         </t-menu-item>
-        <t-menu-item to="/download" value="/download">
-          <template #icon>
-            <download-icon />
-          </template>
-          视频下载
-        </t-menu-item>
         <t-menu-item to="/setting/task" value="/setting/task">
           <template #icon>
             <setting-icon/>
@@ -60,7 +54,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  DownloadIcon,
   FolderOpenIcon,
   HistoryIcon,
   HomeIcon,
@@ -69,11 +62,10 @@ import {
   ViewListIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
-import {useDownloadSettingStore, useInterfaceSettingStore} from "@/store";
+import {useInterfaceSettingStore} from "@/store";
 
 onMounted(() => {
   useInterfaceSettingStore().init();
-  useDownloadSettingStore().init();
 })
 </script>
 <style scoped lang="less">

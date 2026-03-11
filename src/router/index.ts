@@ -65,11 +65,6 @@ export const router = createRouter({
           component: () => import('@/pages/setting/system/SettingSystem.vue'),
         },
         {
-          name: "SettingDownload",
-          path: 'download',
-          component: () => import('@/pages/setting/download/index.vue'),
-        },
-        {
           name: "SettingLog",
           path: 'log',
           component: () => import('@/pages/setting/log/index.vue'),
@@ -80,11 +75,6 @@ export const router = createRouter({
           component: () => import('@/pages/setting/about/index.vue'),
         }
       ]
-    },
-    {
-      name: "Download",
-      path: '/download',
-      component: () => import('@/pages/download/Download.vue'),
     },
     {
       name: "PlayerLibrary",
