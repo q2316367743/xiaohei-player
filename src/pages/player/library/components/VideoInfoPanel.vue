@@ -19,7 +19,14 @@
             <wd-cell title="描述" :value="video?.description || '-'" ellipsis/>
             <wd-cell title="链接" :value="video?.link || '-'" ellipsis/>
             <wd-cell title="工作室" :value="studio || '-'"/>
-            <wd-cell title="演员" :value="actors || '-'" ellipsis/>
+            <wd-cell title="演员">
+              <div>
+                <template v-for="(actor, index) in actors" :key="actor.id">
+                  <span v-if="index > 0">、</span>
+                  <t-link theme="primary" @click="handleClickActor(actor.actor.id)">{{ actor.actor.name }}</t-link>
+                </template>
+              </div>
+            </wd-cell>
           </wd-cell-group>
         </div>
 
@@ -110,6 +117,8 @@
 import type {VideoView} from '@/entity/domain/Video.ts';
 import type {Marker} from "@/entity/domain/Marker.ts";
 
+const router = useRouter();
+
 defineOptions({
   name: 'VideoInfoPanel'
 });
@@ -126,15 +135,8 @@ const activeTab = ref('intro');
 const studio = computed(() => props.video?.studio?.name || '-');
 
 const actors = computed(() => {
-  if (!props.video?.actors?.length) return '-';
+  if (!props.video?.actors?.length) return [];
   return props.video.actors
-    .map(item => {
-      const actorName = item.actor?.name || '';
-      const roleName = item.role_name;
-      return roleName ? `${actorName} (${roleName})` : actorName;
-    })
-    .filter(name => name)
-    .join(', ') || '-';
 });
 
 const tags = computed(() => {
@@ -191,6 +193,7 @@ function formatBitrate(bitrate?: number): string {
 function handleAddMarker() {
   emit('addMarker');
 }
+
 function handleClickMarker(marker: Marker) {
   emit('clickMarker', marker);
 }
@@ -204,6 +207,10 @@ function getProgressWidth(markerTime: number): string {
   const totalDuration = props.video?.duration_ms || 1;
   const percentage = (markerTime / totalDuration) * 100;
   return `${Math.min(percentage, 100)}%`;
+}
+
+const handleClickActor = (actorId: string) => {
+  router.push(`/library/actor/${actorId}`);
 }
 </script>
 

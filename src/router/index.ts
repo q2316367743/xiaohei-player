@@ -35,6 +35,11 @@ export const router = createRouter({
       component: () => import('@/pages/library/detail/index.vue'),
     },
     {
+      name: "LibraryActor",
+      path: '/library/actor/:id',
+      component: () => import('@/pages/library/actor/actor.vue'),
+    },
+    {
       name: "Setting",
       path: '/setting',
       component: () => import('@/pages/setting/Setting.vue'),

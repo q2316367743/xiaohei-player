@@ -1,4 +1,4 @@
-import type {VideoActorIdForm, VideoAddForm} from "@/entity/domain/Video.ts";
+import type {Video, VideoActorIdForm, VideoAddForm} from "@/entity/domain/Video.ts";
 import {useSql} from "@/lib/sql.ts";
 import type {VideoActor, VideoActorView} from "@/entity/domain/VideoActor.ts";
 import type {Actor, ActorAddForm} from "@/entity/domain/Actor.ts";
@@ -88,3 +88,16 @@ export async function listActorView(videoId: string): Promise<Array<VideoActorVi
   }
   return actor;
 }
+
+export function getActor(id: string) {
+  return useSql().query<Actor>('actor').eq('id', id).get();
+}
+
+export async function listVideoByActorId(actorId: string) {
+  const list = await useSql().query<VideoActor>("video_actor").eq('actor_id', actorId).list();
+  if (list.length > 0) {
+    return await useSql().query<Video>("video").in('id', list.map(e => e.video_id)).list();
+  }
+  return [];
+}
+

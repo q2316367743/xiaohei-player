@@ -1,36 +1,30 @@
 <template>
-  <div class="player-page">
-    <header class="player-header">
-      <div class="player-header__left">
-        <t-button theme="default" shape="square" @click="goBack">
-          <template #icon>
-            <chevron-left-icon/>
-          </template>
-        </t-button>
-        <div class="player-header__title">
-          <span>{{ video?.title }}</span>
-        </div>
-        <t-button theme="primary" variant="text" shape="square" @click="handleEdit">
-          <template #icon>
-            <edit-icon/>
-          </template>
-        </t-button>
-      </div>
-    </header>
+  <sub-page-layout :title="video?.title">
+    <template #action>
 
-    <div class="player-container">
-      <div class="video-info-panel-container">
-        <VideoInfoPanel v-if="video" :video="video" :markers @add-marker="handleAddMarker" @click-marker="handleClickMarker"/>
-      </div>
-      <div class="video-content-container">
-        <VideoPlayer v-if="video" :video="video" :markers ref="videoPlayerRef"/>
+      <t-button theme="primary" variant="text" shape="square" @click="handleEdit">
+        <template #icon>
+          <edit-icon/>
+        </template>
+      </t-button>
+    </template>
+
+    <div class="player-page">
+
+      <div class="player-container">
+        <div class="video-info-panel-container">
+          <VideoInfoPanel v-if="video" :video="video" :markers @add-marker="handleAddMarker" @click-marker="handleClickMarker"/>
+        </div>
+        <div class="video-content-container">
+          <VideoPlayer v-if="video" :video="video" :markers ref="videoPlayerRef"/>
+        </div>
       </div>
     </div>
-  </div>
+  </sub-page-layout>
 </template>
 
 <script lang="ts" setup>
-import {ChevronLeftIcon, EditIcon} from 'tdesign-icons-vue-next';
+import {EditIcon} from 'tdesign-icons-vue-next';
 import type {VideoView} from '@/entity/domain/Video.ts';
 import {getVideoInfoById, listMarker, updateVideoStatus} from '@/service';
 import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
@@ -52,7 +46,6 @@ const markers = ref(new Array<Marker>());
 
 const videoPlayerRef = ref();
 
-const goBack = () => router.back();
 
 const initMarker = async () => {
   markers.value = await listMarker(videoId);

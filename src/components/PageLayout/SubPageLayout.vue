@@ -2,7 +2,7 @@
   <div class="page-layout">
     <header class="page-header">
       <t-space size="small" class="page-header__left">
-        <t-button theme="primary" variant="text" shape="square" @click="handlerClick">
+        <t-button variant="outline" shape="square" @click="handlerClick">
           <template #icon>
             <chevron-left-icon />
           </template>
@@ -12,8 +12,8 @@
           <span v-else-if="title">{{ title }}</span>
         </div>
       </t-space>
-      <div class="page-header__right" v-if="slots['extra']">
-        <slot name="extra"></slot>
+      <div class="page-header__right" v-if="slots['action']">
+        <slot name="action"></slot>
       </div>
     </header>
     <div class="page-container">
@@ -51,15 +51,20 @@ function handlerClick() {
     line-height: 32px;
     border-bottom: 1px solid var(--td-border-level-2-color);
     box-sizing: border-box;
+    background-color: var(--td-bg-color-container);
 
     &__left {
       display: flex;
       align-items: center;
+      padding-left: 4px;
     }
 
     &__title {
       display: flex;
       align-items: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding-top: 3px;
     }
 
   }

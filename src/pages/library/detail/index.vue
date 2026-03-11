@@ -1,17 +1,7 @@
 <template>
-  <app-tool-layout>
-    <template #title>
-      <div class="header-left">
-        <t-button theme="default" shape="square" @click="handleBack">
-          <template #icon>
-            <chevron-left-icon/>
-          </template>
-        </t-button>
-        <div>{{ library?.name }}</div>
-      </div>
-    </template>
+  <sub-page-layout :title="library?.name">
     <template #action>
-      <div class="header-right">
+      <div class="flex h-32px items-center">
         <t-select v-model="layout" style="width: 124px;">
           <t-option value="grid" label="网格"/>
           <t-option value="list" label="列表"/>
@@ -88,13 +78,13 @@
       </div>
       <t-back-top container=".scene-content"/>
     </div>
-  </app-tool-layout>
+  </sub-page-layout>
 </template>
 
 <script lang="ts" setup>
 import {pageVideo, type VideoSortField, type SortOrder} from '@/service/VideoService.ts';
 import type {Video} from '@/entity/domain/Video.ts';
-import {ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon} from "tdesign-icons-vue-next";
+import {ChevronUpIcon, ChevronDownIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
 import VideoCard from './components/VideoCard.vue';
 import VideoListItem from './components/VideoListItem.vue';
@@ -103,7 +93,6 @@ import {getLibrary} from "@/service";
 import VideoWaterfall from "@/pages/library/detail/components/VideoWaterfall.vue";
 
 const route = useRoute();
-const router = useRouter();
 
 const libraryId = route.params.id as string;
 
@@ -158,7 +147,6 @@ function handleSortOrderChange(s: SortOrder) {
   handleSortChange();
 }
 
-const handleBack = () => router.back();
 </script>
 
 <style scoped lang="less">
@@ -190,18 +178,6 @@ const handleBack = () => router.back();
     padding-right: 8px;
     background-color: var(--td-bg-color-container);
   }
-}
-
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
 }
 
 .video-grid {
