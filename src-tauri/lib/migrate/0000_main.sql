@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS video
 
     -- 状态标记
     is_deleted       TEXT    NOT NULL DEFAULT '0',       -- 软删除标记 (0:正常, 1:已删除)
-    scan_status      TEXT    NOT NULL DEFAULT 'pending', -- 扫描状态: 'pending', 'scanning', 'completed', 'error'
-    error_message    TEXT    NOT NULL DEFAULT ''         -- 扫描或处理错误信息
+    is_liked         INTEGER NOT NULL DEFAULT 0          -- 是否点赞 (0:正常, 1:已点赞)
 
     -- 索引优化
 );

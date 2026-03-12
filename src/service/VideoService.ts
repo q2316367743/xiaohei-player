@@ -199,6 +199,7 @@ export async function listLastPlayedVideo() {
                left join library l on v.library_id = l.id
       where v.is_deleted = '0'
         and l.password = ''
+        and v.last_played_at > 0
       order by v.last_played_at desc
       limit 10`)
 }

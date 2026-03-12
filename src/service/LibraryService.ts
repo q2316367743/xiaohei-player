@@ -25,11 +25,11 @@ export async function addLibrary(form: LibraryCore) {
 
 export async function updateLibraryPassword(id: string, old: string, password: string) {
   const oldItem = await getLibrary(id);
-  if (!oldItem) return Promise.reject(new Error("收藏库不存在"));
+  if (!oldItem) return Promise.reject("收藏库不存在");
 
   // 设置了旧密码
   const check = await checkMd5Password(old, oldItem.password);
-  if (!check) return Promise.reject(new Error("密码错误"));
+  if (!check) return Promise.reject("密码错误");
 
   const now = Date.now();
   await useSql().mapper<LibraryEntity>('library').updateById(id, {
@@ -49,4 +49,6 @@ export async function removeLibrary(id: string) {
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_LAYOUT(id));
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_SORT_FIELD(id));
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(id));
+  // 所有的视频变为已删除
+  await useSql().select(`update video set is_deleted = '1' where library_id = ${id}`)
 }

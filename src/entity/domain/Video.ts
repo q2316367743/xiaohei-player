@@ -2,6 +2,7 @@ import type {BaseEntity} from "@/entity/BaseEntity.ts";
 import type {Studio} from "@/entity/domain/Studio.ts";
 import type {VideoActorView} from "@/entity/domain/VideoActor.ts";
 import type {VideoTagView} from "@/entity/domain/VideoTag.ts";
+import type {YesOrNo} from "@/global/CommonType.ts";
 
 export interface VideoOriginalFile {
   library_id: string;       // 所属收藏库
@@ -50,8 +51,7 @@ export interface VideoStatusInfo {
   play_count: number;       // 播放次数
   resume_time: number;      // 恢复播放时间
   is_deleted: string;       // 软删除标记 (0:正常, 1:已删除)
-  scan_status: string;      // 扫描状态: 'pending', 'scanning', 'completed', 'error'
-  error_message: string;    // 扫描或处理错误信息
+  is_liked: YesOrNo;        // 是否喜欢
 }
 
 export interface VideoCore extends VideoFile, VideoInfo, VideoMetadata, VideoStatusInfo {

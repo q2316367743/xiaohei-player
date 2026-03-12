@@ -8,10 +8,11 @@ async function handleFolder(path: string, videoNames: Array<string>, extname: st
   const files = await readDir(path);
   const names = new Set(videoNames.map(e => `${e}${extname}`));
   for (const file of files) {
-    // 不是文件
-    if (!file.isFile) continue;
-    // 不是目标文件
-    if (!file.name.endsWith(extname)) continue;
+    if (file.isFile) {
+      // 文件比对后缀名
+      if (!file.name.endsWith(extname)) continue;
+    }
+    // 其他的只需要比对名字
     if (!names.has(file.name)) {
       const filePath = await join(path, file.name);
       // 没有该文件，删除
@@ -38,6 +39,7 @@ export async function cleanGenerateFile(
   const coverDir = await join(generateDir, "cover");
   const screenshotDir = await join(generateDir, "screenshot");
   const vttDir = await join(generateDir, "vtt");
+  const markerDir = await join(generateDir, "marker");
 
   try {
     onProgress(1, 4, "正在处理封面");
@@ -60,6 +62,12 @@ export async function cleanGenerateFile(
   try {
     onProgress(3, 4, "正在处理 vtt 文件");
     await handleFolder(vttDir, videoNames, '_thumbs.vtt');
+  } catch (e) {
+    logError('处理封面失败', e);
+  }
+  try {
+    onProgress(4, 4, "正在处理 vtt 文件");
+    await handleFolder(markerDir, videoNames, '');
   } catch (e) {
     logError('处理封面失败', e);
   }
