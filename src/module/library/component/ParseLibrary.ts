@@ -1,10 +1,10 @@
 import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
-import {readTextFile} from "@tauri-apps/plugin-fs";
+import {exists, readTextFile} from "@tauri-apps/plugin-fs";
 import {XMLParser} from "fast-xml-parser";
 import type {ScanVideoFile} from "@/module/library/types.ts";
 
 interface ParseLibraryResult extends VideoMetadata, VideoEdit {
-  cover?: string;
+  cover_path?: string;
 }
 
 interface NfoData {
@@ -35,11 +35,8 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
 
   const result: ParseLibraryResult = {
     studio_id: '',
-    actors: [],
     link: '',
     director: '',
-    studio: '',
-    tags: [],
     description: '',
     release_date: '',
     title
@@ -77,7 +74,10 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
         }
 
         if (movie.thumb) {
-          result.cover = movie.thumb;
+          const has = await exists(movie.thumb);
+          if (has) {
+            result.cover_path = movie.thumb;
+          }
         }
 
         if (movie.year) {
@@ -120,10 +120,6 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
     } catch (e) {
       console.error('解析 nfo 文件失败:', e);
     }
-  }
-
-  if (prop.cover) {
-    result.cover = prop.cover;
   }
 
   return result;

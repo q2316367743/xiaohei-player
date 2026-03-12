@@ -20,7 +20,7 @@ export async function saveVideo(form: VideoAddForm, hash: string) {
   const {actors, tags, studio, ...video} = form;
 
   // 先处理工作室
-  const studio_id = await saveOrUpdateStudio(studio, form.library_id);
+  const studio_id = await saveOrUpdateStudio(form.library_id, studio);
   // 处理演员
   await saveOrUpdateActor(actors, hash, form.library_id);
   // 处理标签
@@ -36,8 +36,7 @@ export async function saveVideo(form: VideoAddForm, hash: string) {
     last_played_at: 0,
     play_count: 0,
     is_deleted: '0',
-    scan_status: 'completed',
-    error_message: '',
+    is_liked: 0
   });
 }
 
@@ -49,11 +48,8 @@ export async function updateVideo(id: string, form: Partial<VideoAddForm>) {
   const old = await getVideoById(id);
   if (!old) return Promise.reject("视频不存在");
 
-  let studio_id: string | undefined = undefined;
   // 先处理工作室
-  if (studio) {
-    studio_id = await saveOrUpdateStudio(studio, old.library_id);
-  }
+  const studio_id = await saveOrUpdateStudio(old.library_id, studio);
   // 处理演员
   if (actors) await saveOrUpdateActor(actors, id, old.library_id);
   // 处理标签

@@ -73,10 +73,10 @@ export interface VideoActorIdForm {
 
 export interface VideoEdit {
   // 演员, 角色
-  actors: Array<VideoActorForm>;
+  actors?: Array<VideoActorForm>;
   // 标签
-  tags: Array<string>;
-  studio: string;
+  tags?: Array<string>;
+  studio?: string;
 }
 
 export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadata, VideoEdit {

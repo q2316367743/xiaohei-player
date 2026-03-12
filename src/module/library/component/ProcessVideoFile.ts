@@ -36,20 +36,22 @@ export async function processVideoFile(prop: ProcessVideoFileProp) {
 
   logInfo("发现新视频:", fileName);
 
-  const fileStat = await stat(filePath);
+  // 先去解析元数据，因为元数据可能指向了封面
+  const videoMetadata = await parseLibrary(file);
 
+  // 再去考虑生成封面和截图
   const videoInfo = await generatorLibrary({
     hash,
-    filePath,
     system,
     task,
+    file,
     coverDir,
-    fileName,
     screenshotDir,
     vttPrefixDir,
-    existingCover: file.cover
+    existingCover: videoMetadata.cover_path || file.cover
   });
-  const videoMetadata = await parseLibrary(file);
+
+  const fileStat = await stat(filePath);
 
   const form: VideoAddForm = {
     // 基础信息
@@ -58,12 +60,10 @@ export async function processVideoFile(prop: ProcessVideoFileProp) {
     file_path: filePath,
     file_size: fileStat.size,
     file_birthtime: fileStat.birthtime?.getTime() || 0,
-
-    // 视频信息
-    ...videoInfo,
-
     // 核心信息
     ...videoMetadata,
+    // 视频信息
+    ...videoInfo,
 
   };
 

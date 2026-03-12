@@ -54,12 +54,6 @@
       </div>
       <t-list size="small" split>
         <t-list-item>
-          短片封面
-          <template #action>
-            <t-switch v-model="data.shortCover" @change="onChange('shortCover', $event)"/>
-          </template>
-        </t-list-item>
-        <t-list-item>
           <div>
             预览
             <t-tooltip content="鼠标悬停在短片上时播放的预览短片">

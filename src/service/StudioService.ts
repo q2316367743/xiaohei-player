@@ -1,7 +1,7 @@
 import {useSql} from "@/lib/sql.ts";
 import type {Studio, StudioAddForm} from "@/entity/domain/Studio.ts";
 
-export async function saveOrUpdateStudio(studio: string, libraryId: string) {
+export async function saveOrUpdateStudio(libraryId: string, studio?: string) {
   if (!studio) return '';
   let studio_id: string;
   const studioEntry = await useSql().query<Studio>('studio').eq('name', studio).get();

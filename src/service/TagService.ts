@@ -5,6 +5,7 @@ import type {Tag, TagAddForm} from "@/entity/domain/Tag.ts";
 import {map} from "@/util";
 
 export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string, libraryId: string) {
+  if (!tags) return;
   await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
 
   if (tags.length === 0) return;

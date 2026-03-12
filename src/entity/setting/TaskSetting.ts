@@ -10,8 +10,6 @@ export interface TaskSetting {
   // ==== 生成 ====
   // =============
 
-  // 短片封面（封面图片）
-  shortCover: boolean;
   // 预览（预览视频）
   preview: boolean;
   // 短视频时间轴预览小图（9x9的切图）
@@ -27,7 +25,6 @@ export interface TaskSetting {
 export function getTaskSetting(): TaskSetting {
   return {
     reScanFile: false,
-    shortCover: false,
     preview: false,
     timelinePreviewThumbnail: false,
     markPreview: false,

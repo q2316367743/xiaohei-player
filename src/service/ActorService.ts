@@ -5,6 +5,7 @@ import type {Actor, ActorAddForm} from "@/entity/domain/Actor.ts";
 import {map} from "@/util";
 
 export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId: string, libraryId: string) {
+  if (!actors) return;
   // 删除旧的
   await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).delete();
   const actorNames = actors.map(actor => actor.name);

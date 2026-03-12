@@ -77,9 +77,8 @@
 
         <div class="mt-8px">
           <wd-cell-group title="状态信息" border>
-            <wd-cell title="扫描状态" :value="scanStatusText"/>
             <wd-cell title="删除状态" :value="video?.is_deleted ? '已删除' : '正常'"/>
-            <wd-cell v-if="video?.error_message" title="错误信息" :value="video?.error_message" ellipsis/>
+            <wd-cell title="喜欢状态" :value="video?.is_liked ? '已删除' : '正常'"/>
           </wd-cell-group>
         </div>
       </t-tab-panel>
@@ -142,16 +141,6 @@ const actors = computed(() => {
 const tags = computed(() => {
   if (!props.video?.tags?.length) return [];
   return props.video.tags.map(item => item.tag).filter(tag => tag);
-});
-
-const scanStatusText = computed(() => {
-  const statusMap: Record<string, string> = {
-    'pending': '等待中',
-    'scanning': '扫描中',
-    'completed': '已完成',
-    'error': '错误'
-  };
-  return statusMap[props.video?.scan_status || 'pending'] || props.video?.scan_status || '-';
 });
 
 function formatDate(timestamp?: number): string {

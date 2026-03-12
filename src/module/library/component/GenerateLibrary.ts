@@ -5,17 +5,17 @@ import {generateCover, generatePreview, generateVtt, getVideoInfo} from "@/modul
 import type {SystemSetting} from "@/entity/setting/SystemSetting.ts";
 import type {TaskSetting} from "@/entity/setting/TaskSetting.ts";
 import type {VideoInfo} from "@/entity/domain/Video.ts";
+import type {ScanVideoFile} from "@/module/library/types.ts";
 
 interface GenerateLibraryOneProp {
   system: SystemSetting;
   task: TaskSetting;
   hash: string;
-  filePath: string;
-  fileName: string;
+  file: ScanVideoFile;
   vttPrefixDir: string;
   screenshotDir: string;
   coverDir: string;
-  existingCover?: string;
+  existingCover: string;
 }
 
 interface GenerateLibraryOneResult extends VideoInfo {
@@ -31,7 +31,8 @@ interface GenerateLibraryOneResult extends VideoInfo {
 
 
 async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo> {
-  const {filePath, fileName, system} = props;
+  const {file, system} = props;
+  const {filePath, fileName} = file;
 
   let videoInfo: VideoInfo = {
     duration_ms: 0,
@@ -53,11 +54,17 @@ async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo
   return videoInfo;
 }
 
-async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, videoInfo: VideoInfo): Promise<{
+interface HandleVttResult {
   sprite_path: string | undefined,
   vtt_path: string | undefined
-}> {
-  const {hash, filePath, fileName, vttPrefixDir, system, task} = props;
+}
+
+async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, videoInfo: VideoInfo): Promise<HandleVttResult> {
+  const {hash, file, vttPrefixDir, system, task} = props;
+  const {filePath, fileName} = file;
+
+  // 不生成 vtt
+  if (!task.timelinePreviewThumbnail) return {sprite_path: undefined, vtt_path: undefined};
 
   const vttPrefixPath = await join(vttPrefixDir, hash);
 
@@ -67,35 +74,33 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, vide
 
   let sprite_path: string | undefined = undefined;
   let vtt_path: string | undefined = undefined;
-  if (task.timelinePreviewThumbnail) {
-    // 需要生成预览小图
-    try {
-      const existSprite = await exists(sprite);
-      const existVtt = await exists(vtt);
-      if (!task.overwriteExistingFile) {
-        // 不覆盖
-        if (existSprite && existVtt) {
-          // 文件还存在，直接返回
-          return {sprite_path: sprite, vtt_path: vtt};
-        }
+  // 需要生成预览小图
+  try {
+    const existSprite = await exists(sprite);
+    const existVtt = await exists(vtt);
+    if (!task.overwriteExistingFile) {
+      // 不覆盖
+      if (existSprite && existVtt) {
+        // 文件还存在，直接返回
+        return {sprite_path: sprite, vtt_path: vtt};
       }
-      // 覆盖或者文件不全
-      if (existSprite) await remove(sprite);
-      if (existVtt) await remove(vtt);
-      // 生成预览小图
-      await generateVtt({
-        ffmpeg: system.ffmpegPath,
-        durationMs: durationMs,
-        path: filePath,
-        sprite,
-        vtt,
-        videoInfo
-      });
-      sprite_path = sprite;
-      vtt_path = vtt;
-    } catch (e) {
-      logError("生成字幕文件失败，跳过:", fileName, e);
     }
+    // 覆盖或者文件不全
+    if (existSprite) await remove(sprite);
+    if (existVtt) await remove(vtt);
+    // 生成预览小图
+    await generateVtt({
+      ffmpeg: system.ffmpegPath,
+      durationMs: durationMs,
+      path: filePath,
+      sprite,
+      vtt,
+      videoInfo
+    });
+    sprite_path = sprite;
+    vtt_path = vtt;
+  } catch (e) {
+    logError("生成字幕文件失败，跳过:", fileName, e);
   }
   return {
     sprite_path,
@@ -104,64 +109,64 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, vide
 }
 
 async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: number): Promise<string | undefined> {
-  const {hash, filePath, fileName, screenshotDir, system, task} = props;
-  const screenshotPath = await join(screenshotDir, hash + '.mp4');
-  if (task.preview) {
-    const existPreview = await exists(screenshotPath);
-    // 存在预览视频
-    if (existPreview) {
-      // 需要覆盖
-      if (task.overwriteExistingFile) {
-        // 删除旧的视频
-        await remove(screenshotPath);
-      } else {
-        // 不覆盖，直接返回
-        return screenshotPath;
-      }
-    }
+  const {hash, file, screenshotDir, system, task} = props;
+  const {filePath, fileName} = file;
 
-    try {
-      logDebug("生成预览视频:", screenshotPath);
-      await generatePreview({
-        ffmpeg: system.ffmpegPath,
-        path: filePath,
-        preview: screenshotPath,
-        durationMs: duration_ms,
-        previewSetting: system.preview
-      });
+  // 不生成预览视频
+  if (!task.preview) return undefined;
+
+  const screenshotPath = await join(screenshotDir, hash + '.mp4');
+  const existPreview = await exists(screenshotPath);
+  // 存在预览视频
+  if (existPreview) {
+    // 需要覆盖
+    if (task.overwriteExistingFile) {
+      // 删除旧的视频
+      await remove(screenshotPath);
+    } else {
+      // 不覆盖，直接返回
       return screenshotPath;
-    } catch (e) {
-      logError("生成预览视频失败，跳过:", fileName, e);
     }
+  }
+
+  try {
+    logDebug("生成预览视频:", screenshotPath);
+    await generatePreview({
+      ffmpeg: system.ffmpegPath,
+      path: filePath,
+      preview: screenshotPath,
+      durationMs: duration_ms,
+      previewSetting: system.preview
+    });
+    return screenshotPath;
+  } catch (e) {
+    logError("生成预览视频失败，跳过:", fileName, e);
   }
   return undefined;
 }
 
 async function handleCover(props: GenerateLibraryOneProp): Promise<string | undefined> {
-  const {hash, filePath, system, task, coverDir, existingCover} = props;
-  
-  if (existingCover) {
-    logDebug("使用已有封面:", existingCover);
-    return existingCover;
-  }
-  
+  const {hash, file, system, task, coverDir, existingCover} = props;
+  const {filePath} = file;
+
+  // 已经解析到封面了
+  if (existingCover) return existingCover;
+
+  // 没有解析到，需要生成封面
   const coverPath = await join(coverDir, hash + '.jpg');
-  if (task.shortCover) {
-    const existCover = await exists(coverPath);
-    if (existCover) {
-      // 存在封面
-      if (task.overwriteExistingFile) {
-        // 删除旧封面
-        await remove(coverPath);
-      } else {
-        // 存在封面但不覆盖，直接返回
-        return coverPath;
-      }
+  const existCover = await exists(coverPath);
+  if (existCover) {
+    // 存在封面
+    if (task.overwriteExistingFile) {
+      // 删除旧封面
+      await remove(coverPath);
+    } else {
+      // 存在封面但不覆盖，直接返回
+      return coverPath;
     }
-    await generateCover(system.ffmpegPath, filePath, coverPath);
-    return coverPath;
   }
-  return undefined;
+  await generateCover(system.ffmpegPath, filePath, coverPath);
+  return coverPath;
 }
 
 export async function generatorLibrary(props: GenerateLibraryOneProp): Promise<GenerateLibraryOneResult> {
