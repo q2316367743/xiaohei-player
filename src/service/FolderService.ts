@@ -43,11 +43,11 @@ export async function addFolder(form: FolderViewCore) {
 
 export async function updateFolderPassword(id: string, old: string, password: string) {
   const oldItem = await getFolder(id);
-  if (!oldItem) return Promise.reject(new Error("文件夹不存在"));
+  if (!oldItem) return Promise.reject(Error("文件夹不存在"));
 
   // 设置了旧密码
   const check = await checkMd5Password(old, oldItem.password);
-  if (!check) return Promise.reject(new Error("密码错误"));
+  if (!check) return Promise.reject(Error("密码错误"));
 
   const now = Date.now();
   await useSql().mapper<Folder>('folder').updateById(id, {

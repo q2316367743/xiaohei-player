@@ -14,7 +14,7 @@ export interface ScanVideoFile {
   fileName: string;
 
   // 可能存在的封面
-  cover?: string;
+  cover: string;
   // 可能存在的 nfo
-  nfo?: string;
+  nfo: string;
 }

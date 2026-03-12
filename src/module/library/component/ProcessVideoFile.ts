@@ -46,7 +46,8 @@ export async function processVideoFile(prop: ProcessVideoFileProp) {
     coverDir,
     fileName,
     screenshotDir,
-    vttPrefixDir
+    vttPrefixDir,
+    existingCover: file.cover
   });
   const videoMetadata = await parseLibrary(file);
 

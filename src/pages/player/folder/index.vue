@@ -96,9 +96,10 @@ import {getVideoType, playFlv, playM3u8, playTs} from '@/lib/artplayer';
 import {MessagePlugin} from 'tdesign-vue-next';
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
-import {basename, dirname, filterVideoFileList} from "@/module/file/util.ts";
+import {basename, dirname} from "@/util/lang/FileUtil.ts";
 import {createFileBrowser} from "@/service";
 import type {FileBrowser, FileItem} from "@/module/file";
+import {filterVideoFileList} from "@/module/file/util.ts";
 
 defineOptions({
   name: 'LinkPlayer'

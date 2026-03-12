@@ -12,6 +12,6 @@ export function createFileAdapter(data: FolderView): FileBrowser {
     case 'webdav':
       return new WebDAVFileAdapter(data);
     default:
-      throw new Error("不支持的文件适配器类型");
+      throw Error("不支持的文件适配器类型");
   }
 }

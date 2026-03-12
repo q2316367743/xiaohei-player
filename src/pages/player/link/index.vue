@@ -114,7 +114,7 @@ import {useLibrarySettingStore} from "@/lib/store.ts";
 import {revealItemInDir} from "@tauri-apps/plugin-opener";
 import {convertFileSrcToUrl, convertProxyToUrl} from "@/lib/FileSrc.ts";
 import {addOrUpdateHistory, updateHistoryProcess} from "@/service/HistoryService.ts";
-import {basename} from "@/module/file/util.ts";
+import {basename} from "@/util/lang/FileUtil.ts";
 import {parseUrlTitle} from "@/util";
 import {debounce} from "es-toolkit";
 

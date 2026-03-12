@@ -2,7 +2,7 @@ import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 import type {WebDAVClient} from "@/lib/webdav/types.ts";
 import {createWebDAVClient} from "@/lib/webdav";
 import {convertWebDavToUrl} from "@/lib/FileSrc.ts";
-import {extname} from "@/module/file/util.ts";
+import {extname} from "@/util/lang/FileUtil.ts";
 import type {FolderViewCoreWebdav} from "@/entity/main/Folder.ts";
 
 export class WebDAVFileAdapter implements FileBrowser {

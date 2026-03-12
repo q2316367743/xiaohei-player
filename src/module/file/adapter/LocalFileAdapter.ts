@@ -1,6 +1,6 @@
 import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 import {readDir} from "@tauri-apps/plugin-fs";
-import {extname, join} from "@/module/file/util.ts";
+import {extname, joinPath} from "@/util/lang/FileUtil.ts";
 import type {FolderViewCoreLocal} from "@/entity/main/Folder.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
@@ -14,15 +14,15 @@ export class LocalFileAdapter implements FileBrowser {
 
 
   getLink(path: string): string {
-    const target = join(this.base, path);
+    const target = joinPath(this.base, path);
     return convertFileSrcToUrl(target);
   }
 
   async list(path: string): Promise<FileItem[]> {
-    const target = join(this.base, path);
+    const target = joinPath(this.base, path);
     const items = await readDir(target);
     return items.map(e => {
-      const p = join(target, e.name).substring(this.base.length)
+      const p = joinPath(target, e.name).substring(this.base.length)
       return {
         name: e.name,
         extname: extname(e.name),

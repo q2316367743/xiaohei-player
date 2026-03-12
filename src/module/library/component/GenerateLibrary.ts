@@ -15,6 +15,7 @@ interface GenerateLibraryOneProp {
   vttPrefixDir: string;
   screenshotDir: string;
   coverDir: string;
+  existingCover?: string;
 }
 
 interface GenerateLibraryOneResult extends VideoInfo {
@@ -137,7 +138,13 @@ async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: numb
 }
 
 async function handleCover(props: GenerateLibraryOneProp): Promise<string | undefined> {
-  const {hash, filePath, system, task, coverDir} = props;
+  const {hash, filePath, system, task, coverDir, existingCover} = props;
+  
+  if (existingCover) {
+    logDebug("使用已有封面:", existingCover);
+    return existingCover;
+  }
+  
   const coverPath = await join(coverDir, hash + '.jpg');
   if (task.shortCover) {
     const existCover = await exists(coverPath);

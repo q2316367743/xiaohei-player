@@ -1,6 +1,5 @@
 import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
-import {dirname, join} from "@/module/file/util.ts";
-import {exists, readTextFile} from "@tauri-apps/plugin-fs";
+import {readTextFile} from "@tauri-apps/plugin-fs";
 import {XMLParser} from "fast-xml-parser";
 import type {ScanVideoFile} from "@/module/library/types.ts";
 
@@ -32,7 +31,6 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
   const titleTemp = prop.fileName.split(".");
   if (titleTemp.length > 1) titleTemp.pop();
 
-  const dir = dirname(prop.filePath);
   const title = titleTemp.join('.');
 
   const result: ParseLibraryResult = {
@@ -47,11 +45,9 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
     title
   };
 
-  const nfoPath = join(dir, `${title}.nfo`);
-  const nfoExists = await exists(nfoPath);
-  if (nfoExists) {
+  if (prop.nfo) {
     try {
-      const nfo = await readTextFile(nfoPath);
+      const nfo = await readTextFile(prop.nfo);
       const parser = new XMLParser({
         ignoreAttributes: false,
         attributeNamePrefix: '@_',
@@ -124,6 +120,10 @@ export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryRes
     } catch (e) {
       console.error('解析 nfo 文件失败:', e);
     }
+  }
+
+  if (prop.cover) {
+    result.cover = prop.cover;
   }
 
   return result;
