@@ -16,7 +16,7 @@ function execFfmepgCommand(ffmpeg: string, args: Array<string>, timeoutMs: numbe
 
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => {
-      reject(new Error(`FFmpeg command timed out after ${timeoutMs}ms`));
+      reject(`FFmpeg command timed out after ${timeoutMs}ms`);
     }, timeoutMs);
   });
 
@@ -138,7 +138,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
   const effectiveDuration = duration - excludeStart - excludeEnd;
 
   if (effectiveDuration < segmentDuration) {
-    return Promise.reject(new Error(`视频有效时长不足 ${segmentDuration} 秒`));
+    return Promise.reject(`视频有效时长不足 ${segmentDuration} 秒`);
   }
 
   const maxPossibleSegments = Math.floor(effectiveDuration / segmentDuration);
