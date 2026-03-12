@@ -79,6 +79,8 @@ function handleMouseLeave() {
   background: transparent;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  width: 226px;
+  flex-shrink: 0;
 }
 
 .video-cover {
