@@ -2,11 +2,7 @@ import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
 import {dirname, join} from "@/module/file/util.ts";
 import {exists, readTextFile} from "@tauri-apps/plugin-fs";
 import {XMLParser} from "fast-xml-parser";
-
-interface ParseLibraryProp {
-  filePath: string;
-  fileName: string;
-}
+import type {ScanVideoFile} from "@/module/library/types.ts";
 
 interface ParseLibraryResult extends VideoMetadata, VideoEdit {
   cover?: string;
@@ -31,7 +27,7 @@ interface NfoData {
   };
 }
 
-export async function parseLibrary(prop: ParseLibraryProp): Promise<ParseLibraryResult> {
+export async function parseLibrary(prop: ScanVideoFile): Promise<ParseLibraryResult> {
 
   const titleTemp = prop.fileName.split(".");
   if (titleTemp.length > 1) titleTemp.pop();
