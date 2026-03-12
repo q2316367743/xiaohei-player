@@ -96,7 +96,7 @@ const route = useRoute();
 
 const libraryId = route.params.id as string;
 
-const layout = useLocalStorage<'grid' | 'list'>(LocalName.PAGE_LIBRARY_DETAIL_LAYOUT(libraryId), 'grid');
+const layout = useLocalStorage<'grid' | 'list' | 'waterfall'>(LocalName.PAGE_LIBRARY_DETAIL_LAYOUT(libraryId), 'grid');
 const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_DETAIL_SORT_FIELD(libraryId), 'file_name');
 const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(libraryId), 'ASC');
 

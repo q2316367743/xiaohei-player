@@ -299,9 +299,7 @@ function initPlayer() {
     }
     art.on('video:timeupdate', () => {
       currentTime.value = art.currentTime;
-    });
-    art.on('seek', res => {
-      updateResumeTime(res);
+      updateResumeTime(currentTime.value);
     });
     art.on('fullscreenWeb', e => {
       if (!e) {
@@ -312,7 +310,6 @@ function initPlayer() {
       console.error('Player error:', error);
     });
   });
-
 }
 
 function seekToTime(time: number) {

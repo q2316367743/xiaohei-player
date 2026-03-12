@@ -6,7 +6,7 @@
     @click="handleClick"
   >
     <div class="video-cover">
-      <t-image :src="coverUrl" fit="contain" style="width: 226px;height: 127px;background-color: black"/>
+      <t-image :src="coverUrl" fit="cover" class="cover-image"/>
       <div class="video-preview" v-show="isHovered && previewUrl">
         <video
           :src="previewUrl"
@@ -17,13 +17,12 @@
           playsinline
         />
       </div>
+      <div class="progress-bar" v-if="progress > 0">
+        <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+      </div>
     </div>
     <div class="video-info">
       <div class="video-title" :title="video.title">{{ video.title }}</div>
-      <div class="video-meta">
-        <span class="duration">{{ formatDuration(video.duration_ms) }}</span>
-        <span class="size">{{ formatSize(video.file_size) }}</span>
-      </div>
     </div>
   </div>
 </template>
@@ -49,6 +48,13 @@ const isHovered = ref(false);
 const coverUrl = ref('');
 const previewUrl = ref('');
 
+const progress = computed(() => {
+  if (!props.video.resume_time || !props.video.duration_ms) {
+    return 0;
+  }
+  return Math.min((props.video.resume_time * 1000 / props.video.duration_ms) * 100, 100);
+});
+
 onMounted(() => {
   if (props.video.cover_path) {
     coverUrl.value = convertFileSrcToUrl(props.video.cover_path);
@@ -58,8 +64,6 @@ onMounted(() => {
   }
 });
 
-
-
 function handleMouseEnter() {
   isHovered.value = true;
 }
@@ -67,43 +71,14 @@ function handleMouseEnter() {
 function handleMouseLeave() {
   isHovered.value = false;
 }
-
-function formatDuration(ms: number): string {
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  if (hours > 0) {
-    return `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-  }
-  return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
-}
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  } else if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  } else if (bytes < 1024 * 1024 * 1024) {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  } else {
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-  }
-}
 </script>
 
 <style scoped lang="less">
 .video-card {
-  border-radius: 8px;
   overflow: hidden;
-  background: var(--td-bg-color-container);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: transparent;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
-
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  }
 }
 
 .video-cover {
@@ -112,6 +87,7 @@ function formatSize(bytes: number): string {
   aspect-ratio: 16 / 9;
   background: var(--td-bg-color-page);
   overflow: hidden;
+  border-radius: 8px;
 }
 
 .cover-image {
@@ -130,16 +106,41 @@ function formatSize(bytes: number): string {
   align-items: center;
   justify-content: center;
   z-index: 1;
+  border-radius: 8px;
 }
 
 .preview-video {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  border-radius: 8px;
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 3;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--td-brand-color);
+  transition: width 0.3s ease;
+  border-bottom-left-radius: 8px;
+  min-width: 3px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 .video-info {
-  padding: 12px;
+  padding: 6px 0;
+  background: transparent;
+  text-align: center;
 }
 
 .video-title {
@@ -149,21 +150,6 @@ function formatSize(bytes: number): string {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 8px;
-}
-
-.video-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: var(--td-text-color-secondary);
-}
-
-.duration,
-.size {
-  padding: 2px 6px;
-  background: var(--td-bg-color-container-hover);
-  border-radius: 4px;
+  background: transparent;
 }
 </style>

@@ -188,3 +188,28 @@ export async function getVideoInfoById(id: string): Promise<VideoView | undefine
     studio
   };
 }
+
+/**
+ * 列出最近播放的 10 个视频
+ */
+export async function listLastPlayedVideo() {
+  return useSql().select<Array<Video>>(`
+      select v.*
+      from video v
+               left join library l on v.library_id = l.id
+      where v.is_deleted = '0'
+        and l.password = ''
+      order by v.last_played_at desc
+      limit 10`)
+}
+
+export async function listLastAddVideo() {
+  return useSql().select<Array<Video>>(`
+      select v.*
+      from video v
+               left join library l on v.library_id = l.id
+      where v.is_deleted = '0'
+        and l.password = ''
+      order by v.created_at desc
+      limit 10`)
+}
