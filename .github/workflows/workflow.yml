@@ -70,8 +70,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: tauri-demo-v__VERSION__
-          releaseName: 'tauri-demo v__VERSION__'
+          tagName: 小黑影音-v__VERSION__
+          releaseName: '小黑影音_v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: false # 不创建草稿版本
           prerelease: false # 不作为预发布版本
