@@ -48,16 +48,17 @@
     "macOS": {
       "entitlements": "./Entitlements.plist",
       "files": {
-        "embedded.provisionprofile": "/Users/esion/Documents/app/xiaohei-player/mac_app.cer"
+        "embedded.provisionprofile": "./mac_app.cer"
       }
     }
   },
   "plugins": {
     "updater": {
       "dangerousInsecureTransportProtocol": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJDQ0JENkQ5QTA3QjAzOTcKUldTWEEzdWcyZGJMdkE3NFdJQTllckNJeENwZC83emNRSG93MkZqMXRjYXNSWEY4MWxDWFBoRVYK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEEwQzhFODk3NkM3NjI5MDUKUldRRktYWnNsK2pJb05aV3BkekJ5cGY5RlNROUo1UGZxdE5URWdqVGZUL1JwNzlzNHkxRFFhdWsK",
       "endpoints": [
-        "https://github.com/q2316367743/xiaohei-player/releases/latest/download/latest.json"
+        "https://github.com/q2316367743/xiaohei-player/releases/latest/download/latest.json",
+        "https://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=yvK04YxmYT7q5M04lRhTyw&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
       ],
       "windows": {
         "installMode": "passive"
