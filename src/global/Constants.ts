@@ -15,9 +15,6 @@ export const APP_VERSION = "1.0.0";
 export const APP_PASSWORD = "6NU74Lx3gqKO5t"
 
 let appData = '';
-export const initAppDataDir = async () => {
-  appData = await appDataDir();
-}
 
 export const APP_DATA_DIR = () => appData;
 export const APP_DATA_ASSET_DIR = async () => join(APP_DATA_DIR(), "asset");
@@ -33,6 +30,8 @@ export const APP_DATA_VAULT_PATH = async (vaultName: string) => join(await APP_D
 export const APP_DATA_STORE_PATH = async (storeName: string) => join(await APP_DATA_STORE_DIR(), `${storeName}.json`);
 
 export const initPath = async () => {
+  // 获取应用数据目录
+  appData = await appDataDir();
   const items = await Promise.all([
     APP_DATA_ASSET_DIR(),
     APP_DATA_DB_DIR(),
