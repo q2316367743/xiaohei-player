@@ -1,17 +1,17 @@
 <template>
   <div class="page-layout">
     <header class="page-header">
-      <t-space size="small" class="page-header__left">
-        <t-button variant="outline" shape="square" @click="handlerClick">
+      <div class="page-header__left flex gap-8px overflow-hidden mr-8px">
+        <t-button variant="outline" shape="square" class="shrink-0" @click="handlerClick">
           <template #icon>
-            <chevron-left-icon />
+            <chevron-left-icon/>
           </template>
         </t-button>
-        <div class="page-header__title">
+        <div class="page-header__title ellipsis">
           <slot name="title" v-if="slots['title']"></slot>
-          <span v-else-if="title">{{ title }}</span>
+          <template v-else-if="title">{{ title }}</template>
         </div>
-      </t-space>
+      </div>
       <div class="page-header__right" v-if="slots['action']">
         <slot name="action"></slot>
       </div>
@@ -19,7 +19,7 @@
     <div class="page-container">
       <slot/>
     </div>
-    <t-back-top container=".page-layout .page-container" />
+    <t-back-top container=".page-layout .page-container"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -60,8 +60,6 @@ function handlerClick() {
     }
 
     &__title {
-      display: flex;
-      align-items: center;
       font-size: 1.2rem;
       font-weight: bold;
       padding-top: 3px;
