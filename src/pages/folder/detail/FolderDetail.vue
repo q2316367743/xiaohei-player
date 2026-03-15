@@ -41,7 +41,7 @@
             <folder-icon v-if="item.isDirectory" class="file-icon"/>
             <template v-else-if="item.isFile">
               <img v-if="item.cover" :src="item.cover" class="file-cover" alt=""/>
-              <file-icon v-else class="file-icon"/>
+              <video-icon v-else class="file-icon"/>
             </template>
           </div>
           <div class="file-name" :title="item.name">{{ item.name }}</div>
@@ -57,11 +57,11 @@ import type {FileBrowser, FileItem} from "@/module/file";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  FileIcon,
   FolderIcon, FolderOpenIcon,
   HomeIcon,
   LoadingIcon,
-  RefreshIcon
+  RefreshIcon,
+  VideoIcon
 } from "tdesign-icons-vue-next";
 import {filterVideoFileList} from "@/module/file/util.ts";
 
