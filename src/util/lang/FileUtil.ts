@@ -7,13 +7,7 @@ const separator = sep();
  * @param paths 路径片段
  */
 export function joinPath(...paths: string[]): string {
-  const hasRoot = paths.length > 0 && paths[0]?.startsWith(separator);
-  return paths
-    .filter(Boolean)
-    .map(path => path.replace(new RegExp(`^\\${separator}|\\${separator}$`, 'g'), ''))
-    .filter(Boolean)
-    .join(separator)
-    .replace(/^/, hasRoot ? separator : '');
+  return paths.join(separator);
 }
 
 /**

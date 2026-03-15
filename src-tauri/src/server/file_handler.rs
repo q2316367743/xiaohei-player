@@ -94,10 +94,18 @@ async fn serve_file(
         }
     };
 
-    let path = if path.starts_with('/') {
-        path
+    let path = if cfg!(windows) {
+        if path.starts_with('/') {
+            path[1..].to_string()
+        } else {
+            path
+        }
     } else {
-        format!("/{}", path)
+        if path.starts_with('/') {
+            path
+        } else {
+            format!("/{}", path)
+        }
     };
     let mime_type = get_mime_type(&path);
 
