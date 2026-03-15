@@ -16,7 +16,7 @@ async function readFileAsArrayBuffer(filePath) {
       buffer.byteOffset + buffer.byteLength
     );
   } catch (err) {
-    throw new Error(`读取文件失败: ${err.message}`);
+    throw Error(`读取文件失败: ${err.message}`);
   }
 }
 

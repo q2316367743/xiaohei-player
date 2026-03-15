@@ -130,6 +130,6 @@ export function buildFolderViewCore(type: FolderType): FolderViewCore {
         payload: buildFolderViewCoreWebdav()
       };
     default:
-      throw new Error('未知的文件夹类型');
+      throw Error('未知的文件夹类型');
   }
 }

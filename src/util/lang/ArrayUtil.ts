@@ -62,7 +62,7 @@ export function map<T extends Record<string, any>, K extends T[A], A extends key
       if (merge) {
         result.set(key, merge(old, item));
       } else {
-        throw new Error("未设置合并方法，无法合并相同key");
+        throw Error("未设置合并方法，无法合并相同key");
       }
     } else {
       result.set(key, item);
@@ -180,7 +180,7 @@ export function distinct<T extends Record<string, any>, K extends keyof T>(
  */
 export function generatePlaceholders(n: number, offset = 0): string {
   if (!Number.isInteger(n) || n < 0) {
-    throw new Error('Input must be a non-negative integer');
+    throw Error('Input must be a non-negative integer');
   }
   if (n === 0) return '';
   if (isTauri()) {
@@ -197,7 +197,7 @@ export function generatePlaceholders(n: number, offset = 0): string {
  */
 export function draw<T>(list: Array<T>): T {
   if (list.length === 0) {
-    throw new Error("Array is empty");
+    throw Error("Array is empty");
   }
   return list[Math.floor(Math.random() * list.length)]!;
 }

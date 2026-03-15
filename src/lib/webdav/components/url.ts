@@ -41,7 +41,7 @@ export function buildRemoteURL(options: WebDAVClientOptions): string {
   let baseURL = remoteURL || "";
   
   if (!baseURL) {
-    throw new Error("remoteURL is required");
+    throw Error("remoteURL is required");
   }
   
   if (remoteBasePath) {

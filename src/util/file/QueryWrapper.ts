@@ -160,7 +160,7 @@ export class QueryChain<T extends Record<string, any>, N extends string, K exten
   async one(): Promise<T | null> {
     this.lastSql("LIMIT 1");
     const list = await this.execQuery(this.db);
-    if (list.length > 1) return Promise.reject(new Error("存在多个数据"));
+    if (list.length > 1) return Promise.reject(Error("存在多个数据"));
     return list.length > 0 ? list[0]! : null;
   }
 

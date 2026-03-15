@@ -133,7 +133,7 @@ export class WebDAVClientImpl implements WebDAVClient {
     options?: PutFileContentsOptions
   ): Promise<boolean> {
     if (data instanceof WritableStream) {
-      throw new Error("WritableStream is not supported for putFileContents");
+      throw Error("WritableStream is not supported for putFileContents");
     }
     return putFileContents(this.context, filename, data as string | ArrayBuffer, options);
   }

@@ -17,7 +17,7 @@ class CustomSnowflake {
 
     // 如果当前时间小于上次生成ID的时间，抛出异常
     if (timestamp < this.lastTimestamp) {
-      throw new Error("Clock moved backwards, refusing to generate id");
+      throw Error("Clock moved backwards, refusing to generate id");
     }
 
     // 如果当前时间与上次生成ID的时间相同，则递增序列号

@@ -61,7 +61,7 @@ class CryptoUtil {
       return btoa(String.fromCharCode(...combined));
     } catch (error) {
       console.error('加密失败:', error);
-      throw new Error('数据加密失败');
+      throw Error('数据加密失败');
     }
   }
 
@@ -116,7 +116,7 @@ class CryptoUtil {
       return decoder.decode(decryptedBuffer);
     } catch (error) {
       console.error('解密失败:', error);
-      throw new Error('数据解密失败');
+      throw Error('数据解密失败');
     }
   }
 }
@@ -160,7 +160,7 @@ class StrongholdWrapper {
       }));
     } catch (error) {
       console.error(`插入记录失败 [${key}]:`, error);
-      throw new Error(`无法安全存储数据: ${error instanceof Error ? error.message : '未知错误'}`);
+      throw Error(`无法安全存储数据: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   }
 

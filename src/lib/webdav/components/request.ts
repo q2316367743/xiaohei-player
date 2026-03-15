@@ -11,16 +11,20 @@ import type {
 import { generateDigestAuthHeader, parseDigestAuthHeader } from "./auth";
 import { encodePath } from "./url";
 
-export class WebDAVRequestError extends Error implements WebDAVClientError {
+export class WebDAVRequestError  implements WebDAVClientError {
   status?: number;
   response?: AxiosResponse;
+  name: string;
+  stack?: string | undefined;
+  message: string;
 
   constructor(message: string, status?: number, response?: AxiosResponse) {
-    super(message);
+    this.message = message;
     this.name = "WebDAVRequestError";
     this.status = status;
     this.response = response;
   }
+
 }
 
 export async function request(
@@ -31,7 +35,7 @@ export async function request(
 
   const url = requestOptions.url;
   if (!url) {
-    throw new Error("Request URL is required");
+    throw Error("Request URL is required");
   }
 
   const headers: Headers = {
