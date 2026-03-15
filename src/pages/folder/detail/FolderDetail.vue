@@ -54,6 +54,7 @@
 <script lang="ts" setup>
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
+import {separator} from "@/util/lang/FileUtil.ts";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -84,15 +85,15 @@ const loading = ref(false);
 const folderExtname = ref<string[]>([]);
 
 const pathSegments = computed(() => {
-  if (currentPath.value === '/' || currentPath.value === '') {
-    return ['/'];
+  if (currentPath.value === separator || currentPath.value === '') {
+    return [separator];
   }
-  const parts = currentPath.value.split('/').filter(p => p);
-  return ['/', ...parts];
+  const parts = currentPath.value.split(separator).filter(p => p);
+  return [separator, ...parts];
 });
 
 const isRootPath = computed(() => {
-  return currentPath.value === '/' || currentPath.value === '';
+  return currentPath.value === separator || currentPath.value === '';
 });
 
 const filteredFiles = computed(() => {
@@ -122,14 +123,14 @@ async function loadFiles() {
 }
 
 function handleGoBack() {
-  if (currentPath.value === '/' || currentPath.value === '') {
+  if (currentPath.value === separator || currentPath.value === '') {
     return;
   }
-  const parts = currentPath.value.split('/').filter(p => p);
+  const parts = currentPath.value.split(separator).filter(p => p);
   if (parts.length === 1) {
-    currentPath.value = '/';
+    currentPath.value = separator;
   } else {
-    currentPath.value = '/' + parts.slice(0, -1).join('/');
+    currentPath.value = separator + parts.slice(0, -1).join(separator);
   }
   loadFiles();
 }
@@ -144,10 +145,10 @@ function handleRefresh() {
 
 function handlePathClick(index: number) {
   if (index === 0) {
-    currentPath.value = '/';
+    currentPath.value = separator;
   } else {
-    const parts = currentPath.value.split('/').filter(p => p);
-    currentPath.value = '/' + parts.slice(0, index).join('/');
+    const parts = currentPath.value.split(separator).filter(p => p);
+    currentPath.value = separator + parts.slice(0, index).join(separator);
   }
   loadFiles();
 }
