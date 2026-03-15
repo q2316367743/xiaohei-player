@@ -8,6 +8,10 @@ import {type FileBrowser} from "@/module/file";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import FolderDetail from "@/pages/folder/detail/FolderDetail.vue";
 
+defineOptions({
+  name: 'FolderDetail'
+});
+
 const route = useRoute();
 const router = useRouter();
 
