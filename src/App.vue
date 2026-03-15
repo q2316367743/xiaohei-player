@@ -39,7 +39,7 @@
           </template>
           媒体库
         </t-menu-item>
-        <t-menu-item to="/setting/task" value="/setting/task">
+        <t-menu-item to="/setting" value="/setting">
           <template #icon>
             <setting-icon/>
           </template>
@@ -48,7 +48,11 @@
       </t-menu>
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
-      <router-view/>
+      <router-view v-slot="{ Component, route }">
+        <keep-alive :include="['Setting', 'FolderDetail', 'PlayerFolder', 'PlayerLibrary', 'LibraryDetail']">
+          <component :is="Component" :key="route.fullPath"/>
+        </keep-alive>
+      </router-view>
     </t-content>
   </t-layout>
 </template>

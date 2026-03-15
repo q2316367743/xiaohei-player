@@ -92,6 +92,10 @@ import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
 import {getLibrary} from "@/service";
 import VideoWaterfall from "@/pages/library/detail/components/VideoWaterfall.vue";
 
+defineOptions({
+  name: 'LibraryDetail'
+});
+
 const route = useRoute();
 
 const libraryId = route.params.id as string;

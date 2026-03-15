@@ -34,7 +34,7 @@ import type {Marker} from "@/entity/domain/Marker.ts";
 import {openAddVideoMarker} from "@/pages/player/library/func/LibraryMarkerEdit.tsx";
 
 defineOptions({
-  name: 'PlayerPage'
+  name: 'PlayerLibrary'
 });
 
 const route = useRoute();
