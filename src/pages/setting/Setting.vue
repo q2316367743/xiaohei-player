@@ -9,17 +9,25 @@
       <t-tab-panel label="关于" value="/setting/about"></t-tab-panel>
     </t-tabs>
     <div class="setting-content" :style="contentStyle">
-      <router-view/>
+      <TaskPage v-if="path === '/setting/task'"/>
+      <LibraryPage v-else-if="path === '/setting/library'"/>
+      <InterfacePage v-else-if="path === '/setting/interface'"/>
+      <SystemPage v-else-if="path === '/setting/system'"/>
+      <LogPage v-else-if="path === '/setting/log'"/>
+      <AboutPage v-else-if="path === '/setting/about'"/>
     </div>
-    <t-back-top container=".setting-content" />
+    <t-back-top container=".setting-content"/>
   </div>
 </template>
 <script lang="ts" setup>
-const router = useRouter();
+import TaskPage from "./task/SettingTask.vue";
+import LibraryPage from "./library/SettingLibrary.vue";
+import InterfacePage from "./interface/index.vue";
+import SystemPage from "./system/SettingSystem.vue";
+import LogPage from "./log/index.vue";
+import AboutPage from "./about/index.vue";
 
 const path = ref('/setting/task');
-
-watch(path, value => router.push(value), {immediate: true});
 
 const contentStyle = computed(() => {
   if (path.value === '/setting/about') {
@@ -41,8 +49,9 @@ const contentStyle = computed(() => {
     overflow-y: auto;
     padding: 8px;
   }
+
   :deep(.setting-card) {
-    &>.t-card__body {
+    & > .t-card__body {
       padding-top: 0 !important;
     }
   }
