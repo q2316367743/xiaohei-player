@@ -15,18 +15,18 @@
           <div class="actor-info">
             <h1 class="actor-name">{{ actor?.name }}</h1>
             <div class="actor-meta">
-            <span v-if="actor?.original_name" class="meta-item">
-              <t-icon name="user" size="16px"/>
-              {{ actor.original_name }}
-            </span>
+              <span v-if="actor?.original_name" class="meta-item">
+                <user-icon size="16px"/>
+                {{ actor.original_name }}
+              </span>
               <span v-if="actor?.gender" class="meta-item">
-              <t-icon name="usercircle" size="16px"/>
+                <user-circle-icon size="16px"/>
               {{ genderText }}
-            </span>
+              </span>
               <span v-if="actor?.birth_date" class="meta-item">
-              <t-icon name="calendar" size="16px"/>
-              {{ formatDate(actor.birth_date) }}
-            </span>
+                <calendar-icon size="16px"/>
+                {{ formatDate(actor.birth_date) }}
+              </span>
             </div>
             <p v-if="actor?.biography" class="actor-biography">{{ actor.biography }}</p>
           </div>
@@ -45,7 +45,7 @@
           />
         </div>
         <div v-else class="empty-state">
-          <t-icon name="info-circle" size="48px"/>
+          <info-circle-icon size="48px"/>
           <p>暂无视频作品</p>
         </div>
       </t-card>
@@ -61,6 +61,7 @@ import MessageUtil from "@/util/model/MessageUtil.ts";
 import type {Video} from "@/entity/domain/Video.ts";
 import XhAvatar from "@/components/xiaohei/XhAvatar.vue";
 import VideoCard from "@/pages/library/detail/components/VideoCard.vue";
+import {CalendarIcon, InfoCircleIcon, UserCircleIcon, UserIcon} from "tdesign-icons-vue-next";
 
 const route = useRoute();
 const router = useRouter();

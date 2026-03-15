@@ -68,7 +68,7 @@
           size="small"
           @click="toggleSidebar"
         >
-          <t-icon name="close"/>
+          <close-icon/>
         </t-button>
       </div>
       <div class="sidebar-content">
@@ -77,7 +77,7 @@
           <span>加载中...</span>
         </div>
         <div v-else-if="videoFiles.length === 0" class="empty-sidebar">
-          <t-icon name="file-video"/>
+          <video-icon />
           <span>当前目录无视频文件</span>
         </div>
         <div v-else class="file-list">
@@ -105,7 +105,7 @@ import {readDir} from '@tauri-apps/plugin-fs';
 import {dirname, join} from '@tauri-apps/api/path';
 import {writeText} from "@tauri-apps/plugin-clipboard-manager";
 import Artplayer from 'artplayer';
-import {VideoIcon, ArrowLeftIcon, ListNumberedIcon} from 'tdesign-icons-vue-next';
+import {VideoIcon, ArrowLeftIcon, ListNumberedIcon, CloseIcon} from 'tdesign-icons-vue-next';
 import {getCurrentWindow} from '@tauri-apps/api/window';
 import {getVideoType, playFlv, playM3u8, playTs} from '@/lib/artplayer';
 import {MessagePlugin} from 'tdesign-vue-next';

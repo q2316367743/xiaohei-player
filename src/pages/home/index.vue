@@ -6,7 +6,7 @@
         @click="handleOpenFile"
       >
         <template #icon>
-          <t-icon name="folder"></t-icon>
+          <folder-icon />
         </template>
         打开文件
       </t-button>
@@ -15,7 +15,7 @@
         @click="handleOpenUrl"
       >
         <template #icon>
-          <t-icon name="link"></t-icon>
+          <link-icon />
         </template>
         打开URL
       </t-button>
@@ -26,6 +26,7 @@
 import { open } from '@tauri-apps/plugin-dialog';
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import {useLibrarySettingStore} from "@/lib/store.ts";
+import {FolderIcon, LinkIcon} from "tdesign-icons-vue-next";
 
 const router = useRouter();
 

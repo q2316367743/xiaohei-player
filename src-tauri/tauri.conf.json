@@ -28,31 +28,7 @@
           "**/*"
         ]
       },
-      "csp": {
-        "default-src": [
-          "'self'",
-          "ipc:",
-          "http://ipc.localhost",
-          "http://localhost",
-          "'unsafe-inline'"
-        ],
-        "img-src": [
-          "'self'",
-          "asset:",
-          "http://asset.localhost",
-          "http://localhost",
-          "*"
-        ],
-        "style-src": [
-          "'unsafe-inline'",
-          "'self'",
-          "https://chinese-fonts-cdn.deno.dev"
-        ],
-        "worker-src": [
-          "'self'",
-          "blob:"
-        ]
-      }
+      "csp": null
     },
     "withGlobalTauri": true
   },

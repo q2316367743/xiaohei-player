@@ -29,7 +29,7 @@
       <div class="poster-meta">
         <span class="meta-tag">{{ formatSize(video.file_size) }}</span>
         <span class="meta-tag" v-if="video.play_count > 0">
-          <t-icon name="play-circle" size="12px" />
+          <play-circle-icon size="12px"/>
           {{ video.play_count }}
         </span>
       </div>
@@ -40,6 +40,7 @@
 <script lang="ts" setup>
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import {PlayCircleIcon} from "tdesign-icons-vue-next";
 
 const router = useRouter();
 

@@ -21,23 +21,23 @@
       <div class="video-title" :title="video.title">{{ video.title }}</div>
       <div class="video-meta">
         <span class="meta-item">
-          <t-icon name="time" size="14px" />
+          <time-icon size="14px"/>
           <span>{{ formatDuration(video.duration_ms) }}</span>
         </span>
         <span class="meta-item">
-          <t-icon name="file" size="14px" />
+          <file-icon size="14px"/>
           <span>{{ formatSize(video.file_size) }}</span>
         </span>
         <span class="meta-item" v-if="video.file_birthtime">
-          <t-icon name="file-add" size="14px" />
+          <file-add-icon size="14px"/>
           <span>{{ formatDate(video.file_birthtime) }}</span>
         </span>
         <span class="meta-item" v-if="video.created_at">
-          <t-icon name="add-rectangle" size="14px" />
+          <add-rectangle-icon size="14px"/>
           <span>{{ formatDate(video.created_at) }}</span>
         </span>
         <span class="meta-item" v-if="video.play_count > 0">
-          <t-icon name="play-circle" size="14px" />
+          <play-circle-icon size="14px" />
           <span>{{ video.play_count }}次</span>
         </span>
       </div>
@@ -48,6 +48,7 @@
 <script lang="ts" setup>
 import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import {AddRectangleIcon, FileAddIcon, FileIcon, PlayCircleIcon, TimeIcon} from "tdesign-icons-vue-next";
 
 const router = useRouter();
 

@@ -4,35 +4,35 @@
       <div class="toolbar-left">
         <t-button variant="outline" shape="circle" :disabled="isRootPath" @click="handleGoBack">
           <template #icon>
-            <t-icon name="chevron-left"></t-icon>
+            <chevron-left-icon/>
           </template>
         </t-button>
         <t-button variant="outline" shape="circle" @click="handleGoHome">
           <template #icon>
-            <t-icon name="home"></t-icon>
+            <home-icon/>
           </template>
         </t-button>
         <t-button variant="outline" shape="circle" @click="handleRefresh">
           <template #icon>
-            <t-icon name="refresh"></t-icon>
+            <refresh-icon/>
           </template>
         </t-button>
       </div>
       <div class="breadcrumb">
         <div class="breadcrumb-item" v-for="(item, index) in pathSegments" :key="index" @click="handlePathClick(index)">
           <span class="breadcrumb-text">{{ item }}</span>
-          <t-icon name="chevron-right" class="breadcrumb-separator" v-if="index < pathSegments.length - 1"></t-icon>
+          <chevron-right-icon class="breadcrumb-separator" v-if="index < pathSegments.length - 1"/>
         </div>
       </div>
     </div>
 
     <div class="file-list">
       <div v-if="loading" class="loading-state">
-        <t-icon name="loading" class="loading-icon"></t-icon>
+        <loading-icon class="loading-icon"/>
         <p class="loading-text">加载中...</p>
       </div>
       <div v-else-if="filteredFiles.length === 0" class="empty-state">
-        <t-icon name="folder-open" class="empty-icon"></t-icon>
+        <folder-open-icon class="empty-icon"/>
         <p class="empty-text">此文件夹为空</p>
       </div>
       <div v-else class="file-grid">
@@ -54,7 +54,15 @@
 <script lang="ts" setup>
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
-import { FileIcon, FolderIcon } from "tdesign-icons-vue-next";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  FileIcon,
+  FolderIcon, FolderOpenIcon,
+  HomeIcon,
+  LoadingIcon,
+  RefreshIcon
+} from "tdesign-icons-vue-next";
 import {filterVideoFileList} from "@/module/file/util.ts";
 
 const router = useRouter();
