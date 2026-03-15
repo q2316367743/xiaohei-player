@@ -17,7 +17,7 @@
               </template>
             </t-button>
           </div>
-          <div class="header-title text-ellipsis">{{ title }}</div>
+          <div class="header-title ellipsis">{{ title }}</div>
           <div class="header-actions">
             <t-button
               theme="primary"
