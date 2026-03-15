@@ -15,6 +15,28 @@ fn get_mime_type(path: &str) -> String {
     from_path(path).first_or_octet_stream().to_string()
 }
 
+fn add_cors_headers(builder: axum::http::response::Builder) -> axum::http::response::Builder {
+    builder
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
+        .header(
+            "Access-Control-Allow-Headers",
+            "Range, Content-Type, Authorization",
+        )
+        .header(
+            "Access-Control-Expose-Headers",
+            "Content-Length, Content-Range, Accept-Ranges",
+        )
+}
+
+fn cors_error_response(status: StatusCode, message: String) -> Response {
+    add_cors_headers(axum::http::Response::builder())
+        .status(status)
+        .header(header::CONTENT_TYPE, "text/plain")
+        .body(Body::from(message))
+        .unwrap()
+}
+
 fn parse_range(range_str: &str, file_size: u64) -> Option<(u64, u64)> {
     let range = range_str.strip_prefix("bytes=")?;
     let parts: Vec<&str> = range.split('-').collect();
@@ -59,18 +81,8 @@ async fn serve_file(
     method: Method,
 ) -> Response {
     if method == Method::OPTIONS {
-        return axum::http::Response::builder()
+        return add_cors_headers(axum::http::Response::builder())
             .status(StatusCode::OK)
-            .header("Access-Control-Allow-Origin", "*")
-            .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-            .header(
-                "Access-Control-Allow-Headers",
-                "Range, Content-Type, Authorization",
-            )
-            .header(
-                "Access-Control-Expose-Headers",
-                "Content-Length, Content-Range, Accept-Ranges",
-            )
             .body(Body::empty())
             .unwrap();
     }
@@ -78,7 +90,7 @@ async fn serve_file(
     let path = match percent_decode_str(&path).decode_utf8() {
         Ok(p) => p.to_string(),
         Err(_) => {
-            return (StatusCode::BAD_REQUEST, "Invalid URL encoding".to_string()).into_response();
+            return cors_error_response(StatusCode::BAD_REQUEST, "Invalid URL encoding".to_string());
         }
     };
 
@@ -94,11 +106,10 @@ async fn serve_file(
             let metadata = match file.metadata().await {
                 Ok(m) => m,
                 Err(e) => {
-                    return (
+                    return cors_error_response(
                         StatusCode::INTERNAL_SERVER_ERROR,
                         format!("Failed to get file metadata: {}", e),
-                    )
-                        .into_response();
+                    );
                 }
             };
 
@@ -111,18 +122,17 @@ async fn serve_file(
                         let content_length = end - start + 1;
 
                         if file.seek(std::io::SeekFrom::Start(start)).await.is_err() {
-                            return (
+                            return cors_error_response(
                                 StatusCode::INTERNAL_SERVER_ERROR,
                                 "Failed to seek file".to_string(),
-                            )
-                                .into_response();
+                            );
                         }
 
                         let reader = tokio::io::BufReader::new(file);
                         let stream = ReaderStream::with_capacity(reader.take(content_length), 8192);
                         
                         let body = Body::from_stream(stream);
-                        let response = axum::http::Response::builder()
+                        let response = add_cors_headers(axum::http::Response::builder())
                             .status(StatusCode::PARTIAL_CONTENT)
                             .header(header::CONTENT_TYPE, mime_type)
                             .header(header::CONTENT_LENGTH, content_length.to_string())
@@ -131,45 +141,24 @@ async fn serve_file(
                                 format!("bytes {}-{}/{}", start, end, file_size),
                             )
                             .header(header::ACCEPT_RANGES, "bytes")
-                            .header("Access-Control-Allow-Origin", "*")
-                            .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-                            .header(
-                                "Access-Control-Allow-Headers",
-                                "Range, Content-Type, Authorization",
-                            )
-                            .header(
-                                "Access-Control-Expose-Headers",
-                                "Content-Length, Content-Range, Accept-Ranges",
-                            )
                             .body(body)
                             .unwrap();
 
                         return response;
                     } else {
-                        return (
+                        return cors_error_response(
                             StatusCode::RANGE_NOT_SATISFIABLE,
                             format!("Range Not Satisfiable: {}", range_str),
-                        )
-                            .into_response();
+                        );
                     }
                 }
             }
 
-            let builder = axum::http::Response::builder()
+            let builder = add_cors_headers(axum::http::Response::builder())
                 .status(StatusCode::OK)
                 .header(header::CONTENT_TYPE, mime_type)
                 .header(header::CONTENT_LENGTH, file_size.to_string())
-                .header(header::ACCEPT_RANGES, "bytes")
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-                .header(
-                    "Access-Control-Allow-Headers",
-                    "Range, Content-Type, Authorization",
-                )
-                .header(
-                    "Access-Control-Expose-Headers",
-                    "Content-Length, Content-Range, Accept-Ranges",
-                );
+                .header(header::ACCEPT_RANGES, "bytes");
 
             let stream = ReaderStream::with_capacity(tokio::io::BufReader::new(file), 8192);
             let body = Body::from_stream(stream);
@@ -178,11 +167,10 @@ async fn serve_file(
 
             response
         }
-        Err(e) => (
+        Err(e) => cors_error_response(
             StatusCode::NOT_FOUND,
             format!("File not found: {} - {}", path, e),
-        )
-            .into_response(),
+        ),
     }
 }
 
