@@ -1,6 +1,6 @@
 import {sep} from "@tauri-apps/api/path";
 
-const separator = sep();
+export const separator = sep();
 
 /**
  * 拼接路径
