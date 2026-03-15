@@ -24,6 +24,14 @@
           <chevron-right-icon class="breadcrumb-separator" v-if="index < pathSegments.length - 1"/>
         </div>
       </div>
+      <div class="actions">
+        <t-button theme="default" shape="square" @click="handleToggleLayout">
+          <template #icon>
+            <view-list-icon v-if="layout === 'list'"/>
+            <app-icon v-else-if="layout === 'card'"/>
+          </template>
+        </t-button>
+      </div>
     </div>
 
     <div class="file-list">
@@ -35,8 +43,8 @@
         <folder-open-icon class="empty-icon"/>
         <p class="empty-text">此文件夹为空</p>
       </div>
-      <div v-else class="file-grid">
-        <div v-for="item in filteredFiles" :key="item.path" class="file-item" @click="handleFileClick(item)">
+      <div v-else class="file-grid" :class="`file-grid-${layout}`">
+        <div v-for="item in filteredFiles" :key="item.path" class="file-item" :class="`file-item-${layout}`" @click="handleFileClick(item)">
           <div class="file-icon-wrapper">
             <folder-icon v-if="item.isDirectory" class="file-icon"/>
             <template v-else-if="item.isFile">
@@ -56,15 +64,17 @@ import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
 import {separator} from "@/util/lang/FileUtil.ts";
 import {
+  AppIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   FolderIcon, FolderOpenIcon,
   HomeIcon,
   LoadingIcon,
   RefreshIcon,
-  VideoIcon
+  VideoIcon, ViewListIcon
 } from "tdesign-icons-vue-next";
 import {filterVideoFileList} from "@/module/file/util.ts";
+import {LocalName} from "@/global/LocalName.ts";
 
 const router = useRouter();
 
@@ -83,6 +93,8 @@ const currentPath = ref('/');
 const files = ref<FileItem[]>([]);
 const loading = ref(false);
 const folderExtname = ref<string[]>([]);
+
+const layout = useLocalStorage<'card' | 'list'>(LocalName.PAGE_FOLDER_DETAIL_LAYOUT(props.folderId), 'list');
 
 const pathSegments = computed(() => {
   if (currentPath.value === separator || currentPath.value === '') {
@@ -166,6 +178,10 @@ function handleFileClick(item: FileItem) {
       }
     });
   }
+}
+
+function handleToggleLayout() {
+  layout.value = layout.value === 'card' ? 'list' : 'card';
 }
 </script>
 
