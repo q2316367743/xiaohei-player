@@ -1,6 +1,9 @@
 import {sep} from "@tauri-apps/api/path";
+import { platform } from "@tauri-apps/plugin-os";
 
 export const separator = sep();
+
+export const isWindows = platform() === 'windows'
 
 /**
  * 拼接路径

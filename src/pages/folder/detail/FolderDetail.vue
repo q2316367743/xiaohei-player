@@ -54,7 +54,7 @@
 <script lang="ts" setup>
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
-import {separator} from "@/util/lang/FileUtil.ts";
+import {isWindows, separator} from "@/util/lang/FileUtil.ts";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -79,7 +79,7 @@ const props = defineProps({
   }
 });
 
-const currentPath = ref('/');
+const currentPath = ref(isWindows ? '\\' : '/');
 const files = ref<FileItem[]>([]);
 const loading = ref(false);
 const folderExtname = ref<string[]>([]);
