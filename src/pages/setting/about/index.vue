@@ -170,8 +170,9 @@ const openGitHub = async () => {
 
 .logo-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
 }
 
 .logo-inner {
@@ -190,8 +191,8 @@ const openGitHub = async () => {
   z-index: 2;
   overflow: hidden;
   .logo-svg {
-    width: 100%;
-    height: 100%;
+    width: 48px;
+    height: 48px;
   }
 }
 
