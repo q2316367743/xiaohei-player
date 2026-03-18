@@ -50,12 +50,12 @@ export async function removeLibrary(id: string) {
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_SORT_FIELD(id));
   localStorage.removeItem(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(id));
   // 所有的视频变为已删除
-  await useSql().select(`update video set is_deleted = '1' where library_id = ${id}`);
+  await useSql().execute(`update video set is_deleted = '1' where library_id = ${id}`);
   // 删除全部的标记
-  await useSql().select(`delete from marker where library_id = ${id}`);
+  await useSql().execute(`delete from marker where library_id = ${id}`);
   // 删除全部的演员
-  await useSql().select(`delete from actor where library_id = ${id}`);
+  await useSql().execute(`delete from actor where library_id = ${id}`);
   // 删除全部的标签
-  await useSql().select(`delete from tag where library_id = ${id}`);
+  await useSql().execute(`delete from tag where library_id = ${id}`);
 
 }

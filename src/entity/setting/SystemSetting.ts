@@ -1,3 +1,5 @@
+import {isTauri} from "@tauri-apps/api/core";
+
 export interface SystemPreviewSetting {
   /**
    * 预览片段段数
@@ -147,8 +149,8 @@ export function getSystemSetting(): SystemSetting {
     pluginPath: '/root/.stash/plugins',
     metaPath: '/metadata/',
     customActorImagePath: '',
-    ffmpegPath: 'ffmpeg',
-    ffprobePath: 'ffprobe',
+    ffmpegPath: isTauri() ? 'ffmpeg' : '',
+    ffprobePath: isTauri() ? 'ffprobe' : '',
     pythonPath: '',
     backupPath: '',
     trashPath: '',

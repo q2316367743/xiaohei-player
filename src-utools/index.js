@@ -8,7 +8,7 @@ const {setupServer, getServerPort} = require("./server");
 setupServer();
 // 注入命令
 window.__TAURI_INTERNALS__ = inject('main', {
-  ffmpeg_command: (arg) => {
+  ffmpeg_command: async (arg) => {
     const {cmd, args} = arg;
     if (cmd) {
       return new Promise((resolve, reject) => {
@@ -37,7 +37,13 @@ window.__TAURI_INTERNALS__ = inject('main', {
         });
       });
     }
-    return utools.runFFmpeg(args);
+    let r = '';
+    await utools.runFFmpeg(args, {
+      onLog(text) {
+        r += text;
+      }
+    });
+    return r;
   },
   get_server_port: async () => {
     return getServerPort();

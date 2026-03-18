@@ -41,6 +41,29 @@ interface GenerateVttProp {
   videoInfo: VideoInfo;
 }
 
+function formatVttTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  const secsInt = Math.floor(secs);
+  const ms = Math.floor((secs - secsInt) * 1000);
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secsInt).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+}
+
+interface GeneratePreviewProp {
+  // ffmpeg 路径
+  ffmpeg: string;
+  // 原视频地址
+  path: string;
+  // 生成的预览视频地址
+  preview: string;
+  // 视频总时长
+  durationMs: number;
+
+  // 预览配置
+  previewSetting: SystemPreviewSetting;
+}
+
 export async function generateVtt(prop: GenerateVttProp) {
   const {ffmpeg, durationMs, path, sprite, vtt, videoInfo} = prop;
 
@@ -52,6 +75,7 @@ export async function generateVtt(prop: GenerateVttProp) {
   const thumbWidth = Math.round(videoInfo.width * (thumbHeight / videoInfo.height));
 
   await execFfmepgCommand(ffmpeg, [
+    "-hide_banner",
     "-i",
     path,
     "-vf",
@@ -91,29 +115,6 @@ export async function generateVtt(prop: GenerateVttProp) {
 
   await writeFile(vtt, new TextEncoder().encode(vttContent));
 
-}
-
-function formatVttTime(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  const secsInt = Math.floor(secs);
-  const ms = Math.floor((secs - secsInt) * 1000);
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secsInt).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
-}
-
-interface GeneratePreviewProp {
-  // ffmpeg 路径
-  ffmpeg: string;
-  // 原视频地址
-  path: string;
-  // 生成的预览视频地址
-  preview: string;
-  // 视频总时长
-  durationMs: number;
-
-  // 预览配置
-  previewSetting: SystemPreviewSetting;
 }
 
 /**
@@ -168,6 +169,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
     tempFiles.push(tempFile);
 
     await execFfmepgCommand(ffmpeg, [
+      "-hide_banner",
       "-ss",
       startTimes[i]?.toString() || "0",
       "-i",
@@ -194,6 +196,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
   }
 
   await execFfmepgCommand(ffmpeg, [
+    "-hide_banner",
     ...inputArgs,
     "-filter_complex",
     filterComplex,
@@ -232,11 +235,12 @@ export async function generatePreview(prop: GeneratePreviewProp) {
  */
 export async function generateCover(ffmpeg: string, path: string, cover: string) {
   await execFfmepgCommand(ffmpeg, [
+    "-hide_banner",
+    "-ss",
+    "1",
     "-i",
     path,
     "-vframes",
-    "1",
-    "-ss",
     "1",
     "-f",
     "image2",
@@ -249,64 +253,161 @@ export async function generateCover(ffmpeg: string, path: string, cover: string)
  * 获取视频时长
  */
 export async function getVideoDuration(ffprobe: string, path: string) {
-  const result = await execFfmepgCommand(ffprobe, [
-    "-v",
-    "error",
-    "-show_entries",
-    "format=duration",
-    "-of",
-    "default=noprint_wrappers=1:nokey=1",
-    path
-  ]);
-  const duration = parseFloat(result.trim());
-  if (isNaN(duration)) {
+  if (ffprobe) {
+    const result = await execFfmepgCommand(ffprobe, [
+      "-v",
+      "error",
+      "-show_entries",
+      "format=duration",
+      "-of",
+      "default=noprint_wrappers=1:nokey=1",
+      path
+    ]);
+    const duration = parseFloat(result.trim());
+    if (isNaN(duration)) {
+      return "0";
+    }
+    return (duration * 1000).toString();
+  } else {
+    const result = await execFfmepgCommand("", [
+      "-hide_banner",
+      "-i",
+      path,
+      "-f",
+      "null",
+      "-"
+    ]);
+
+    const durationMatch = result.match(/Duration:\s+(\d{2}):(\d{2}):(\d{2}\.\d{2})/);
+    
+    if (durationMatch && durationMatch[1] && durationMatch[2] && durationMatch[3]) {
+      const hours = parseInt(durationMatch[1]);
+      const minutes = parseInt(durationMatch[2]);
+      const seconds = parseFloat(durationMatch[3]);
+      const duration = hours * 3600 + minutes * 60 + seconds;
+      return (duration * 1000).toString();
+    }
+
     return "0";
   }
-  return (duration * 1000).toString();
 }
 
 /**
  * 获取视频完整信息
  */
 export async function getVideoInfo(ffprobe: string, path: string): Promise<VideoInfo> {
-  const result = await execFfmepgCommand(ffprobe, [
-    "-v",
-    "error",
-    "-show_entries",
-    "stream=width,height,r_frame_rate,bit_rate,codec_name,codec_type:format=duration,format_name",
-    "-of",
-    "json",
-    path
-  ]);
+  if (ffprobe) {
+    const result = await execFfmepgCommand(ffprobe, [
+      "-v",
+      "error",
+      "-show_entries",
+      "stream=width,height,r_frame_rate,bit_rate,codec_name,codec_type:format=duration,format_name",
+      "-of",
+      "json",
+      path
+    ]);
 
-  const data = JSON.parse(result);
-  const streams = data.streams || [];
-  const format = data.format || {};
+    const data = JSON.parse(result);
+    const streams = data.streams || [];
+    const format = data.format || {};
 
-  const videoStream = streams.find((s: any) => s.codec_type === "video");
-  const audioStream = streams.find((s: any) => s.codec_type === "audio");
+    const videoStream = streams.find((s: any) => s.codec_type === "video");
+    const audioStream = streams.find((s: any) => s.codec_type === "audio");
 
-  let fps = 0;
-  if (videoStream?.r_frame_rate) {
-    const [num, den] = videoStream.r_frame_rate.split("/");
-    fps = den ? parseFloat(num) / parseFloat(den) : parseFloat(num);
+    let fps = 0;
+    if (videoStream?.r_frame_rate) {
+      const [num, den] = videoStream.r_frame_rate.split("/");
+      fps = den ? parseFloat(num) / parseFloat(den) : parseFloat(num);
+    }
+
+    let durationMs = 0;
+    if (format.duration) {
+      durationMs = parseFloat(format.duration) * 1000;
+    }
+
+    return {
+      duration_ms: durationMs,
+      width: videoStream?.width || 0,
+      height: videoStream?.height || 0,
+      fps: fps,
+      bit_rate: videoStream?.bit_rate ? parseInt(videoStream.bit_rate) : 0,
+      video_codec: videoStream?.codec_name || "",
+      audio_codec: audioStream?.codec_name || "",
+      container_format: format.format_name?.split(",")[0] || ""
+    };
+  } else {
+    const result = await execFfmepgCommand("", [
+      "-hide_banner",
+      "-i",
+      path,
+      "-f",
+      "null",
+      "-"
+    ]);
+
+    const lines = result.split('\n');
+    
+    let durationMs = 0;
+    let width = 0;
+    let height = 0;
+    let fps = 0;
+    let bitRate = 0;
+    let videoCodec = "";
+    let audioCodec = "";
+    let containerFormat = "";
+
+    for (const line of lines) {
+      const durationMatch = line.match(/Duration:\s+(\d{2}):(\d{2}):(\d{2}\.\d{2})/);
+      if (durationMatch && durationMatch[1] && durationMatch[2] && durationMatch[3]) {
+        const hours = parseInt(durationMatch[1]);
+        const minutes = parseInt(durationMatch[2]);
+        const seconds = parseFloat(durationMatch[3]);
+        durationMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+      }
+
+      const videoStreamMatch = line.match(/Stream\s+#\d+:\d+.*Video:\s+(\w+)/);
+      if (videoStreamMatch && videoStreamMatch[1]) {
+        videoCodec = videoStreamMatch[1];
+      }
+
+      const audioStreamMatch = line.match(/Stream\s+#\d+:\d+.*Audio:\s+(\w+)/);
+      if (audioStreamMatch && audioStreamMatch[1]) {
+        audioCodec = audioStreamMatch[1];
+      }
+
+      const resolutionMatch = line.match(/(\d{3,5})x(\d{3,5})/);
+      if (resolutionMatch && resolutionMatch[1] && resolutionMatch[2]) {
+        width = parseInt(resolutionMatch[1]);
+        height = parseInt(resolutionMatch[2]);
+      }
+
+      const fpsMatch = line.match(/(\d+(?:\.\d+)?)\s*fps/);
+      if (fpsMatch && fpsMatch[1]) {
+        fps = parseFloat(fpsMatch[1]);
+      }
+
+      const bitRateMatch = line.match(/(\d+)\s*kb\/s/);
+      if (bitRateMatch && bitRateMatch[1]) {
+        bitRate = parseInt(bitRateMatch[1]) * 1000;
+      }
+
+      const formatMatch = line.match(/Input\s+#\d+,\s*(\w+)/);
+      if (formatMatch && formatMatch[1]) {
+        containerFormat = formatMatch[1];
+      }
+    }
+
+    return {
+      duration_ms: durationMs,
+      width: width,
+      height: height,
+      fps: fps,
+      bit_rate: bitRate,
+      video_codec: videoCodec,
+      audio_codec: audioCodec,
+      container_format: containerFormat
+    };
   }
-
-  let durationMs = 0;
-  if (format.duration) {
-    durationMs = parseFloat(format.duration) * 1000;
-  }
-
-  return {
-    duration_ms: durationMs,
-    width: videoStream?.width || 0,
-    height: videoStream?.height || 0,
-    fps: fps,
-    bit_rate: videoStream?.bit_rate ? parseInt(videoStream.bit_rate) : 0,
-    video_codec: videoStream?.codec_name || "",
-    audio_codec: audioStream?.codec_name || "",
-    container_format: format.format_name?.split(",")[0] || ""
-  };
 }
 
 /**
@@ -324,6 +425,7 @@ export async function generateMarker(
 ) {
   await ensureDir(marker);
   await execFfmepgCommand(ffmpeg, [
+    "-hide_banner",
     "-ss",
     String(time),
     "-i",

@@ -1,10 +1,13 @@
 import {listAllVideo} from "@/service";
 import {join} from "@tauri-apps/api/path";
-import {readDir, remove} from "@tauri-apps/plugin-fs";
-import {logError} from "@/lib/log.ts";
+import {exists, readDir, remove} from "@tauri-apps/plugin-fs";
+import {logDebug, logError} from "@/lib/log.ts";
 import {APP_DATA_GENERATE_DIR} from "@/global/Constants.ts";
 
 async function handleFolder(path: string, videoNames: Array<string>, extname: string) {
+  if (!await exists(path)) {
+    return;
+  }
   const files = await readDir(path);
   const names = new Set(videoNames.map(e => `${e}${extname}`));
   for (const file of files) {
@@ -42,33 +45,38 @@ export async function cleanGenerateFile(
   const markerDir = await join(generateDir, "marker");
 
   try {
-    onProgress(1, 4, "正在处理封面");
+    onProgress(1, 5, "正在处理封面");
+    logDebug("正在处理封面");
     await handleFolder(coverDir, videoNames, '.jpg');
   } catch (e) {
     logError('处理封面失败', e);
   }
   try {
-    onProgress(2, 4, "正在处理快照");
+    onProgress(2, 5, "正在处理快照");
+    logDebug("正在处理快照");
     await handleFolder(screenshotDir, videoNames, '.mp4');
   } catch (e) {
-    logError('处理封面失败', e);
+    logError('处理快照失败', e);
   }
   try {
-    onProgress(3, 4, "正在处理 vtt 切图");
+    onProgress(3, 5, "正在处理 vtt 切图");
+    logDebug("正在处理 vtt 切图");
     await handleFolder(vttDir, videoNames, '_sprite.jpg');
   } catch (e) {
-    logError('处理封面失败', e);
+    logError('处理 vtt 切图失败', e);
   }
   try {
-    onProgress(3, 4, "正在处理 vtt 文件");
+    onProgress(4, 5, "正在处理 vtt 文件");
+    logDebug("正在处理 vtt 文件");
     await handleFolder(vttDir, videoNames, '_thumbs.vtt');
   } catch (e) {
-    logError('处理封面失败', e);
+    logError('处理 vtt 文件失败', e);
   }
   try {
-    onProgress(4, 4, "正在处理 vtt 文件");
+    onProgress(5, 5, "正在处理 vtt 文件");
+    logDebug("正在处理标记文件");
     await handleFolder(markerDir, videoNames, '');
   } catch (e) {
-    logError('处理封面失败', e);
+    logError('处理标记失败', e);
   }
 }
