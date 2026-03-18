@@ -16,7 +16,7 @@ module.exports = async (cmd, args, eventEmitter) => {
     const _id = `${rid}:${key}`;
     const old = await utools.db.promises.get(_id);
     await utools.db.promises.put({
-      _id: rid + ":" + key,
+      _id: _id,
       _rev: old?._rev,
       value
     })
@@ -37,8 +37,15 @@ module.exports = async (cmd, args, eventEmitter) => {
     const {rid, key} = args;
     const _id = `${rid}:${key}`;
     return !!await utools.db.promises.get(_id);
+  } else if (cmd === 'plugin:store|entries') {
+    const {rid} = args;
+    const prefix = `${rid}:`;
+    const item = await utools.db.promises.allDocs(prefix);
+    return item.map(row => [row._id.substring(prefix.length), row.value]);
   } else if (cmd === 'plugin:store|delete') {
-    await utools.db.promises.remove(args.rid + ":" + args.key);
+    const {rid, key} = args;
+    const _id = `${rid}:${key}`;
+    await utools.db.promises.remove(_id);
     eventEmitter.emit("store://change", {
       payload: {
         resourceId: args.rid,

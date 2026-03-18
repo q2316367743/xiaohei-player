@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full setting">
-    <t-tabs v-model="path">
+    <t-tabs v-model="path" class="mt-6px">
       <t-tab-panel label="任务" value="/setting/task"></t-tab-panel>
       <t-tab-panel label="收藏库" value="/setting/library"></t-tab-panel>
       <t-tab-panel label="界面" value="/setting/interface"></t-tab-panel>

@@ -112,11 +112,6 @@ const filteredFiles = computed(() => {
   return filterVideoFileList(files.value, folderExtname.value, props.adapter);
 });
 
-onMounted(async () => {
-  await loadSettings();
-  await loadFiles();
-});
-
 async function loadSettings() {
   const settings = await useLibrarySettingStore().get();
   folderExtname.value = settings.folderExtname || [];
@@ -183,6 +178,16 @@ function handleFileClick(item: FileItem) {
 function handleToggleLayout() {
   layout.value = layout.value === 'card' ? 'list' : 'card';
 }
+
+watch(() => props.folderId, () => {
+  currentPath.value = isWindows ? '\\' : '/';
+  loadFiles();
+})
+
+onMounted(async () => {
+  await loadSettings();
+  await loadFiles();
+});
 </script>
 
 <style scoped lang="less">

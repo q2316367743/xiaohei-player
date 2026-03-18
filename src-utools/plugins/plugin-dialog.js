@@ -3,24 +3,27 @@
  * @param cmd {string} 命令
  * @param args {Record<string, any>} 参数
  */
-module.exports = (cmd, args) => {
+module.exports = async (cmd, args) => {
   if (cmd === 'plugin:dialog|open') {
-    return Promise.resolve(utools.showOpenDialog({
+    const paths = utools.showOpenDialog({
       ...args.options,
       properties: [
         args.options.directory ? 'openDirectory' : 'openFile',
         args.options.multiple ? 'multiSelections' : 'openFile',
         args.options.canCreateDirectories ? 'createDirectory' : 'openFile'
       ]
-    }))
-  }else if (cmd === 'plugin:dialog|save') {
-    return Promise.resolve(utools.showSaveDialog({
+    });
+    if (args.multiple) return paths;
+    else return paths ? paths[0] ? paths[0] : null : null;
+  } else if (cmd === 'plugin:dialog|save') {
+    const path = utools.showSaveDialog({
       ...args.options,
       properties: [
         'openFile',
         args.options.multiple ? 'multiSelections' : 'openFile',
         args.options.canCreateDirectories ? 'createDirectory' : 'openFile'
       ]
-    }))
+    });
+    return path ? path : null;
   }
 }

@@ -7,6 +7,8 @@ const store = require('./plugins/plugin-store');
 const win = require("./plugins/plugin-window");
 const webview = require('./plugins/plugin-webview');
 const event = require('./plugins/plugin-event');
+const app = require('./plugins/plugin-app');
+const log = require('./plugins/plugin-log');
 const {TaskEventEmitter} = require("./core/TaskEventEmitter");
 const {ipcRenderer} = require('electron');
 
@@ -56,6 +58,8 @@ module.exports = (label, invoke_handler) => {
     invoke: (cmd, args, options) => {
       if (cmd.startsWith('plugin:sql')) {
         return sql(cmd, args);
+      } else if (cmd.startsWith("plugin:app")) {
+        return app(cmd, args);
       } else if (cmd.startsWith("plugin:path")) {
         return path(cmd, args);
       } else if (cmd.startsWith("plugin:store")) {
@@ -68,24 +72,12 @@ module.exports = (label, invoke_handler) => {
         return dialog(cmd, args);
       } else if (cmd.startsWith("plugin:window")) {
         return win(cmd, args, browserWindowMap);
-      }  else if (cmd.startsWith("plugin:event")) {
+      } else if (cmd.startsWith("plugin:event")) {
         return event(cmd, args, browserWindowMap, eventEmitter);
       } else if (cmd.startsWith("plugin:webview")) {
         return webview(cmd, args, browserWindowMap);
-      } else if (cmd === 'plugin:log|log') {
-        // 插件日志
-        const {
-          // Trace|Debug|Info|Warn|Error
-          level,
-          message,
-          location,
-        } = args;
-        const msg = `[${location}] ${message}`;
-        if (level === 2) console.debug(msg);
-        else if (level === 3) console.info(msg);
-        else if (level === 4) console.warn(msg);
-        else if (level === 5) console.error(msg);
-        else console.trace(msg);
+      } else if (cmd.startsWith("plugin:log")) {
+        return log(cmd, args);
       }
       if (invoke_handler) {
         return invoke_handler[cmd](args);

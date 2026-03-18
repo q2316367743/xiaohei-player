@@ -15,12 +15,12 @@ defineOptions({
 const route = useRoute();
 const router = useRouter();
 
-const folderId = route.params.id as string;
+const folderId = computed(() => route.params.id as string);
 
 const adapter = ref<FileBrowser>()
 
 onMounted(async () => {
-  const temp = await createFileBrowser(folderId);
+  const temp = await createFileBrowser(folderId.value);
   if (!temp) {
     MessageUtil.error('未找到该文件');
     router.back();
