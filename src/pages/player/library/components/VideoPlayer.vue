@@ -294,7 +294,8 @@ function initPlayer() {
     ]
   }, art => {
     console.log('Player is ready');
-    if (props.video?.resume_time) {
+    // 存在恢复时间，并且未设置从恢复时间开始播放
+    if (props.video?.resume_time && !useInterfaceSettingStore().videoFromStart) {
       seekToTime(props.video.resume_time);
     }
     if (player.value?.video) {

@@ -6,7 +6,8 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
 
   const interfaceSetting = ref(getInterfaceSetting());
 
-  const showPreviewAxis = computed(() => interfaceSetting.value.showPreviewAxis)
+  const showPreviewAxis = computed(() => interfaceSetting.value.showPreviewAxis);
+  const videoFromStart = computed(() => interfaceSetting.value.videoFromStart);
 
   const init = async () => {
     interfaceSetting.value = await interfaceSettingStore.get();
@@ -18,7 +19,7 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
   }
 
   return {
-    interfaceSetting,showPreviewAxis,
+    interfaceSetting, showPreviewAxis, videoFromStart,
     init,
     setItem
   }
