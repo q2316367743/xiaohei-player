@@ -77,7 +77,7 @@
           <span>加载中...</span>
         </div>
         <div v-else-if="videoFiles.length === 0" class="empty-sidebar">
-          <video-icon />
+          <video-icon/>
           <span>当前目录无视频文件</span>
         </div>
         <div v-else class="file-list">
@@ -117,6 +117,7 @@ import {addOrUpdateHistory, updateHistoryProcess} from "@/service/HistoryService
 import {basename} from "@/util/lang/FileUtil.ts";
 import {parseUrlTitle} from "@/util";
 import {debounce} from "es-toolkit";
+import {isTauri} from "@tauri-apps/api/core";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -243,8 +244,8 @@ const initPlayer = () => {
     container: playerRef.value,
     url: url.value,
     type: getVideoType(url.value),
-    fullscreen: false,
-    fullscreenWeb: false,
+    fullscreen: !isTauri(),
+    fullscreenWeb: !isTauri(),
     volume: 0.7,
     muted: false,
     autoplay: true,
@@ -271,7 +272,7 @@ const initPlayer = () => {
       m3u8: playM3u8,
       ts: playTs,
     },
-    controls: [{
+    controls: isTauri() ? [{
       name: 'fullscreen',
       position: 'right',
       html: `<span>全屏</span>`,
@@ -281,7 +282,7 @@ const initPlayer = () => {
           currentWindow.setFullscreen(!v);
         });
       }
-    }]
+    }] : []
   }, art => {
     // 监听进度
     art.on('seek', (currentTime) => {

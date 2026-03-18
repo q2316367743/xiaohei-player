@@ -26,6 +26,7 @@ import {updateVideoStatus} from "@/service";
 import KeyframesTimeline from "./KeyframesTimeline.vue";
 import type {Marker} from "@/entity/domain/Marker.ts";
 import {useInterfaceSettingStore} from "@/store";
+import {isTauri} from "@tauri-apps/api/core";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -102,8 +103,8 @@ function initPlayer() {
     url: videoUrl,
     poster: posterUrl,
     type: getVideoType(videoUrl),
-    fullscreen: false,
-    fullscreenWeb: false,
+    fullscreen: !isTauri(),
+    fullscreenWeb: !isTauri(),
     volume: 0.7,
     isLive: false,
     muted: false,
@@ -280,7 +281,7 @@ function initPlayer() {
           setTimeout(renderMarkers, 100);
         }
       }] : []),
-      {
+      ...(isTauri() ? [{
         name: 'fullscreen',
         position: 'right',
         html: `<span>全屏</span>`,
@@ -290,7 +291,7 @@ function initPlayer() {
             currentWindow.setFullscreen(!v);
           })
         }
-      }
+      }] : [])
     ]
   }, art => {
     console.log('Player is ready');

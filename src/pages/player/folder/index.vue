@@ -100,6 +100,7 @@ import {basename, dirname} from "@/util/lang/FileUtil.ts";
 import {createFileBrowser} from "@/service";
 import type {FileBrowser, FileItem} from "@/module/file";
 import {filterVideoFileList} from "@/module/file/util.ts";
+import {isTauri} from "@tauri-apps/api/core";
 
 defineOptions({
   name: 'LinkPlayer'
@@ -190,8 +191,8 @@ const initPlayer = () => {
     container: playerRef.value,
     url: url.value,
     type: getVideoType(url.value),
-    fullscreen: false,
-    fullscreenWeb: false,
+    fullscreen: !isTauri(),
+    fullscreenWeb: !isTauri(),
     volume: 0.7,
     muted: false,
     autoplay: true,
@@ -218,7 +219,7 @@ const initPlayer = () => {
       m3u8: playM3u8,
       ts: playTs,
     },
-    controls: [{
+    controls: isTauri() ? [{
       name: 'fullscreen',
       position: 'right',
       html: `<span>全屏</span>`,
@@ -228,7 +229,7 @@ const initPlayer = () => {
           currentWindow.setFullscreen(!v);
         });
       }
-    }]
+    }] : []
   }, art => {
     art.on('fullscreenWeb', e => {
       if (!e) {
