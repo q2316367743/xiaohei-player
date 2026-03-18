@@ -4,3 +4,5 @@
 .idea
 .DS_store
 dist
+/src-tauri/binaries/*
+!/src-tauri/binaries/.gitkeep
