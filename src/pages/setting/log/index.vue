@@ -15,7 +15,10 @@
           </template>
         </t-list-item-meta>
         <template #action>
-          <t-button theme="primary" @click="openFile(file)">打开</t-button>
+          <t-space size="small">
+            <t-button theme="primary" @click="openFile(file)">打开</t-button>
+            <t-button v-if="file.name !== 'app.log'" theme="danger" @click="deleteFile(file)">删除</t-button>
+          </t-space>
         </template>
       </t-list-item>
       <t-empty v-if="!loading && logFiles.length === 0" description="暂无日志文件"/>
@@ -24,10 +27,11 @@
 </template>
 <script lang="ts" setup>
 import {appLogDir, join} from '@tauri-apps/api/path';
-import {readDir, stat} from '@tauri-apps/plugin-fs';
+import {readDir, stat, remove} from '@tauri-apps/plugin-fs';
 import {openPath} from '@tauri-apps/plugin-opener';
 import {isTauri} from '@tauri-apps/api/core';
 import MessageUtil from '@/util/model/MessageUtil.ts';
+import MessageBoxUtil from '@/util/model/MessageBoxUtil';
 import {formatDate, prettyDataUnit} from "@/util/lang/FormatUtil.ts";
 
 interface LogFile {
@@ -79,6 +83,20 @@ const openFile = async (file: LogFile) => {
     await openPath(file.path);
   } catch (error) {
     MessageUtil.error('打开文件失败', error);
+  }
+};
+
+const deleteFile = async (file: LogFile) => {
+  try {
+    await MessageBoxUtil.confirm(`确定要删除日志文件 "${file.name}" 吗？`, '确认删除');
+    await remove(file.path);
+    MessageUtil.success('删除成功');
+    await refreshLogList();
+  } catch (error) {
+    if (error === 'cancel') {
+      return;
+    }
+    MessageUtil.error('删除文件失败', error);
   }
 };
 

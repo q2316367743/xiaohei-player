@@ -6,6 +6,8 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
 
   const interfaceSetting = ref(getInterfaceSetting());
 
+  const showPreviewAxis = computed(() => interfaceSetting.value.showPreviewAxis)
+
   const init = async () => {
     interfaceSetting.value = await interfaceSettingStore.get();
   }
@@ -16,7 +18,7 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
   }
 
   return {
-    interfaceSetting,
+    interfaceSetting,showPreviewAxis,
     init,
     setItem
   }

@@ -3,7 +3,7 @@
     <div ref="playerRef" class="artplayer"></div>
 
     <KeyframesTimeline
-      v-if="vttCues.length > 0"
+      v-if="vttCues.length > 0 && showPreviewAxis"
       :vttCues="vttCues"
       :currentTime="currentTime"
       :duration="duration"
@@ -25,6 +25,7 @@ import {debounce} from "es-toolkit";
 import {updateVideoStatus} from "@/service";
 import KeyframesTimeline from "./KeyframesTimeline.vue";
 import type {Marker} from "@/entity/domain/Marker.ts";
+import {useInterfaceSettingStore} from "@/store";
 
 defineOptions({
   name: 'VideoPlayer'
@@ -42,6 +43,8 @@ const vttCues = ref<VttCue[]>([]);
 const currentTime = ref(0);
 const duration = ref(0);
 const spriteUrl = ref('');
+
+const showPreviewAxis = computed(() => useInterfaceSettingStore().showPreviewAxis);
 
 async function loadVtt() {
   if (!props.video?.vtt_path) {

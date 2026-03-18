@@ -23,7 +23,7 @@ pub fn run() {
             tauri_plugin_log::Builder::new()
                 .targets([
                     Target::new(TargetKind::Stdout),
-                    Target::new(TargetKind::LogDir { file_name: Some("app.log".to_string()) }),
+                    Target::new(TargetKind::LogDir { file_name: Some("app".to_string()) }),
                     Target::new(TargetKind::Webview),
                 ])
                 .rotation_strategy(RotationStrategy::KeepSome(10))
