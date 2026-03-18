@@ -9,6 +9,7 @@ const webview = require('./plugins/plugin-webview');
 const event = require('./plugins/plugin-event');
 const app = require('./plugins/plugin-app');
 const log = require('./plugins/plugin-log');
+const shell = require('./plugins/plugin-shell');
 const {TaskEventEmitter} = require("./core/TaskEventEmitter");
 const {ipcRenderer} = require('electron');
 
@@ -70,6 +71,8 @@ module.exports = (label, invoke_handler) => {
         return opener(cmd, args);
       } else if (cmd.startsWith("plugin:dialog")) {
         return dialog(cmd, args);
+      }  else if (cmd.startsWith("plugin:shell")) {
+        return shell(cmd, args);
       } else if (cmd.startsWith("plugin:window")) {
         return win(cmd, args, browserWindowMap);
       } else if (cmd.startsWith("plugin:event")) {

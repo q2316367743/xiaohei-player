@@ -181,12 +181,13 @@ function handleSortOrderChange(s: SortOrder) {
     padding-left: 8px;
     padding-right: 8px;
     background-color: var(--td-bg-color-container);
+    border-top: 1px solid var(--td-border-level-1-color);
   }
 }
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, 226px);
   gap: 16px;
 }
 

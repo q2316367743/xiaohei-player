@@ -123,8 +123,10 @@ export class BaseMapper<T extends TableLike, N extends string> {
     const query = new Array<string>();
     const values = new Array<any>();
     for (const key in params) {
+      const value = params[key];
+      if (typeof value === 'undefined') continue;
       query.push(`\`${key}\``);
-      values.push(params[key]);
+      values.push(value);
     }
     const sql = `insert into ${this.tableName} (${query.join(
             ", "
