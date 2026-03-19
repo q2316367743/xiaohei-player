@@ -4,13 +4,14 @@ import {dirname, join, tempDir} from "@tauri-apps/api/path";
 import type {VideoInfo} from "@/entity/domain/Video.ts";
 import type {SystemPreviewSetting} from "@/entity/setting/SystemSetting.ts";
 import {Command} from "@tauri-apps/plugin-shell";
+// import {invoke} from "@tauri-apps/api/core";
 
 function execFfmepgCommand(args: Array<string>, timeoutMs: number = 30000) {
 
   const command = Command.sidecar("binaries/ffmpeg", args);
   const commandPromise = command.execute().then(r => {
     if (r.code !== 0) return Promise.reject(r.stderr);
-    return r.stdout;
+    return r.stdout || r.stderr;
   });
 
   if (!timeoutMs) {
@@ -24,6 +25,13 @@ function execFfmepgCommand(args: Array<string>, timeoutMs: number = 30000) {
   });
 
   return Promise.race([commandPromise, timeoutPromise]);
+}
+
+function escapePath(path: string): string {
+  // if (path.includes(' ') || path.includes('"') || path.includes("'")) {
+  //   return `"${path.replace(/"/g, '\\"')}"`;
+  // }
+  return path;
 }
 
 async function ensureDir(filePath: string) {
@@ -77,7 +85,7 @@ export async function generateVtt(prop: GenerateVttProp) {
   await execFfmepgCommand([
     "-hide_banner",
     "-i",
-    path,
+    escapePath(path),
     "-vf",
     `fps=1/5,scale=${thumbWidth}:-1:flags=lanczos,tile=9x9`,
     "-q:v",
@@ -85,7 +93,7 @@ export async function generateVtt(prop: GenerateVttProp) {
     "-frames:v",
     "1",
     "-y",
-    sprite
+    escapePath(sprite)
   ]);
 
   const fps = 1 / 5;
@@ -173,13 +181,13 @@ export async function generatePreview(prop: GeneratePreviewProp) {
       "-ss",
       startTimes[i]?.toString() || "0",
       "-i",
-      path,
+      escapePath(path),
       "-t",
       segmentDuration.toString(),
       "-c",
       "copy",
       "-y",
-      tempFile
+      escapePath(tempFile)
     ]);
   }
 
@@ -192,7 +200,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
 
   const inputArgs: string[] = [];
   for (const tempFile of tempFiles) {
-    inputArgs.push("-i", tempFile);
+    inputArgs.push("-i", escapePath(tempFile));
   }
 
   await execFfmepgCommand([
@@ -215,7 +223,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
     "-b:a",
     "128k",
     "-y",
-    preview
+    escapePath(preview)
   ], 120000);
 
   for (const tempFile of tempFiles) {
@@ -238,13 +246,13 @@ export async function generateCover(path: string, cover: string) {
     "-ss",
     "1",
     "-i",
-    path,
+    escapePath(path),
     "-vframes",
     "1",
     "-f",
     "image2",
     "-y",
-    cover
+    escapePath(cover)
   ]);
 }
 
@@ -255,7 +263,7 @@ export async function getVideoDuration(path: string) {
   const result = await execFfmepgCommand([
     "-hide_banner",
     "-i",
-    path,
+    escapePath(path),
     "-f",
     "null",
     "-"
@@ -281,7 +289,7 @@ export async function getVideoInfo(path: string): Promise<VideoInfo> {
   const result = await execFfmepgCommand([
     "-hide_banner",
     "-i",
-    path,
+    escapePath(path),
     "-f",
     "null",
     "-"
@@ -368,12 +376,12 @@ export async function generateMarker(
     "-ss",
     String(time),
     "-i",
-    video,
+    escapePath(video),
     "-vframes",
     "1",
     "-f",
     "image2",
     "-y",
-    marker
+    escapePath(marker)
   ]);
 }

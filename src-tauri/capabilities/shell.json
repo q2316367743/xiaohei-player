@@ -53,30 +53,8 @@
           "args": [
             "-hide_banner",
             "-ss",
-            "1",
-            "-i",
             {
-              "validator": ".*"
-            },
-            "-vframes",
-            "1",
-            "-f",
-            "image2",
-            "-y",
-            {
-              "validator": ".*"
-            }
-          ],
-          "cmd": "",
-          "name": "binaries/ffmpeg",
-          "sidecar": true
-        },
-        {
-          "args": [
-            "-hide_banner",
-            "-ss",
-            {
-              "validator": ".*"
+              "validator": "\\d+"
             },
             "-i",
             {

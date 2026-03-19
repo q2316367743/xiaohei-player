@@ -163,7 +163,12 @@ async function handleCover(props: GenerateLibraryOneProp): Promise<string | unde
       return coverPath;
     }
   }
-  await generateCover(filePath, coverPath);
+  try {
+    await generateCover(filePath, coverPath);
+    logDebug("生成预览视频成功", file.fileName);
+  }catch (e) {
+    logError("生成封面失败，跳过:", file.fileName, e);
+  }
   return coverPath;
 }
 
