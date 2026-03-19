@@ -5,7 +5,7 @@
       <t-tab-panel label="收藏库" value="/setting/library"></t-tab-panel>
       <t-tab-panel label="界面" value="/setting/interface"></t-tab-panel>
       <t-tab-panel label="系统" value="/setting/system"></t-tab-panel>
-      <t-tab-panel label="日志" value="/setting/log"></t-tab-panel>
+      <t-tab-panel v-if="showLog" label="日志" value="/setting/log"></t-tab-panel>
       <t-tab-panel label="关于" value="/setting/about"></t-tab-panel>
     </t-tabs>
     <div class="setting-content" :style="contentStyle">
@@ -26,8 +26,10 @@ import InterfacePage from "./interface/index.vue";
 import SystemPage from "./system/SettingSystem.vue";
 import LogPage from "./log/index.vue";
 import AboutPage from "./about/index.vue";
+import {isTauri} from "@tauri-apps/api/core";
 
 const path = ref('/setting/task');
+const showLog = ref(isTauri());
 
 const contentStyle = computed(() => {
   if (path.value === '/setting/about') {
