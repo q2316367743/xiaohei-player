@@ -1,5 +1,3 @@
-import {isTauri} from "@tauri-apps/api/core";
-
 export interface SystemPreviewSetting {
   /**
    * 预览片段段数
@@ -47,16 +45,6 @@ export interface SystemSetting {
    * 默认演员图像的自定义路径。 留空以使用内置默认值
    */
   customActorImagePath: string;
-  /**
-   * FFmpeg可执行路径
-   * ffmpeg可执行文件（不仅仅是文件夹）的路径。如果为空，ffmpeg将通过$PATH、配置目录或$HOME/. stash从环境中解析
-   */
-  ffmpegPath: string;
-  /**
-   * FFprobe 可执行路径
-   * ffprobe可执行文件的路径（不仅仅是文件夹）。如果为空，ffprobe将通过$PATH、配置目录或$HOME/. stash从环境中解析
-   */
-  ffprobePath: string;
   /**
    * Python 可执行文件路径
    * Python 执行程序的路径。（不限于文件夹）给网页挖掘器和插件的源文件使用。如果没有，python会从环境变量找到
@@ -149,8 +137,6 @@ export function getSystemSetting(): SystemSetting {
     pluginPath: '/root/.stash/plugins',
     metaPath: '/metadata/',
     customActorImagePath: '',
-    ffmpegPath: isTauri() ? 'ffmpeg' : '',
-    ffprobePath: isTauri() ? 'ffprobe' : '',
     pythonPath: '',
     backupPath: '',
     trashPath: '',
@@ -178,8 +164,6 @@ export const SystemSettingTitle: Record<keyof SystemSetting, string> = {
   pluginPath: '插件文件路径',
   metaPath: '元数据存储路径',
   customActorImagePath: '自定义演员图像路径',
-  ffmpegPath: 'FFmpeg可执行路径',
-  ffprobePath: 'FFprobe 可执行路径',
   pythonPath: 'Python 可执行文件路径',
   backupPath: '备份用的路径',
   trashPath: '回收站路径',

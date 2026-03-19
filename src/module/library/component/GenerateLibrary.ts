@@ -31,7 +31,7 @@ interface GenerateLibraryOneResult extends VideoInfo {
 
 
 async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo> {
-  const {file, system} = props;
+  const {file} = props;
   const {filePath, fileName} = file;
 
   let videoInfo: VideoInfo = {
@@ -46,7 +46,7 @@ async function handleVideoInfo(props: GenerateLibraryOneProp): Promise<VideoInfo
   };
 
   try {
-    videoInfo = await getVideoInfo(system.ffprobePath, filePath);
+    videoInfo = await getVideoInfo(filePath);
     logDebug("获取视频信息成功:", fileName, videoInfo);
   } catch (e) {
     logError("视频文件损坏或无法读取，跳过:", fileName, e);
@@ -60,7 +60,7 @@ interface HandleVttResult {
 }
 
 async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, videoInfo: VideoInfo): Promise<HandleVttResult> {
-  const {hash, file, vttPrefixDir, system, task} = props;
+  const {hash, file, vttPrefixDir, task} = props;
   const {filePath, fileName} = file;
 
   // 不生成 vtt
@@ -90,7 +90,6 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, vide
     if (existVtt) await remove(vtt);
     // 生成预览小图
     await generateVtt({
-      ffmpeg: system.ffmpegPath,
       durationMs: durationMs,
       path: filePath,
       sprite,
@@ -132,7 +131,6 @@ async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: numb
   try {
     logDebug("生成预览视频:", screenshotPath);
     await generatePreview({
-      ffmpeg: system.ffmpegPath,
       path: filePath,
       preview: screenshotPath,
       durationMs: duration_ms,
@@ -146,7 +144,7 @@ async function handleScreenshot(props: GenerateLibraryOneProp, duration_ms: numb
 }
 
 async function handleCover(props: GenerateLibraryOneProp): Promise<string | undefined> {
-  const {hash, file, system, task, coverDir, existingCover} = props;
+  const {hash, file, task, coverDir, existingCover} = props;
   const {filePath} = file;
 
   // 已经解析到封面了
@@ -165,7 +163,7 @@ async function handleCover(props: GenerateLibraryOneProp): Promise<string | unde
       return coverPath;
     }
   }
-  await generateCover(system.ffmpegPath, filePath, coverPath);
+  await generateCover(filePath, coverPath);
   return coverPath;
 }
 

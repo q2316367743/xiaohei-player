@@ -11,24 +11,148 @@
       "identifier": "shell:allow-execute",
       "allow": [
         {
-          "name": "xattr-d-apple",
-          "cmd": "xattr",
           "args": [
-            "-d",
-            "com.apple.quarantine",
+            "-hide_banner",
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-f",
+            "null",
+            "-"
+          ],
+          "cmd": "",
+          "name": "binaries/ffmpeg",
+          "sidecar": true
+        },
+        {
+          "args": [
+            "-hide_banner",
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-vf",
+            {
+              "validator": ".*"
+            },
+            "-q:v",
+            "2",
+            "-frames:v",
+            "1",
+            "-y",
             {
               "validator": ".*"
             }
-          ]
-        }
-      ]
-    },
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
+          ],
+          "cmd": "",
+          "name": "binaries/ffmpeg",
+          "sidecar": true
+        },
         {
           "args": [
-            "**"
+            "-hide_banner",
+            "-ss",
+            "1",
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-vframes",
+            "1",
+            "-f",
+            "image2",
+            "-y",
+            {
+              "validator": ".*"
+            }
+          ],
+          "cmd": "",
+          "name": "binaries/ffmpeg",
+          "sidecar": true
+        },
+        {
+          "args": [
+            "-hide_banner",
+            "-ss",
+            {
+              "validator": ".*"
+            },
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-vframes",
+            "1",
+            "-f",
+            "image2",
+            "-y",
+            {
+              "validator": ".*"
+            }
+          ],
+          "cmd": "",
+          "name": "binaries/ffmpeg",
+          "sidecar": true
+        },
+        {
+          "args": [
+            "-hide_banner",
+            "-ss",
+            {
+              "validator": ".*"
+            },
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-t",
+            {
+              "validator": ".*"
+            },
+            "-c",
+            "copy",
+            "-y",
+            {
+              "validator": ".*"
+            }
+          ],
+          "cmd": "",
+          "name": "binaries/ffmpeg",
+          "sidecar": true
+        },
+        {
+          "args": [
+            "-hide_banner",
+            {
+              "validator": ".*"
+            },
+            "-i",
+            {
+              "validator": ".*"
+            },
+            "-filter_complex",
+            {
+              "validator": ".*"
+            },
+            "-map",
+            "[outv]",
+            "-map",
+            "[outa]",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "23",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "128k",
+            "-y",
+            {
+              "validator": ".*"
+            }
           ],
           "cmd": "",
           "name": "binaries/ffmpeg",

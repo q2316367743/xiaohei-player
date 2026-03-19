@@ -3,7 +3,6 @@ import type {MarkerAddForm} from "@/entity/domain/Marker.ts";
 import {DialogPlugin, Form, FormItem, Input, Textarea} from "tdesign-vue-next";
 import {addMarker} from "@/service";
 import MessageUtil from "@/util/model/MessageUtil.ts";
-import {useSystemSettingStore} from "@/lib/store.ts";
 import {join} from "@tauri-apps/api/path";
 import {APP_DATA_GENERATE_DIR} from "@/global/Constants.ts";
 import {generateMarker} from "@/module/library/command/FfmpegCommand.ts";
@@ -31,8 +30,6 @@ export function openAddVideoMarker(video: VideoView, time: number, onUpdate: () 
     </Form>,
     onConfirm: async () => {
       try {
-        // 获取 ffmpeg
-        const ffmpegPath = await useSystemSettingStore().getItem('ffmpegPath');
         // 处理标记目录
         const dataPath = await APP_DATA_GENERATE_DIR();
         const markerDir = await join(dataPath, "marker", video.id);
@@ -41,7 +38,7 @@ export function openAddVideoMarker(video: VideoView, time: number, onUpdate: () 
         }
         const markerPath = await join(markerDir, `${time}.jpg`);
         // 生成标记
-        await generateMarker(ffmpegPath, video.file_path, markerPath, time);
+        await generateMarker(video.file_path, markerPath, time);
         // 设置标记图片路径
         form.value.image = markerPath;
         // 添加标记

@@ -37,6 +37,7 @@ export const initPath = async () => {
     APP_DATA_DB_DIR(),
     APP_DATA_STORE_DIR(),
     APP_DATA_HOLD_DIR(),
+    APP_DATA_GENERATE_DIR()
   ])
   for (const dir of items) {
     logDebug("初始化目录：" + dir);
