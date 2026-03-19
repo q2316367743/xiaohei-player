@@ -22,7 +22,7 @@ module.exports = async (cmd, args) => {
       if (program === 'binaries/ffmpeg') {
         // ffmpeg 程序
         let r = '';
-        await utools.runFFmpeg(args, {
+        await utools.runFFmpeg(cmdArgs, {
           onLog(text) {
             r += text;
           }
