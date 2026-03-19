@@ -33,7 +33,11 @@
         </div>
       </div>
     </div>
-    <empty-result v-else tip="暂无收藏库"/>
+    <t-empty v-else title="暂无收藏库，请在设置中添加">
+      <template #action>
+        <t-button theme="primary" @click="goSetting">设置</t-button>
+      </template>
+    </t-empty>
   </div>
 </template>
 
@@ -54,10 +58,6 @@ const initList = async () => {
   list.value = await listLibrary();
 }
 
-onMounted(() => {
-  initList();
-})
-
 const handleClick = (item: LibraryEntity) => {
   if (item.password) {
     MessageBoxUtil.prompt("", "请输入密码", {inputType: 'password'}).then(psd => {
@@ -77,6 +77,20 @@ const handleClick = (item: LibraryEntity) => {
 const handleImageError = (item: LibraryEntity) => {
   item.cover = '';
 }
+
+const goSetting = () => {
+  router.push({
+    path: "/setting",
+    query: {
+      active: "library"
+    }
+  });
+}
+
+
+onMounted(() => {
+  initList();
+})
 </script>
 
 <style scoped lang="less">

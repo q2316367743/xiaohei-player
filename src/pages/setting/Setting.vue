@@ -28,6 +28,8 @@ import LogPage from "./log/index.vue";
 import AboutPage from "./about/index.vue";
 import {isTauri} from "@tauri-apps/api/core";
 
+const route = useRoute();
+
 const path = ref('/setting/task');
 const showLog = ref(isTauri());
 
@@ -40,6 +42,12 @@ const contentStyle = computed(() => {
     }
   }
   return {};
+});
+
+onMounted(() => {
+  if (route.query.active) {
+    path.value = `/setting/${route.query.active}`
+  }
 })
 </script>
 <style scoped lang="less">

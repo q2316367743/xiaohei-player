@@ -1,7 +1,7 @@
 <template>
   <t-layout class="abs-0 overflow-hidden app-container">
     <t-aside class="app-aside" :width="collapsed ? '64px' : '232px'">
-      <t-menu :collapsed default-value="/">
+      <t-menu v-model="value" :collapsed>
         <template #logo>
           <div class="flex justify-left items-center" :style="{marginLeft: collapsed ? undefined : '16px'}">
             <t-avatar image="/logo.png"/>
@@ -49,7 +49,7 @@
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
       <router-view v-slot="{ Component, route }">
-        <keep-alive :include="['Setting', 'FolderDetail', 'PlayerFolder', 'PlayerLibrary', 'LibraryDetail']">
+        <keep-alive :include="['FolderDetail', 'PlayerFolder', 'PlayerLibrary', 'LibraryDetail']">
           <component :is="Component" :key="route.fullPath"/>
         </keep-alive>
       </router-view>
@@ -67,6 +67,16 @@ import {
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
 import {useInterfaceSettingStore} from "@/store";
+
+const route = useRoute();
+
+const value = ref("/");
+
+watch(() => route.path, val => {
+  if (val === '/setting') {
+    value.value = val;
+  }
+})
 
 onMounted(() => {
   useInterfaceSettingStore().init();
