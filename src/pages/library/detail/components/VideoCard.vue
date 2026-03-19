@@ -7,7 +7,7 @@
   >
     <div class="video-cover">
       <t-image :src="coverUrl" fit="cover" class="cover-image"/>
-      <div class="video-preview" v-show="isHovered && previewUrl">
+      <div class="video-preview" v-if="isHovered && previewUrl">
         <video
           :src="previewUrl"
           class="preview-video"
