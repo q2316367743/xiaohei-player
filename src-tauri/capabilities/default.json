@@ -26,120 +26,6 @@
     "dialog:default",
     "dialog:allow-open",
     "dialog:allow-save",
-    {
-      "identifier": "fs:default",
-      "allow": [
-        {
-          "path": "$APPDATA/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    "fs:allow-resource-read-recursive",
-    {
-      "identifier": "fs:allow-stat",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-mkdir",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-read-dir",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-exists",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-write-file",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-write-text-file",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-read-text-file",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-remove",
-      "allow": [
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "http:default",
-      "allow": [
-        {
-          "url": "https://*"
-        },
-        {
-          "url": "http://*"
-        },
-        {
-          "url": "http://*:*/*"
-        }
-      ]
-    },
     "log:default",
     "opener:default",
     "opener:allow-open-url",
@@ -148,55 +34,11 @@
       "identifier": "opener:allow-open-path",
       "allow": [
         {
-          "path": "$HOME/**/*"
-        },
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "$LOCALAPPDATA/**/*"
-        },
-        {
-          "path": "$DESKTOP/**/*"
-        },
-        {
-          "path": "$DOCUMENT/**/*"
-        },
-        {
-          "path": "$DOWNLOAD/**/*"
-        },
-        {
-          "path": "$PICTURE/**/*"
-        },
-        {
-          "path": "$MUSIC/**/*"
-        },
-        {
-          "path": "$VIDEO/**/*"
-        },
-        {
           "path": "/**/*"
         }
       ]
     },
     "os:default",
-    "shell:default",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "xattr-d-apple",
-          "cmd": "xattr",
-          "args": [
-            "-d",
-            "com.apple.quarantine",
-            {
-              "validator": ".*"
-            }
-          ]
-        }
-      ]
-    },
     "sql:default",
     "sql:allow-load",
     "sql:allow-execute",

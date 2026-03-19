@@ -16,6 +16,21 @@ module.exports = async (cmd, args) => {
       args: cmdArgs,
       options
     } = args;
+
+    if (options && options.sidecar) {
+      // sidecar 程序
+      if (program === 'binaries/ffmpeg') {
+        // ffmpeg 程序
+        let r = '';
+        await utools.runFFmpeg(args, {
+          onLog(text) {
+            r += text;
+          }
+        });
+        return {code: 0, signal: null, stdout: r, stderr: null};
+      }
+    }
+
     const r = spawn(programMap[program], cmdArgs, options);
     return new Promise((resolve, reject) => {
       let stdout = '';
@@ -30,11 +45,7 @@ module.exports = async (cmd, args) => {
       });
       
       r.on('close', (code) => {
-        if (code === 0) {
-          resolve(stdout);
-        } else {
-          reject(stderr);
-        }
+        resolve({code, signal: null, stdout, stderr});
       });
       
       r.on('error', (error) => {

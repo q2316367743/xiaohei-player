@@ -31,9 +31,10 @@
         v-for="video in videos"
         :key="video.id"
         :video="video"
+        width="226px"
       />
     </div>
-    <empty-result v-else tip="暂无观看记录"/>
+    <t-empty v-else title="暂无观看记录"/>
   </div>
 </template>
 

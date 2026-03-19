@@ -1,0 +1,124 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "fs",
+  "description": "文件操作相关权限",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    {
+      "identifier": "fs:default",
+      "allow": [
+        {
+          "path": "$APPDATA/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    "fs:allow-resource-read-recursive",
+    {
+      "identifier": "fs:allow-stat",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-file",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-remove",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        },
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://*"
+        },
+        {
+          "url": "http://*"
+        },
+        {
+          "url": "http://*:*/*"
+        }
+      ]
+    }
+  ]
+}

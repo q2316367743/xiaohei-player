@@ -88,7 +88,7 @@ export async function deleteVideo(id: string) {
 }
 
 export async function cleanDeletedVideo() {
-  const deletedVideos = await useSql().query<Video>('video').ne('is_deleted', '').list();
+  const deletedVideos = await useSql().query<Video>('video').ne('is_deleted', '0').list();
 
   for (const video of deletedVideos) {
     await useSql().query<VideoActor>('video_actor').eq('video_id', video.id).delete();

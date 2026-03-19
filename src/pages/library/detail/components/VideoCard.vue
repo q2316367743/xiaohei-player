@@ -18,7 +18,7 @@
         />
       </div>
       <div class="progress-bar" v-if="progress > 0">
-        <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+        <div class="progress-fill" :style="progressStyle"></div>
       </div>
     </div>
     <div class="video-info">
@@ -33,15 +33,17 @@ import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 
 const router = useRouter();
 
-interface Props {
-  video: Video;
-}
 
-const props = defineProps<Props>();
-
-function handleClick() {
-  router.push(`/player/library/${props.video.id}`);
-}
+const props = defineProps({
+  video: {
+    type: Object as PropType<Video>,
+    required: true
+  },
+  width: {
+    type: String,
+    default: '100%'
+  }
+});
 
 const isHovered = ref(false);
 
@@ -54,6 +56,20 @@ const progress = computed(() => {
   }
   return Math.min((props.video.resume_time * 1000 / props.video.duration_ms) * 100, 100);
 });
+const progressStyle = computed(() => ({width: props.width + '%'}));
+const cardWidth = computed(() => props.width);
+
+function handleClick() {
+  router.push(`/player/library/${props.video.id}`);
+}
+
+function handleMouseEnter() {
+  isHovered.value = true;
+}
+
+function handleMouseLeave() {
+  isHovered.value = false;
+}
 
 onMounted(() => {
   if (props.video.cover_path) {
@@ -63,14 +79,6 @@ onMounted(() => {
     previewUrl.value = convertFileSrcToUrl(props.video.screenshot_path);
   }
 });
-
-function handleMouseEnter() {
-  isHovered.value = true;
-}
-
-function handleMouseLeave() {
-  isHovered.value = false;
-}
 </script>
 
 <style scoped lang="less">
@@ -79,7 +87,7 @@ function handleMouseLeave() {
   background: transparent;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
-  width: 226px;
+  width: v-bind(cardWidth);
   flex-shrink: 0;
 }
 

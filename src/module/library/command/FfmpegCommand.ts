@@ -1,17 +1,21 @@
-import {invoke} from "@tauri-apps/api/core";
+// import {invoke} from "@tauri-apps/api/core";
 import {mkdir, writeFile, remove} from '@tauri-apps/plugin-fs';
 import {dirname, join, tempDir} from "@tauri-apps/api/path";
 import type {VideoInfo} from "@/entity/domain/Video.ts";
 import type {SystemPreviewSetting} from "@/entity/setting/SystemSetting.ts";
+import {Command} from "@tauri-apps/plugin-shell";
 
-function execFfmepgCommand(ffmpeg: string, args: Array<string>, timeoutMs: number = 30000) {
-  const commandPromise = invoke<string>("ffmpeg_command", {
-    cmd: ffmpeg,
-    args
+function execFfmepgCommand(_ffmpeg: string, args: Array<string>, timeoutMs: number = 30000) {
+
+  const command = Command.sidecar("binaries/ffmpeg", args);
+  const commandPromise = command.execute().then(r => {
+    if (r.code !== 0) return Promise.reject(r.stderr);
+    return r.stdout;
   });
 
+
   if (!timeoutMs) {
-    return commandPromise;
+    return commandPromise
   }
 
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -279,7 +283,7 @@ export async function getVideoDuration(ffprobe: string, path: string) {
     ]);
 
     const durationMatch = result.match(/Duration:\s+(\d{2}):(\d{2}):(\d{2}\.\d{2})/);
-    
+
     if (durationMatch && durationMatch[1] && durationMatch[2] && durationMatch[3]) {
       const hours = parseInt(durationMatch[1]);
       const minutes = parseInt(durationMatch[2]);
@@ -346,7 +350,7 @@ export async function getVideoInfo(ffprobe: string, path: string): Promise<Video
     ]);
 
     const lines = result.split('\n');
-    
+
     let durationMs = 0;
     let width = 0;
     let height = 0;

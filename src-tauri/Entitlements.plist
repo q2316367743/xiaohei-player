@@ -2,11 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 允许运行未签名的子进程 (关键！) -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+
+    <!-- 如果需要访问网络 (ffmpeg 可能需要) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- 如果需要访问用户文件 -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+
+    <!-- 允许临时例外 (开发阶段常用) -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+
+    <!-- 沙箱运行 -->
     <key>com.apple.security.app-sandbox</key>
     <true/>
     <key>com.apple.application-identifier</key>
-    <string>$TEAM_ID.omni-player.esion.xyz</string>
+    <string>PNP35F7Q7P.xyz.esion.xiaohei-player</string>
     <key>com.apple.developer.team-identifier</key>
-    <string>$TEAM_ID</string>
+    <string>PNP35F7Q7P</string>
 </dict>
 </plist>

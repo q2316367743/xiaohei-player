@@ -187,7 +187,7 @@ function handleSortOrderChange(s: SortOrder) {
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 226px);
+  grid-template-columns: repeat(auto-fill, minmax(226px, 1fr));
   gap: 16px;
 }
 

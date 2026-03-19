@@ -51,11 +51,16 @@
     "resources": [
       "lib/**/*"
     ],
+    "externalBin": [
+      "binaries/ffmpeg"
+    ],
     "category": "Entertainment",
     "macOS": {
       "entitlements": "./Entitlements.plist",
+      "signingIdentity": "Apple Development: Shengda Qiao (PNP35F7Q7P)",
+      "providerShortName": "PNP35F7Q7P",
       "files": {
-        "embedded.provisionprofile": "./mac_app.cer"
+        "embedded.provisionprofile": "./xiaohei-player.provisionprofile"
       }
     },
     "windows": {

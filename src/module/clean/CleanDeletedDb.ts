@@ -1,5 +1,8 @@
 import {cleanDeletedVideo} from "@/service/VideoService.ts";
 
+/**
+ * 优化数据库
+ */
 export async function cleanDeletedDb(
   onProgress: (progress: number, total: number, message: string) => void
 ) {

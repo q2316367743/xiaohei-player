@@ -14,8 +14,10 @@
     "email": "m17762618644@163.com"
   },
   "scripts": {
-    "utools:dev": "vite",
-    "utools:build": "vue-tsc -b && vite build",
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "utools:dev": "vite --mode=utools",
+    "utools:build": "vue-tsc -b && vite build --mode=utools",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
   },
