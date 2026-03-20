@@ -2,6 +2,7 @@ import type {Folder, FolderType, FolderView, FolderViewCore} from "@/entity/main
 import {useSql} from "@/lib/sql.ts";
 import {checkMd5Password, md5} from "@/util/lang/CryptoUtil.ts";
 import {createFileAdapter, type FileBrowser} from "@/module/file";
+import {closeSmbClient} from "@/lib/smb.ts";
 
 const fileBrowserMap = new Map<string, FileBrowser>();
 
@@ -56,9 +57,14 @@ export async function updateFolderPassword(id: string, old: string, password: st
   });
 }
 
-export function removeFolder(id: string) {
+export async function removeFolder(id: string) {
+  const old = await getFolder(id);
+  if (!old) return Promise.reject(Error("文件夹不存在"));
   fileBrowserMap.delete(id);
-  return useSql().mapper<Folder>('folder').deleteById(id);
+  await useSql().mapper<Folder>('folder').deleteById(id);
+  if (old.type ==='smb') {
+    await closeSmbClient(id);
+  }
 }
 
 export async function createFileBrowser(id: string): Promise<FileBrowser | null> {

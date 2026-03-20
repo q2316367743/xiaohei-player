@@ -12,6 +12,9 @@ export class LocalFileAdapter implements FileBrowser {
     this.base = prop.path;
   }
 
+  async init(): Promise<void> {
+  }
+
 
   getLink(path: string): string {
     if (isWindows) {

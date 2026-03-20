@@ -24,6 +24,9 @@ export class WebDAVFileAdapter implements FileBrowser {
     this.base = prop.path;
   }
 
+  async init(): Promise<void> {
+  }
+
   getLink(path: string): string {
     const target = this.base + path;
 

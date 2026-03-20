@@ -49,3 +49,14 @@ export function convertProxyToUrl(
   
   return `http://127.0.0.1:${serverPort}/proxy/${encodedUrl}${queryString}`;
 }
+
+
+export function convertSmbToUrl(
+  url: string,
+  clientId: string
+): string {
+  const filename = url.split("\\").pop();
+  const encodedUrl = encodeURIComponent(url);
+
+  return `http://127.0.0.1:${serverPort}/smb/${filename}?clientId=${clientId}&url=${encodedUrl}`;
+}

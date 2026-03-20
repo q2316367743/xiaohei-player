@@ -14,6 +14,8 @@ export interface FileItem {
 
 export interface FileBrowser {
 
+  init(): Promise<void>;
+
   list(path: string): Promise<FileItem[]>;
 
   getLink(path: string): string;

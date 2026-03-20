@@ -1,6 +1,7 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
+import type {SmbOption} from "@/lib/smb.ts";
 
-export type FolderType = 'local' | 'webdav';
+export type FolderType = 'local' | 'webdav' | 'smb';
 export type FolderWebdavType = 'auto' | 'digest' | 'none' | 'password' | 'token';
 
 export type FolderPayloadLocal = object
@@ -98,7 +99,17 @@ export interface FolderViewCoreWebdav extends FolderViewCoreBase {
   payload: FolderPayloadWebdav
 }
 
-export type FolderViewCore = FolderViewCoreLocal | FolderViewCoreWebdav;
+export interface FolderViewCoreSmb extends FolderViewCoreBase {
+
+  type: 'smb';
+
+  /**
+   * 文件夹配置
+   */
+  payload: SmbOption
+}
+
+export type FolderViewCore = FolderViewCoreLocal | FolderViewCoreWebdav | FolderViewCoreSmb;
 
 export type FolderView = BaseEntity & FolderViewCore;
 
