@@ -179,13 +179,22 @@ function handleToggleLayout() {
   layout.value = layout.value === 'card' ? 'list' : 'card';
 }
 
-watch(() => props.folderId, () => {
+const currentFolderId = ref('');
+
+watch(() => props.folderId, val => {
+  if (val) {
+    currentFolderId.value = val;
+  }
+});
+watch(currentFolderId, () => {
+  console.log('--------> folderId: ', currentFolderId.value);
   currentPath.value = isWindows ? '\\' : '/';
   loadFiles();
 })
 
 onMounted(async () => {
   await loadSettings();
+  currentFolderId.value = props.folderId;
   await loadFiles();
 });
 </script>

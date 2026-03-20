@@ -1,6 +1,6 @@
 <template>
   <t-layout class="abs-0 overflow-hidden app-container">
-    <t-aside class="app-aside" :width="collapsed ? '64px' : '232px'">
+    <t-aside class="app-aside" :width="asideWidth">
       <t-menu v-model="value" :collapsed>
         <template #logo>
           <div class="flex justify-left items-center" :style="{marginLeft: collapsed ? undefined : '16px'}">
@@ -53,7 +53,6 @@
 <script lang="ts" setup>
 import {
   FolderOpenIcon,
-  HistoryIcon,
   HomeIcon,
   SettingIcon,
   VideoIcon,
@@ -65,6 +64,11 @@ import {useInterfaceSettingStore} from "@/store";
 const route = useRoute();
 
 const value = ref("/");
+
+const asideWidth = computed(() => {
+  if (route.path.startsWith("/player")) return '0px';
+  return collapsed.value ? '64px' : '232px';
+})
 
 watch(() => route.path, val => {
   if (val === '/setting') {
@@ -81,6 +85,8 @@ onMounted(() => {
   .app-aside {
     border-right: 1px solid var(--td-border-level-1-color);
     box-shadow: var(--td-shadow-1);
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
 }
