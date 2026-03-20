@@ -187,7 +187,6 @@ watch(() => props.folderId, val => {
   }
 });
 watch(currentFolderId, () => {
-  console.log('--------> folderId: ', currentFolderId.value);
   currentPath.value = isWindows ? '\\' : '/';
   loadFiles();
 })
