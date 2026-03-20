@@ -44,7 +44,8 @@
         <p class="empty-text">此文件夹为空</p>
       </div>
       <div v-else class="file-grid" :class="`file-grid-${layout}`">
-        <div v-for="item in filteredFiles" :key="item.path" class="file-item" :class="`file-item-${layout}`" @click="handleFileClick(item)">
+        <div v-for="item in filteredFiles" :key="item.path" class="file-item" :class="`file-item-${layout}`"
+             @click="handleFileClick(item)">
           <div class="file-icon-wrapper">
             <folder-icon v-if="item.isDirectory" class="file-icon"/>
             <template v-else-if="item.isFile">
@@ -62,7 +63,6 @@
 <script lang="ts" setup>
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import type {FileBrowser, FileItem} from "@/module/file";
-import {isWindows, separator} from "@/util/lang/FileUtil.ts";
 import {
   AppIcon,
   ChevronLeftIcon,
@@ -89,7 +89,7 @@ const props = defineProps({
   }
 });
 
-const currentPath = ref(isWindows ? '\\' : '/');
+const currentPath = ref('/');
 const files = ref<FileItem[]>([]);
 const loading = ref(false);
 const folderExtname = ref<string[]>([]);
@@ -97,15 +97,15 @@ const folderExtname = ref<string[]>([]);
 const layout = useLocalStorage<'card' | 'list'>(LocalName.PAGE_FOLDER_DETAIL_LAYOUT(props.folderId), 'list');
 
 const pathSegments = computed(() => {
-  if (currentPath.value === separator || currentPath.value === '') {
-    return [separator];
+  if (currentPath.value === '/' || currentPath.value === '') {
+    return ['/'];
   }
-  const parts = currentPath.value.split(separator).filter(p => p);
-  return [separator, ...parts];
+  const parts = currentPath.value.split('/').filter(p => p);
+  return ['/', ...parts]
 });
 
 const isRootPath = computed(() => {
-  return currentPath.value === separator || currentPath.value === '';
+  return currentPath.value === '/' || currentPath.value === '';
 });
 
 const filteredFiles = computed(() => {
@@ -130,14 +130,14 @@ async function loadFiles() {
 }
 
 function handleGoBack() {
-  if (currentPath.value === separator || currentPath.value === '') {
+  if (currentPath.value === '/' || currentPath.value === '') {
     return;
   }
-  const parts = currentPath.value.split(separator).filter(p => p);
+  const parts = currentPath.value.split('/').filter(p => p);
   if (parts.length === 1) {
-    currentPath.value = separator;
+    currentPath.value = '/';
   } else {
-    currentPath.value = separator + parts.slice(0, -1).join(separator);
+    currentPath.value = '/' + parts.slice(0, -1).join('/');
   }
   loadFiles();
 }
@@ -152,10 +152,10 @@ function handleRefresh() {
 
 function handlePathClick(index: number) {
   if (index === 0) {
-    currentPath.value = separator;
+    currentPath.value = '/';
   } else {
-    const parts = currentPath.value.split(separator).filter(p => p);
-    currentPath.value = separator + parts.slice(0, index).join(separator);
+    const parts = currentPath.value.split('/').filter(p => p);
+    currentPath.value = '/' + parts.slice(0, index).join('/');
   }
   loadFiles();
 }
@@ -187,7 +187,7 @@ watch(() => props.folderId, val => {
   }
 });
 watch(currentFolderId, () => {
-  currentPath.value = isWindows ? '\\' : '/';
+  currentPath.value = '/';
   loadFiles();
 })
 

@@ -87,6 +87,7 @@ onMounted(() => {
     box-shadow: var(--td-shadow-1);
     overflow-x: hidden;
     overflow-y: auto;
+    flex-shrink: 0;
   }
 
 }
