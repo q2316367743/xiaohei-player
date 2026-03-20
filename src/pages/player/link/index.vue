@@ -113,10 +113,6 @@ import MessageUtil from "@/util/model/MessageUtil.ts";
 import {useLibrarySettingStore} from "@/lib/store.ts";
 import {revealItemInDir} from "@tauri-apps/plugin-opener";
 import {convertFileSrcToUrl, convertProxyToUrl} from "@/lib/FileSrc.ts";
-import {addOrUpdateHistory, updateHistoryProcess} from "@/service/HistoryService.ts";
-import {basename} from "@/util/lang/FileUtil.ts";
-import {parseUrlTitle} from "@/util";
-import {debounce} from "es-toolkit";
 import {isTauri} from "@tauri-apps/api/core";
 
 defineOptions({
@@ -133,8 +129,6 @@ const showSidebar = ref(false);
 const loading = ref(false);
 const videoFiles = ref<Array<{ name: string; path: string }>>([]);
 
-const historyId = ref<string>();
-
 const type = ref(route.query.type as string);
 const src = ref(route.query.src as string);
 // 是否被加密，加密的不需要保存历史记录
@@ -149,15 +143,6 @@ onMounted(() => {
     url.value = convertProxyToUrl(src.value);
   }
   initPlayer();
-  if (!crypto.value) {
-    addOrUpdateHistory({
-      path: src.value,
-      type: type.value as any,
-      title: type.value === 'file' ? basename(src.value) : parseUrlTitle(src.value)
-    }).then(id => {
-      historyId.value = id;
-    })
-  }
 });
 
 // 切换侧边栏
@@ -233,13 +218,6 @@ const goBack = () => {
 const initPlayer = () => {
   if (!playerRef.value || !url.value) return;
 
-  const updateCurrentTime = debounce((currentTime: number) => {
-    if (!historyId.value) return;
-    return updateHistoryProcess(historyId.value, {
-      progress_second: currentTime
-    })
-  }, 300);
-
   player.value = new Artplayer({
     container: playerRef.value,
     url: url.value,
@@ -283,11 +261,6 @@ const initPlayer = () => {
         });
       }
     }] : []
-  }, art => {
-    // 监听进度
-    art.on('seek', (currentTime) => {
-      updateCurrentTime(currentTime);
-    })
   });
 
 

@@ -111,11 +111,6 @@ const currentPage = ref(1);
 const pageSize = ref(15);
 const total = ref(0);
 
-onMounted(async () => {
-  library.value = await getLibrary(libraryId);
-  await loadVideos();
-});
-
 async function loadVideos() {
   loading.value = true;
   try {
@@ -151,6 +146,11 @@ function handleSortOrderChange(s: SortOrder) {
   handleSortChange();
 }
 
+
+onActivated(async () => {
+  library.value = await getLibrary(libraryId);
+  await loadVideos();
+});
 </script>
 
 <style scoped lang="less">

@@ -21,12 +21,6 @@
           </template>
           首页
         </t-menu-item>
-        <t-menu-item to="/history" value="/history">
-          <template #icon>
-            <history-icon/>
-          </template>
-          最近播放
-        </t-menu-item>
         <t-menu-item to="/folder/list" value="/folder/list">
           <template #icon>
             <folder-open-icon/>

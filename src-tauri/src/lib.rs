@@ -34,7 +34,6 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
-            commands::ffmpeg::ffmpeg_command,
             commands::server::get_server_port
         ])
         .setup(|app| {

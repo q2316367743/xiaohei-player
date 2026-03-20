@@ -10,11 +10,6 @@ export const router = createRouter({
       component: () => import('@/pages/home/index.vue'),
     },
     {
-      name: "History",
-      path: '/history',
-      component: () => import('@/pages/history/index.vue'),
-    },
-    {
       name: "FolderList",
       path: '/folder/list',
       component: () => import('@/pages/folder/list/FolderList.vue'),
