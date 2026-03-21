@@ -107,8 +107,7 @@ async fn serve_webdav(
 
     for (key, value) in headers.iter() {
         let key_str = key.as_str();
-        if key_str == "range" 
-            || key_str == "authorization" 
+        if key_str == "authorization" 
             || key_str == "host"
             || key_str == "content-length"
             || key_str == "transfer-encoding"
