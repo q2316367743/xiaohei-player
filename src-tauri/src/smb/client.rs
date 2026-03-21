@@ -92,23 +92,19 @@ pub async fn create_client(client_id: String, option: SmbOption) -> Result<(), S
 pub async fn close_client(client_id: String) -> Result<(), String> {
     let client = {
         let clients = SMB_CLIENTS.read();
-        clients
-            .get(&client_id)
-            .cloned()
-            .ok_or_else(|| format!("Client {} not found", client_id))?
+        clients.get(&client_id).cloned()
     };
-    
-    client
-        .close()
-        .await
-        .map_err(|e| format!("Failed to close client: {:?}", e))?;
-    
+
+    if let Some(client) = client {
+        let _ = client.close().await;
+    }
+
     let mut clients = SMB_CLIENTS.write();
     clients.remove(&client_id);
-    
+
     let mut client_infos = SMB_CLIENT_INFO.write();
     client_infos.remove(&client_id);
-    
+
     Ok(())
 }
 
