@@ -4,7 +4,6 @@ export interface SmbOption {
   username: string;
   password: string;
   domain: string;
-  share: string;
 }
 
 /**
@@ -64,7 +63,7 @@ export interface SmbFileItem {
 /**
  * 读取目录
  * @param clientId 客户端 ID
- * @param path 目录路径
+ * @param path 目录路径，unc 的相对目录
  */
 export async function readSmbDir(clientId: string, path: string): Promise<Array<SmbFileItem>> {
   return await invoke("read_smb_dir", {clientId, path});

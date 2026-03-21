@@ -1,6 +1,8 @@
+mod common;
 mod file_handler;
 mod webdav_handler;
 mod proxy_handler;
+mod smb_handler;
 
 use axum::Router;
 use std::net::SocketAddr;
@@ -17,7 +19,8 @@ pub async fn start_server() -> Result<u16, Box<dyn std::error::Error + Send + Sy
     let app = Router::new()
         .nest("/file", file_handler::router())
         .nest("/webdav", webdav_handler::router())
-        .nest("/proxy", proxy_handler::router());
+        .nest("/proxy", proxy_handler::router())
+        .nest("/smb", smb_handler::router());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 0));
 

@@ -1,12 +1,14 @@
 use axum::{
     body::Body,
     extract::{Path as AxumPath, Query},
-    http::{HeaderMap, StatusCode},
-    response::{IntoResponse, Response},
+    http::{HeaderMap, Method, StatusCode},
+    response::Response,
     routing::get,
     Router,
 };
 use serde::Deserialize;
+
+use super::common::{add_cors_headers, cors_error_response, cors_options_response};
 
 #[derive(Debug, Deserialize)]
 struct WebDavQuery {
@@ -65,7 +67,12 @@ async fn serve_webdav(
     AxumPath(_filename): AxumPath<String>,
     Query(query): Query<WebDavQuery>,
     headers: HeaderMap,
+    method: Method,
 ) -> Response {
+    if method == Method::OPTIONS {
+        return cors_options_response();
+    }
+
     let url = query.url.clone();
     let auth_type = query.r#type;
 
@@ -121,25 +128,14 @@ async fn serve_webdav(
             let stream = response.bytes_stream();
             let body = Body::from_stream(stream);
 
-            builder = builder
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-                .header(
-                    "Access-Control-Allow-Headers",
-                    "Range, Content-Type, Authorization",
-                )
-                .header(
-                    "Access-Control-Expose-Headers",
-                    "Content-Length, Content-Range, Accept-Ranges",
-                );
+            builder = add_cors_headers(builder);
 
             builder.body(body).unwrap()
         }
-        Err(e) => (
+        Err(e) => cors_error_response(
             StatusCode::BAD_GATEWAY,
             format!("Failed to fetch WebDAV: {}", e),
-        )
-            .into_response(),
+        ),
     }
 }
 

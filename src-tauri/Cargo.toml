@@ -42,6 +42,11 @@ futures = "0.3"
 
 tauri-plugin-velesdb = "1.1.1"
 tauri-plugin-upload = "2"
+smb = { version = "0.11.1", default-features = false, features = ["async", "sign", "encrypt", "compress", "std-fs-impls", "netbios-transport", "kerberos"] }
+smb-fscc = "=0.11.1"
+futures-util = "0.3"
+lazy_static = "1.4"
+parking_lot = "0.12"
 
 [dependencies.tauri-plugin-sql]
 features = ["sqlite"] # or "postgres", or "mysql"

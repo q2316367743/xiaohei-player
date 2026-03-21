@@ -1,5 +1,4 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
-import type {SmbOption} from "@/lib/smb.ts";
 
 export type FolderType = 'local' | 'webdav' | 'smb';
 export type FolderWebdavType = 'auto' | 'digest' | 'none' | 'password' | 'token';
@@ -99,6 +98,13 @@ export interface FolderViewCoreWebdav extends FolderViewCoreBase {
   payload: FolderPayloadWebdav
 }
 
+export interface FolderPayloadSmb {
+  username: string;
+  password: string;
+  domain: string;
+  share: string;
+}
+
 export interface FolderViewCoreSmb extends FolderViewCoreBase {
 
   type: 'smb';
@@ -106,7 +112,7 @@ export interface FolderViewCoreSmb extends FolderViewCoreBase {
   /**
    * 文件夹配置
    */
-  payload: SmbOption
+  payload: FolderPayloadSmb
 }
 
 export type FolderViewCore = FolderViewCoreLocal | FolderViewCoreWebdav | FolderViewCoreSmb;
@@ -121,6 +127,9 @@ const buildFolderViewCoreWebdav = (): FolderPayloadWebdav => ({
   auth_type: 'auto'
 })
 
+export function buildFolderViewCore(type: 'local'): FolderViewCoreLocal;
+export function buildFolderViewCore(type: 'webdav'): FolderViewCoreWebdav;
+export function buildFolderViewCore(type: 'smb'): FolderViewCoreSmb;
 export function buildFolderViewCore(type: FolderType): FolderViewCore {
   const base = {
     name: '',
@@ -140,7 +149,16 @@ export function buildFolderViewCore(type: FolderType): FolderViewCore {
         type: 'webdav',
         payload: buildFolderViewCoreWebdav()
       };
-    default:
-      throw Error('未知的文件夹类型');
+    case 'smb':
+      return {
+        ...base,
+        type: 'smb',
+        payload: {
+          username: '',
+          password: '',
+          domain: '',
+          share: ''
+        }
+      };
   }
 }

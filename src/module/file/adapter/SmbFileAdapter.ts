@@ -13,7 +13,11 @@ export class SmbFileAdapter implements FileBrowser {
   }
 
   async init(): Promise<void> {
-    await createSmbClient(this.id, this.option.payload);
+    await createSmbClient(this.id, {
+      username: this.option.payload.username,
+      password: this.option.payload.password,
+      domain: `\\\\${this.option.payload.domain}\\${this.option.payload.share}`,
+    });
   }
 
   private uncPathToUnix(path: string): string {

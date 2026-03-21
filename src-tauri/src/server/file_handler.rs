@@ -9,71 +9,8 @@ use axum::{
 use percent_encoding::percent_decode_str;
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 use tokio_util::io::ReaderStream;
-use mime_guess::from_path;
 
-fn get_mime_type(path: &str) -> String {
-    from_path(path).first_or_octet_stream().to_string()
-}
-
-fn add_cors_headers(builder: axum::http::response::Builder) -> axum::http::response::Builder {
-    builder
-        .header("Access-Control-Allow-Origin", "*")
-        .header("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")
-        .header(
-            "Access-Control-Allow-Headers",
-            "Range, Content-Type, Authorization",
-        )
-        .header(
-            "Access-Control-Expose-Headers",
-            "Content-Length, Content-Range, Accept-Ranges",
-        )
-}
-
-fn cors_error_response(status: StatusCode, message: String) -> Response {
-    add_cors_headers(axum::http::Response::builder())
-        .status(status)
-        .header(header::CONTENT_TYPE, "text/plain")
-        .body(Body::from(message))
-        .unwrap()
-}
-
-fn parse_range(range_str: &str, file_size: u64) -> Option<(u64, u64)> {
-    let range = range_str.strip_prefix("bytes=")?;
-    let parts: Vec<&str> = range.split('-').collect();
-    if parts.len() != 2 {
-        return None;
-    }
-
-    let (start, end) = match (parts[0].is_empty(), parts[1].is_empty()) {
-        (false, false) => {
-            let start: u64 = parts[0].parse().ok()?;
-            let end: u64 = parts[1].parse().ok()?;
-            (start, end)
-        }
-        (false, true) => {
-            let start: u64 = parts[0].parse().ok()?;
-            (start, file_size.saturating_sub(1))
-        }
-        (true, false) => {
-            let end: u64 = parts[1].parse().ok()?;
-            if end >= file_size {
-                (0, file_size.saturating_sub(1))
-            } else {
-                (
-                    file_size.saturating_sub(end).saturating_sub(1),
-                    file_size.saturating_sub(1),
-                )
-            }
-        }
-        (true, true) => (0, file_size.saturating_sub(1)),
-    };
-
-    if start > end || start >= file_size {
-        return None;
-    }
-
-    Some((start, end.min(file_size - 1)))
-}
+use super::common::{add_cors_headers, cors_error_response, cors_options_response, get_mime_type, parse_range};
 
 async fn serve_file(
     AxumPath(path): AxumPath<String>,
@@ -81,10 +18,7 @@ async fn serve_file(
     method: Method,
 ) -> Response {
     if method == Method::OPTIONS {
-        return add_cors_headers(axum::http::Response::builder())
-            .status(StatusCode::OK)
-            .body(Body::empty())
-            .unwrap();
+        return cors_options_response();
     }
 
     let path = match percent_decode_str(&path).decode_utf8() {

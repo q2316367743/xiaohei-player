@@ -2,6 +2,7 @@ use tauri_plugin_log::{Target, TargetKind, RotationStrategy};
 
 mod commands;
 mod server;
+mod smb;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -29,7 +30,10 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
-            commands::server::get_server_port
+            commands::server::get_server_port,
+            smb::commands::create_smb_client,
+            smb::commands::close_smb_client,
+            smb::commands::read_smb_dir
         ])
         .setup(|app| {
             std::thread::spawn(|| {

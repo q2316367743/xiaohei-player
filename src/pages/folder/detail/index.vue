@@ -26,6 +26,7 @@ onMounted(async () => {
     router.back();
     return;
   }
+  await temp.init();
   adapter.value = temp;
 })
 </script>

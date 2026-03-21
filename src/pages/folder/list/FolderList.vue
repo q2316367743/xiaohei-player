@@ -32,17 +32,18 @@
             <t-tag theme="primary" variant="outline">
               <span v-if="item.type === 'local'">本地</span>
               <span v-else-if="item.type === 'webdav'">WebDAV</span>
+              <span v-else-if="item.type === 'smb'">SMB</span>
             </t-tag>
           </div>
         </div>
-        <div class="folder-card add" @click="handleContextmenu()">
+        <div class="folder-card add" @click="handleContextmenu($event)">
           <div class="folder-icon-wrapper">
             <add-icon size="48px" class="folder-icon"/>
           </div>
         </div>
       </div>
       <empty-result v-else tip="暂无文件夹">
-        <t-button theme="primary" @click="handleContextmenu()">
+        <t-button theme="primary" @click="handleContextmenu($event)">
           <template #icon>
             <add-icon/>
           </template>
@@ -54,13 +55,15 @@
 </template>
 
 <script lang="ts" setup>
-import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "../components/edit.tsx";
+import Ctx from "@imengyu/vue3-context-menu";
 import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
-import type {FolderType, FolderView} from "@/entity/main/Folder.ts";
+import type {FolderType, FolderView} from "@/entity";
 import {listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
+import {isDark} from "@/global/Constants.ts";
+import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "@/pages/folder/list/components/edit.tsx";
 
 const router = useRouter();
 
@@ -94,26 +97,31 @@ const handleClick = (item: FolderView) => {
   router.push(`/folder/detail/${item.id}`);
 }
 
-const handleContextmenu = () => {
-  // e.preventDefault();
-  // e.stopPropagation();
-  // Cxt.showContextMenu({
-  //   x: e.x,
-  //   y: e.y,
-  //   theme: isDark.value ? 'mac dark' : 'mac',
-  //   items: [{
-  //     label: 'WebDAV',
-  //     onClick: () => {
-  //       handleAddFolder('webdav')
-  //     }
-  //   }, {
-  //     label: '本地',
-  //     onClick: () => {
-  //       handleAddFolder('local')
-  //     }
-  //   }]
-  // })
-  handleAddFolder('local');
+const handleContextmenu = (e: MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+  Ctx.showContextMenu({
+    x: e.x,
+    y: e.y,
+    theme: isDark.value ? 'mac dark' : 'mac',
+    items: [{
+      label: '本地',
+      divided: 'down',
+      onClick: () => {
+        handleAddFolder('local')
+      }
+    }, {
+      label: 'WebDAV',
+      onClick: () => {
+        handleAddFolder('webdav')
+      }
+    }, {
+      label: 'smb',
+      onClick: () => {
+        handleAddFolder('smb')
+      }
+    }]
+  })
 }
 </script>
 
