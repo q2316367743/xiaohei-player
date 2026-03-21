@@ -194,7 +194,7 @@ watch(currentFolderId, () => {
 onMounted(async () => {
   await loadSettings();
   currentFolderId.value = props.folderId;
-  await loadFiles();
+  // await loadFiles();
 });
 </script>
 

@@ -118,5 +118,5 @@ async fn serve_file(
 
 pub fn router() -> Router {
     Router::new()
-        .route("/:path", get(serve_file).head(serve_file))
+        .route("/*path", get(serve_file).head(serve_file))
 }

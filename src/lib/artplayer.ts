@@ -5,7 +5,8 @@ import Artplayer from "artplayer";
 
 export const getVideoType = (url: string): string => {
   if (!url) return '';
-  const lowerUrl = url.toLowerCase();
+  const u = new URL(url);
+  const lowerUrl = u.pathname.toLowerCase();
   if (lowerUrl.endsWith('.flv')) return 'flv';
   if (lowerUrl.endsWith('.m3u8') || lowerUrl.includes('.m3u8')) return 'm3u8';
   if (lowerUrl.endsWith('.mp4')) return 'mp4';

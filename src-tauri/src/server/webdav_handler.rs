@@ -74,17 +74,22 @@ async fn serve_webdav(
     }
 
     let url = query.url.clone();
+    let url = url.trim_end_matches(',').to_string();
     let auth_type = query.r#type;
 
-    let client = reqwest::Client::new();
-    let mut request_builder = client.request(reqwest::Method::GET, &url);
+    let client = reqwest::Client::builder()
+        .user_agent("Mozilla/5.0")
+        .build()
+        .unwrap();
+    let mut request_builder = client.get(&url);
 
     match auth_type {
         AuthType::Password | AuthType::Auto => {
             if let (Some(username), Some(password)) = (&query.username, &query.password) {
                 let credentials = format!("{}:{}", username, password);
                 let encoded = base64_encode(credentials.as_bytes());
-                request_builder = request_builder.header("Authorization", format!("Basic {}", encoded));
+                let auth_value = format!("Basic {}", encoded);
+                request_builder = request_builder.header("Authorization", auth_value);
             }
         }
         AuthType::Token => {
@@ -101,15 +106,32 @@ async fn serve_webdav(
     }
 
     for (key, value) in headers.iter() {
-        if key.as_str() == "range" || key.as_str() == "authorization" {
+        let key_str = key.as_str();
+        if key_str == "range" 
+            || key_str == "authorization" 
+            || key_str == "host"
+            || key_str == "content-length"
+            || key_str == "transfer-encoding"
+        {
             continue;
         }
         if let Ok(v) = value.to_str() {
-            request_builder = request_builder.header(key.as_str(), v);
+            request_builder = request_builder.header(key_str, v);
         }
     }
 
-    match request_builder.send().await {
+    let request = match request_builder.build() {
+        Ok(r) => r,
+        Err(e) => {
+            log::error!("WebDAV failed to build request: {}", e);
+            return cors_error_response(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to build request: {}", e),
+            );
+        }
+    };
+
+    match client.execute(request).await {
         Ok(response) => {
             let status_num = response.status().as_u16();
             let status = if let Ok(s) = StatusCode::from_u16(status_num) {
@@ -132,14 +154,17 @@ async fn serve_webdav(
 
             builder.body(body).unwrap()
         }
-        Err(e) => cors_error_response(
-            StatusCode::BAD_GATEWAY,
-            format!("Failed to fetch WebDAV: {}", e),
-        ),
+        Err(e) => {
+            log::error!("WebDAV request failed: {}", e);
+            cors_error_response(
+                StatusCode::BAD_GATEWAY,
+                format!("Failed to fetch WebDAV: {}", e),
+            )
+        }
     }
 }
 
 pub fn router() -> Router {
     Router::new()
-        .route("/:filename", get(serve_webdav))
+        .route("/*filename", get(serve_webdav))
 }

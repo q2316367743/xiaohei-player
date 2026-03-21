@@ -163,5 +163,5 @@ async fn serve_smb(
 
 pub fn router() -> Router {
     Router::new()
-        .route("/:filename", get(serve_smb).head(serve_smb))
+        .route("/*filename", get(serve_smb).head(serve_smb))
 }

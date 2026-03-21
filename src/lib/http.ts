@@ -2,7 +2,7 @@ import axios, {type AxiosRequestConfig} from "axios";
 import {isTauri} from "@tauri-apps/api/core";
 import {fetch} from '@tauri-apps/plugin-http'
 
-export function getTauriFetch() {
+function getTauriFetch() {
   return isTauri() ? fetch : undefined;
 }
 
