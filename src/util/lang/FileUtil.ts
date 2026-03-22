@@ -10,7 +10,7 @@ export const isWindows = platform() === 'windows'
  * @param paths 路径片段
  */
 export function joinPath(...paths: string[]): string {
-  return paths.join(separator);
+  return paths.filter(Boolean).join(separator).replace(/\/{2,}/g, '/');
 }
 
 /**

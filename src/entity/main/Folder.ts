@@ -1,6 +1,6 @@
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
 
-export type FolderType = 'local' | 'webdav' | 'smb';
+export type FolderType = 'local' | 'webdav' | 'smb' | 'open_list';
 export type FolderWebdavType = 'auto' | 'digest' | 'none' | 'password' | 'token';
 
 export type FolderPayloadLocal = object
@@ -115,7 +115,24 @@ export interface FolderViewCoreSmb extends FolderViewCoreBase {
   payload: FolderPayloadSmb
 }
 
-export type FolderViewCore = FolderViewCoreLocal | FolderViewCoreWebdav | FolderViewCoreSmb;
+export interface FolderPayloadOpenList {
+  type: 'basic' | 'token';
+  username: string;
+  password: string;
+  token: string;
+}
+
+export interface FolderViewCoreOpenList extends FolderViewCoreBase {
+
+  type: 'open_list';
+
+  /**
+   * 文件夹配置
+   */
+  payload: FolderPayloadOpenList
+}
+
+export type FolderViewCore = FolderViewCoreLocal | FolderViewCoreWebdav | FolderViewCoreSmb | FolderViewCoreOpenList;
 
 export type FolderView = BaseEntity & FolderViewCore;
 
@@ -126,10 +143,23 @@ const buildFolderViewCoreWebdav = (): FolderPayloadWebdav => ({
   auth_password: '',
   auth_type: 'auto'
 })
+const buildFolderViewCoreSmb = (): FolderPayloadSmb => ({
+  username: '',
+  password: '',
+  domain: '',
+  share: ''
+})
+const buildFolderViewCoreOpenList = (): FolderPayloadOpenList => ({
+  type: 'basic',
+  username: '',
+  password: '',
+  token: ''
+})
 
 export function buildFolderViewCore(type: 'local'): FolderViewCoreLocal;
 export function buildFolderViewCore(type: 'webdav'): FolderViewCoreWebdav;
 export function buildFolderViewCore(type: 'smb'): FolderViewCoreSmb;
+export function buildFolderViewCore(type: 'open_list'): FolderViewCoreOpenList;
 export function buildFolderViewCore(type: FolderType): FolderViewCore {
   const base = {
     name: '',
@@ -153,12 +183,13 @@ export function buildFolderViewCore(type: FolderType): FolderViewCore {
       return {
         ...base,
         type: 'smb',
-        payload: {
-          username: '',
-          password: '',
-          domain: '',
-          share: ''
-        }
+        payload: buildFolderViewCoreSmb()
       };
+    case 'open_list':
+      return {
+        ...base,
+        type: 'open_list',
+        payload: buildFolderViewCoreOpenList()
+      }
   }
 }

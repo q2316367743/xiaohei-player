@@ -84,7 +84,7 @@ export class WebDAVFileAdapter implements FileBrowser {
     return baseUrl + normalizedPath;
   }
 
-  getLink(path: string): string {
+  async getLink(path: string) {
     const target = this.base + path;
     const url = this.getFileDownloadLink(target);
     const filename = path.split('/').pop() || 'video.mp4';
@@ -181,16 +181,26 @@ export class WebDAVFileAdapter implements FileBrowser {
       const displayName = getPropValue<string>(prop, ['d:displayname', 'D:displayname', 'displayname']);
       const name = displayName || basename(hrefPath);
 
+      const contentLength = getPropValue<string>(prop, ['d:getcontentlength', 'D:getcontentlength', 'getcontentlength']);
+      const size = contentLength ? parseInt(contentLength, 10) || 0 : 0;
+
+      const lastModified = getPropValue<string>(prop, ['d:getlastmodified', 'D:getlastmodified', 'getlastmodified']);
+      const created = lastModified ? new Date(lastModified).getTime() || 0 : 0;
+
       const itemPath = hrefPath.startsWith(this.base)
         ? hrefPath.substring(this.base.length)
         : hrefPath;
-
 
       items.push({
         name: name,
         extname: extname(name),
         path: itemPath,
         folder: target,
+
+        size: size,
+        created: created,
+        sign: itemPath,
+
         isFile: isFile,
         isDirectory: isDirectory,
         isSymlink: false,

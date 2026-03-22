@@ -130,28 +130,9 @@ async function loadSettings() {
   folderExtname.value = settings.folderExtname || [];
 }
 
-onMounted(async () => {
-
-  const fb = await createFileBrowser(folderId.value);
-  if (!fb) {
-    MessageUtil.error('未找到该文件');
-    router.back();
-    return;
-  }
-  adapter.value = fb;
-  url.value = fb.getLink(src.value);
-
-  initPlayer();
-  await loadSettings();
-});
-
 // 切换侧边栏
 const toggleSidebar = async () => {
   showSidebar.value = !showSidebar.value;
-  // 显示侧边栏 & 文件类型 & 存在链接 & 未加密
-  if (showSidebar.value) {
-    await loadVideoFiles();
-  }
 };
 
 // 加载视频文件列表
@@ -160,7 +141,7 @@ const loadVideoFiles = async () => {
   loading.value = true;
   try {
     const list = await adapter.value!.list(dirname(src.value));
-    videoFiles.value = filterVideoFileList(list, folderExtname.value, adapter.value!);
+    videoFiles.value = await filterVideoFileList(list, folderExtname.value, adapter.value!);
   } catch (error) {
     console.error('Failed to load video files:', error);
     MessageUtil.error('加载文件列表失败', error);
@@ -170,9 +151,9 @@ const loadVideoFiles = async () => {
 };
 
 // 播放视频
-const playVideo = (item: FileItem) => {
+const playVideo = async (item: FileItem) => {
   src.value = item.path;
-  url.value = adapter.value!.getLink(src.value);
+  url.value = await adapter.value!.getLink(src.value);
   title.value = item.name
   if (player.value) {
     player.value.destroy();
@@ -245,6 +226,23 @@ const initPlayer = () => {
 
 
 };
+
+onMounted(async () => {
+
+  const fb = await createFileBrowser(folderId.value);
+  if (!fb) {
+    MessageUtil.error('未找到该文件');
+    router.back();
+    return;
+  }
+  adapter.value = fb;
+  url.value = await fb.getLink(src.value);
+
+  initPlayer();
+  await loadSettings();
+  // 加载视频文件列表
+  await loadVideoFiles();
+});
 
 onBeforeUnmount(() => {
   if (player.value) {

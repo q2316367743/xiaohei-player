@@ -30,7 +30,7 @@ export class SmbFileAdapter implements FileBrowser {
     return path.replace(/\//g, "\\");
   }
 
-  getLink(path: string): string {
+  async getLink(path: string) {
     // unix 路径转为 unc 路径
     const unc = this.unixPathToUnc(path);
     return convertSmbToUrl(unc, this.id);
@@ -39,15 +39,23 @@ export class SmbFileAdapter implements FileBrowser {
   async list(path: string): Promise<FileItem[]> {
     const unc = this.unixPathToUnc(path);
     const list = await readSmbDir(this.id, unc);
-    return list.map(item => ({
-      name: item.filename,
-      extname: extname(item.filename),
-      path: this.uncPathToUnix(path + '\\' + item.filename),
-      folder: path,
-      isFile: item.isFile,
-      isDirectory: item.isDirectory,
-      isSymlink: item.isSymlink,
-    }));
+    return list.map(item => {
+      const itemPath = this.uncPathToUnix(path + '\\' + item.filename);
+      return {
+        name: item.filename,
+        extname: extname(item.filename),
+        path: itemPath,
+        folder: path,
+
+        size: item.end_of_file,
+        created: item.creation_time,
+        sign: itemPath,
+
+        isFile: item.isFile,
+        isDirectory: item.isDirectory,
+        isSymlink: item.isSymlink,
+      }
+    });
   }
 
 }

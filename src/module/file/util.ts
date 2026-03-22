@@ -1,17 +1,20 @@
 import type {FileBrowser, FileItem} from "@/module/file/types.ts";
 
-export function filterVideoFileList(files: Array<FileItem>, folderExtname: Array<string>, adapter: FileBrowser): Array<FileItem> {
+export async function filterVideoFileList(files: Array<FileItem>, folderExtname: Array<string>, adapter: FileBrowser): Promise<Array<FileItem>> {
   const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
 
-  return files.filter(item => {
+  const items = files.filter(item => {
     if (item.isDirectory) {
       return true;
     }
     const ext = item.extname.toLowerCase().replace('.', '');
     return folderExtname.includes(ext);
-  }).map(item => {
+  });
+  const results = new Array<FileItem>();
+  for (const item of items) {
     if (item.isDirectory) {
-      return item;
+      results.push(item);
+      continue;
     }
 
     const nameWithoutExt = item.name.substring(0, item.name.lastIndexOf('.'));
@@ -42,10 +45,15 @@ export function filterVideoFileList(files: Array<FileItem>, folderExtname: Array
         break;
       }
     }
+    let cover: string | undefined = undefined;
+    if (coverFile) {
+      cover = await adapter.getLink(coverFile.path);
+    }
 
-    return {
+    results.push({
       ...item,
-      cover: coverFile ? adapter.getLink(coverFile.path) : undefined
-    };
-  });
+      cover
+    })
+  }
+  return results;
 }

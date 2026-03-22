@@ -8,6 +8,13 @@ export interface FileItem {
   isDirectory: boolean;
   isSymlink: boolean;
 
+  // 文件大小
+  size: number;
+  // 文件签名
+  sign: string;
+  // 创建时间
+  created: number;
+
   // 封面路径
   cover?: string;
 }
@@ -18,6 +25,6 @@ export interface FileBrowser {
 
   list(path: string): Promise<FileItem[]>;
 
-  getLink(path: string): string;
+  getLink(path: string): Promise<string>;
 
 }

@@ -108,9 +108,9 @@ const isRootPath = computed(() => {
   return currentPath.value === '/' || currentPath.value === '';
 });
 
-const filteredFiles = computed(() => {
+const filteredFiles = computedAsync(() => {
   return filterVideoFileList(files.value, folderExtname.value, props.adapter);
-});
+}, []);
 
 async function loadSettings() {
   const settings = await useLibrarySettingStore().get();
