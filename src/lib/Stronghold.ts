@@ -209,9 +209,32 @@ class StrongholdWrapper {
 
 }
 
+class StrongholdMediaWrapper extends StrongholdWrapper {
+
+  async getMediaRecord(serviceId: string, key: string) {
+    return await this.getRecord(`/media/${serviceId}/${key}`);
+  }
+
+  async setMediaRecord(serviceId: string, key: string, value: string, timeout?: number) {
+    await this.insertRecord(`/media/${serviceId}/${key}`, value, timeout);
+  }
+
+  async removeMediaRecord(serviceId: string, key: string) {
+    await this.removeRecord(`/media/${serviceId}/${key}`);
+  }
+
+}
+
 
 const strongholdWrapper = new StrongholdWrapper("vault");
 
 export const useStronghold = () => {
   return strongholdWrapper;
+}
+
+const mediaStrongholdWrap = new StrongholdMediaWrapper("media");
+
+// 媒体专用
+export const useMediaStronghold = () => {
+  return mediaStrongholdWrap;
 }
