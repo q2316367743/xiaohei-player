@@ -11,7 +11,9 @@
           <div class="folder-cover">
             <lock-on-icon v-if="item.password" class="lock-icon"/>
             <div class="folder-icon-wrapper">
-              <folder-icon class="folder-icon"/>
+              <folder-icon v-if="item.type === 'local'" class="folder-icon"/>
+              <WebDAVIcon v-else-if="item.type === 'webdav'" class="webdav-icon"/>
+              <OpenListIcon v-else-if="item.type === 'open_list'" class="folder-icon"/>
             </div>
             <div class="folder-actions">
               <t-dropdown trigger="click">
@@ -20,6 +22,7 @@
                 </t-button>
                 <t-dropdown-menu>
                   <t-dropdown-item @click="openUpdateLocalPassword(item, loadList)">修改密码</t-dropdown-item>
+                  <t-dropdown-item @click="openUpdateFolder(item, loadList)">更新</t-dropdown-item>
                   <t-dropdown-item theme="error" @click="openDeleteFolderLocal(item, loadList)">删除</t-dropdown-item>
                 </t-dropdown-menu>
               </t-dropdown>
@@ -33,6 +36,7 @@
               <span v-if="item.type === 'local'">本地</span>
               <span v-else-if="item.type === 'webdav'">WebDAV</span>
               <span v-else-if="item.type === 'smb'">SMB</span>
+              <span v-else-if="item.type === 'open_list'">OpenList</span>
             </t-tag>
           </div>
         </div>
@@ -64,8 +68,10 @@ import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
 import {
   openUpdateLocalPassword,
   openDeleteFolderLocal,
-  handleFolderContextmenu
+  handleFolderContextmenu, openUpdateFolder
 } from "@/pages/folder/list/components/edit.tsx";
+import OpenListIcon from "@/assets/icon/OpenListIcon.vue";
+import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
 
 const router = useRouter();
 

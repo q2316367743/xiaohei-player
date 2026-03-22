@@ -116,6 +116,7 @@ export interface FolderViewCoreSmb extends FolderViewCoreBase {
 }
 
 export interface FolderPayloadOpenList {
+  domain: string;
   type: 'basic' | 'token';
   username: string;
   password: string;
@@ -150,7 +151,8 @@ const buildFolderViewCoreSmb = (): FolderPayloadSmb => ({
   share: ''
 })
 const buildFolderViewCoreOpenList = (): FolderPayloadOpenList => ({
-  type: 'basic',
+  domain: '',
+  type: 'token',
   username: '',
   password: '',
   token: ''

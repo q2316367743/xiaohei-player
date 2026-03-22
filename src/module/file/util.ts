@@ -1,6 +1,6 @@
-import type {FileBrowser, FileItem} from "@/module/file/types.ts";
+import type {FileItem} from "@/module/file/types.ts";
 
-export async function filterVideoFileList(files: Array<FileItem>, folderExtname: Array<string>, adapter: FileBrowser): Promise<Array<FileItem>> {
+export async function filterVideoFileList(files: Array<FileItem>, folderExtname: Array<string>): Promise<Array<FileItem>> {
   const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
 
   const items = files.filter(item => {
@@ -45,14 +45,10 @@ export async function filterVideoFileList(files: Array<FileItem>, folderExtname:
         break;
       }
     }
-    let cover: string | undefined = undefined;
-    if (coverFile) {
-      cover = await adapter.getLink(coverFile.path);
-    }
 
     results.push({
       ...item,
-      cover
+      cover: coverFile?.path
     })
   }
   return results;

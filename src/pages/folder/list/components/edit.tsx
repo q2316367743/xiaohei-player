@@ -1,18 +1,20 @@
 import {DialogPlugin, Form, FormItem, Input} from "tdesign-vue-next";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
-import {type FolderType, type FolderView} from "@/entity/main/Folder.ts";
+import {type FolderView} from "@/entity/main/Folder.ts";
 import {removeFolder, updateFolderPassword} from "@/service";
 import {addLocalFolderDialog} from "@/pages/folder/list/components/LocalFileEdit.tsx";
 import {addWebdavFolderDialog} from "@/pages/folder/list/components/WebdavFileEdit.tsx";
 import {addSmbFolderDialog} from "@/pages/folder/list/components/SmbFileEdit.tsx";
 import Ctx from "@imengyu/vue3-context-menu";
 import {isDark} from "@/global/Constants.ts";
-import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
 import {FolderAddIcon} from "tdesign-icons-vue-next";
+import {addOpenListFolderDialog, updateOpenListFolderDialog} from "@/pages/folder/list/components/OpenListFileEdit.tsx";
+import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
 import SmbIcon from "@/assets/icon/SmbIcon.vue";
+import OpenListIcon from "@/assets/icon/OpenListIcon.vue";
 
-export const handleFolderContextmenu = (e: MouseEvent, loadList: () => void) => {
+export const handleFolderContextmenu = (e: MouseEvent, onUpdate: () => void) => {
   e.preventDefault();
   e.stopPropagation();
   Ctx.showContextMenu({
@@ -24,33 +26,30 @@ export const handleFolderContextmenu = (e: MouseEvent, loadList: () => void) => 
       icon: () => <FolderAddIcon/>,
       divided: 'down',
       onClick: () => {
-        addFolderDialog('local', loadList)
+        addLocalFolderDialog(onUpdate);
       }
     }, {
       label: 'WebDAV',
       icon: () => <WebDAVIcon/>,
       onClick: () => {
-        addFolderDialog('webdav', loadList)
+        addWebdavFolderDialog(onUpdate);
+      }
+    }, {
+      label: 'OpenList',
+      icon: () => <OpenListIcon/>,
+      divided: 'down',
+      onClick: () => {
+        addOpenListFolderDialog(onUpdate);
       }
     }, {
       label: 'smb',
       icon: () => <SmbIcon/>,
       disabled: true,
       onClick: () => {
-        addFolderDialog('smb', loadList)
+        addSmbFolderDialog(onUpdate);
       }
     }]
   })
-}
-
-export function addFolderDialog(type: FolderType, onUpdate: () => void) {
-  if (type === 'local') {
-    addLocalFolderDialog(onUpdate);
-  } else if (type === 'webdav') {
-    addWebdavFolderDialog(onUpdate);
-  } else if (type === 'smb') {
-    addSmbFolderDialog(onUpdate);
-  }
 }
 
 export function openUpdateLocalPassword(folder: FolderView, onUpdate: () => void) {
@@ -93,4 +92,11 @@ export function openDeleteFolderLocal(folder: FolderView, onUpdate: () => void) 
         MessageUtil.error("删除失败", e);
       })
     })
+}
+
+export function openUpdateFolder(view: FolderView, onUpdate: () => void) {
+  switch (view.type) {
+    case 'open_list':
+      return updateOpenListFolderDialog(view.id, onUpdate);
+  }
 }

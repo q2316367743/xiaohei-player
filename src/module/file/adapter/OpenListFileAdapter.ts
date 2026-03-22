@@ -150,7 +150,7 @@ export class OpenListFileAdapter implements FileBrowser {
     const {payload} = this.option;
     const key = `/file/${this.id}/token`;
     if (payload.type === 'basic') {
-      const tokenOld = localStorage.getItem(key);
+      const tokenOld = sessionStorage.getItem(key);
       if (tokenOld) {
         this.token = tokenOld;
         return;
@@ -160,7 +160,7 @@ export class OpenListFileAdapter implements FileBrowser {
         username: payload.username,
         password: payload.password,
         otp_code: ""
-      });
+      }, {baseURL: this.option.payload.domain});
       const {code, data} = resp.data;
       // 如果返回 402 则需要输入 opt 码
       if (code === 402) {
@@ -175,15 +175,15 @@ export class OpenListFileAdapter implements FileBrowser {
           username: payload.username,
           password: payload.password,
           otp_code: opt_code
-        });
+        }, {baseURL: this.option.payload.domain});
         // 设置 token
         this.token = optLoginResp.data.data.token;
-        localStorage.setItem(key, data.token);
+        sessionStorage.setItem(key, data.token);
         return;
       }
       // 设置 token
       this.token = data.token;
-      localStorage.setItem(key, data.token);
+      sessionStorage.setItem(key, data.token);
     } else if (payload.type === 'token') {
       this.token = payload.token;
     }
@@ -193,18 +193,19 @@ export class OpenListFileAdapter implements FileBrowser {
     const resp = await postAction<OpenListResp<FsGetObject>>('/api/fs/get', {
       path: path,
       password: ""
-    }, {headers: {'Authorization': this.token}});
+    }, {headers: {'Authorization': this.token}, baseURL: this.option.payload.domain});
+    console.log(resp);
     return resp.data.data.raw_url;
   }
 
   async list(path: string): Promise<FileItem[]> {
-    const resp = await postAction<OpenListResp<OpenListFsResp>>('/api/file/list', {
+    const resp = await postAction<OpenListResp<OpenListFsResp>>('/api/fs/list', {
       "path": path,
       "password": "",
       "refresh": false,
       "page": 1,
       "per_page": 30
-    }, {headers: {'Authorization': this.token}}).then(resp => {
+    }, {headers: {'Authorization': this.token}, baseURL: this.option.payload.domain}).then(resp => {
       return resp.data.data;
     });
     const {content} = resp;

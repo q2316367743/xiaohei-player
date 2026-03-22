@@ -48,10 +48,7 @@
              @click="handleFileClick(item)">
           <div class="file-icon-wrapper">
             <folder-icon v-if="item.isDirectory" class="file-icon"/>
-            <template v-else-if="item.isFile">
-              <img v-if="item.cover" :src="item.cover" class="file-cover" alt=""/>
-              <video-icon v-else class="file-icon"/>
-            </template>
+            <folder-image v-else-if="item.isFile" :adapter="props.adapter" :src="item.cover" class="file-icon"/>
           </div>
           <div class="file-name" :title="item.name">{{ item.name }}</div>
         </div>
@@ -71,10 +68,11 @@ import {
   HomeIcon,
   LoadingIcon,
   RefreshIcon,
-  VideoIcon, ViewListIcon
+  ViewListIcon
 } from "tdesign-icons-vue-next";
 import {filterVideoFileList} from "@/module/file/util.ts";
 import {LocalName} from "@/global/LocalName.ts";
+import FolderImage from "@/components/FolderImage/FolderImage.vue";
 
 const router = useRouter();
 
@@ -109,7 +107,7 @@ const isRootPath = computed(() => {
 });
 
 const filteredFiles = computedAsync(() => {
-  return filterVideoFileList(files.value, folderExtname.value, props.adapter);
+  return filterVideoFileList(files.value, folderExtname.value);
 }, []);
 
 async function loadSettings() {

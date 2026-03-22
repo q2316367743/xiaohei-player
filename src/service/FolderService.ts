@@ -31,6 +31,16 @@ export async function getFolder(id: string): Promise<FolderView | undefined> {
   return undefined;
 }
 
+export async function updateFolder(id: string, form: Omit<FolderViewCore, 'password'>) {
+  const now = Date.now();
+  await useSql().mapper<Folder>('folder').updateById(id, {
+    path: form.path,
+    name: form.name,
+    payload: JSON.stringify(form.payload),
+    updated_at: now
+  });
+}
+
 export async function addFolder(form: FolderViewCore) {
   const now = Date.now();
   await useSql().mapper<Folder>('folder').insert({

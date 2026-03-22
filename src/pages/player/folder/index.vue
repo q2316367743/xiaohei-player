@@ -74,8 +74,7 @@
             @click="playVideo(file)"
           >
             <div class="file-icon">
-              <t-image v-if="file.cover" :src="file.cover" fit="cover"/>
-              <video-icon v-else/>
+              <folder-image v-if="adapter" :adapter="adapter" :src="file.cover"/>
             </div>
             <div class="file-info">
               <div class="file-name">{{ file.name }}</div>
@@ -141,7 +140,7 @@ const loadVideoFiles = async () => {
   loading.value = true;
   try {
     const list = await adapter.value!.list(dirname(src.value));
-    videoFiles.value = await filterVideoFileList(list, folderExtname.value, adapter.value!);
+    videoFiles.value = await filterVideoFileList(list, folderExtname.value);
   } catch (error) {
     console.error('Failed to load video files:', error);
     MessageUtil.error('加载文件列表失败', error);
@@ -235,6 +234,7 @@ onMounted(async () => {
     router.back();
     return;
   }
+  await fb.init();
   adapter.value = fb;
   url.value = await fb.getLink(src.value);
 
