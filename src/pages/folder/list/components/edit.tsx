@@ -6,6 +6,42 @@ import {removeFolder, updateFolderPassword} from "@/service";
 import {addLocalFolderDialog} from "@/pages/folder/list/components/LocalFileEdit.tsx";
 import {addWebdavFolderDialog} from "@/pages/folder/list/components/WebdavFileEdit.tsx";
 import {addSmbFolderDialog} from "@/pages/folder/list/components/SmbFileEdit.tsx";
+import Ctx from "@imengyu/vue3-context-menu";
+import {isDark} from "@/global/Constants.ts";
+import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
+import {FolderAddIcon} from "tdesign-icons-vue-next";
+import SmbIcon from "@/assets/icon/SmbIcon.vue";
+
+export const handleFolderContextmenu = (e: MouseEvent, loadList: () => void) => {
+  e.preventDefault();
+  e.stopPropagation();
+  Ctx.showContextMenu({
+    x: e.x,
+    y: e.y,
+    theme: isDark.value ? 'mac dark' : 'mac',
+    items: [{
+      label: '本地',
+      icon: () => <FolderAddIcon/>,
+      divided: 'down',
+      onClick: () => {
+        addFolderDialog('local', loadList)
+      }
+    }, {
+      label: 'WebDAV',
+      icon: () => <WebDAVIcon/>,
+      onClick: () => {
+        addFolderDialog('webdav', loadList)
+      }
+    }, {
+      label: 'smb',
+      icon: () => <SmbIcon/>,
+      disabled: true,
+      onClick: () => {
+        addFolderDialog('smb', loadList)
+      }
+    }]
+  })
+}
 
 export function addFolderDialog(type: FolderType, onUpdate: () => void) {
   if (type === 'local') {

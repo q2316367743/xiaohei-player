@@ -612,3 +612,12 @@
 .mx-menu-bar.flat .mx-menu-bar-item {
   border-radius: 0
 }
+
+.mx-context-menu-item {
+  &.disabled {
+    .t-icon {
+      color: var(--mx-menu-disabled-text);
+      fill: var(--mx-menu-disabled-text);
+    }
+  }
+}

@@ -55,15 +55,18 @@
 </template>
 
 <script lang="ts" setup>
-import Ctx from "@imengyu/vue3-context-menu";
 import {AddIcon, FolderIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
-import type {FolderType, FolderView} from "@/entity";
+import type {FolderView} from "@/entity";
 import {listFolder} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
-import {isDark} from "@/global/Constants.ts";
-import {addFolderDialog, openUpdateLocalPassword, openDeleteFolderLocal} from "@/pages/folder/list/components/edit.tsx";
+import {
+  openUpdateLocalPassword,
+  openDeleteFolderLocal,
+  handleFolderContextmenu
+} from "@/pages/folder/list/components/edit.tsx";
+import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
 
 const router = useRouter();
 
@@ -76,9 +79,6 @@ const loadList = async () => {
 
 onMounted(loadList);
 
-function handleAddFolder(type: FolderType) {
-  addFolderDialog(type, loadList);
-}
 
 const handleClick = (item: FolderView) => {
   if (item.password) {
@@ -98,30 +98,7 @@ const handleClick = (item: FolderView) => {
 }
 
 const handleContextmenu = (e: MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-  Ctx.showContextMenu({
-    x: e.x,
-    y: e.y,
-    theme: isDark.value ? 'mac dark' : 'mac',
-    items: [{
-      label: '本地',
-      divided: 'down',
-      onClick: () => {
-        handleAddFolder('local')
-      }
-    }, {
-      label: 'WebDAV',
-      onClick: () => {
-        handleAddFolder('webdav')
-      }
-    }, {
-      label: 'smb',
-      onClick: () => {
-        handleAddFolder('smb')
-      }
-    }]
-  })
+  handleFolderContextmenu(e, loadList);
 }
 </script>
 
