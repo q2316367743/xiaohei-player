@@ -66,7 +66,6 @@ import {
   openDeleteFolderLocal,
   handleFolderContextmenu
 } from "@/pages/folder/list/components/edit.tsx";
-import WebDAVIcon from "@/assets/icon/WebDAVIcon.vue";
 
 const router = useRouter();
 
