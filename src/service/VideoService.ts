@@ -91,6 +91,12 @@ export async function deleteVideo(id: string) {
   await useSql().mapper<Video>('video').updateById(id, {is_deleted: useSnowflake().nextId()});
 }
 
+// 物理删除
+export async function deleteVideoPhysical(id: string) {
+  await useSql().query<Video>('video').eq('id', id).delete();
+}
+
+
 export async function cleanDeletedVideo() {
   const deletedVideos = await useSql().query<Video>('video').ne('is_deleted', '0').list();
 

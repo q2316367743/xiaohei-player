@@ -102,3 +102,6 @@ export async function listVideoByActorId(actorId: string) {
   return [];
 }
 
+export async function removeVideoActor(videoId: string) {
+  await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).delete();
+}

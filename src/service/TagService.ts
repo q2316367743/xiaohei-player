@@ -81,3 +81,7 @@ export async function listTagView(videoId: string) {
 
   return tags;
 }
+
+export function removeVideoTag(videoId: string) {
+  return useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
+}

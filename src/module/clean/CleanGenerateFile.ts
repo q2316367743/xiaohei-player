@@ -1,8 +1,8 @@
 import {listAllVideoId} from "@/service";
-import {join} from "@tauri-apps/api/path";
 import {exists, readDir, remove} from "@tauri-apps/plugin-fs";
 import {logDebug, logError} from "@/lib/log.ts";
 import {APP_DATA_GENERATE_DIR} from "@/global/Constants.ts";
+import {joinPath} from "@/util/lang/FileUtil.ts";
 
 async function handleFolder(path: string, videoNames: Array<string>, extname: string) {
   if (!await exists(path)) {
@@ -17,7 +17,7 @@ async function handleFolder(path: string, videoNames: Array<string>, extname: st
     }
     // 其他的只需要比对名字
     if (!names.has(file.name)) {
-      const filePath = await join(path, file.name);
+      const filePath = joinPath(path, file.name);
       // 没有该文件，删除
       await remove(filePath);
     }
@@ -39,10 +39,10 @@ export async function cleanGenerateFile(
   // 获取生成目录
   const generateDir = APP_DATA_GENERATE_DIR();
 
-  const coverDir = await join(generateDir, "cover");
-  const screenshotDir = await join(generateDir, "screenshot");
-  const vttDir = await join(generateDir, "vtt");
-  const markerDir = await join(generateDir, "marker");
+  const coverDir = joinPath(generateDir, "cover");
+  const screenshotDir = joinPath(generateDir, "screenshot");
+  const vttDir = joinPath(generateDir, "vtt");
+  const markerDir = joinPath(generateDir, "marker");
 
   try {
     onProgress(1, 5, "正在处理封面");

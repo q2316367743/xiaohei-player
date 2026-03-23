@@ -35,8 +35,8 @@
       </div>
     </template>
     <div class="scene-page">
-      <div class="scene-content">
-        <t-loading v-if="loading" size="large" class="loading-container"/>
+      <div ref="scrollContainerRef" class="scene-content">
+        <t-loading v-if="loading && videos.length === 0" size="large" class="loading-container"/>
         <template v-else>
           <div v-if="layout === 'grid'" class="video-grid">
             <VideoCard
@@ -63,18 +63,15 @@
 
           <empty-result v-if="videos.length === 0" tip="暂无视频"/>
 
-        </template>
-      </div>
+          <div v-if="loadingMore" class="loading-more">
+            <t-loading size="small"/>
+            <span>加载中...</span>
+          </div>
 
-      <div v-if="total > 0" class="pagination-container">
-        <t-pagination
-          v-model="currentPage"
-          v-model:page-size="pageSize"
-          :total="total"
-          :page-size-options="[15, 30, 50, 80]"
-          @change="handlePageChange"
-          @page-size-change="handlePageSizeChange"
-        />
+          <div v-else-if="noMore && videos.length > 0" class="no-more">
+            没有更多了
+          </div>
+        </template>
       </div>
       <t-back-top container=".scene-content"/>
     </div>
@@ -90,6 +87,7 @@ import VideoListItem from './components/VideoListItem.vue';
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
 import {getLibrary} from "@/service";
 import VideoWaterfall from "@/pages/library/detail/components/VideoWaterfall.vue";
+import {useInfiniteScroll} from "@vueuse/core";
 
 defineOptions({
   name: 'LibraryDetail'
@@ -106,37 +104,55 @@ const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_DETAIL_SORT_
 const library = ref<LibraryEntity>()
 const videos = ref<Array<VideoPageResult>>([]);
 const loading = ref(true);
+const loadingMore = ref(false);
+const noMore = ref(false);
 const currentPage = ref(1);
-const pageSize = ref(15);
+const pageSize = ref(30);
 const total = ref(0);
 
-async function loadVideos() {
-  loading.value = true;
+const scrollContainerRef = ref<HTMLElement | null>(null);
+
+async function loadVideos(isLoadMore = false) {
+  if (isLoadMore) {
+    if (loadingMore.value || noMore.value) return;
+    loadingMore.value = true;
+  } else {
+    loading.value = true;
+    currentPage.value = 1;
+    videos.value = [];
+    noMore.value = false;
+  }
+
   try {
     const result = await pageVideo(libraryId, currentPage.value, pageSize.value, sortField.value, sortOrder.value);
-    videos.value = result.records;
+    if (isLoadMore) {
+      videos.value = [...videos.value, ...result.records];
+    } else {
+      videos.value = result.records;
+    }
     total.value = result.total;
+    noMore.value = videos.value.length >= result.total;
   } catch (e) {
     console.error('加载视频列表失败', e);
   } finally {
     loading.value = false;
+    loadingMore.value = false;
   }
 }
 
-function handlePageChange(pageInfo: { current: number; pageSize: number }) {
-  currentPage.value = pageInfo.current;
-  loadVideos();
+async function loadMore() {
+  if (loadingMore.value || noMore.value) return;
+  currentPage.value++;
+  await loadVideos(true);
 }
 
-function handlePageSizeChange(newPageSize: number) {
-  currentPage.value = 1;
-  pageSize.value = newPageSize;
-  loadVideos();
-}
+useInfiniteScroll(
+  scrollContainerRef,
+  loadMore,
+  { distance: 200, interval: 100 }
+);
 
 function handleSortChange() {
-
-  currentPage.value = 1;
   loadVideos();
 }
 
@@ -144,7 +160,6 @@ function handleSortOrderChange(s: SortOrder) {
   sortOrder.value = s;
   handleSortChange();
 }
-
 
 onActivated(async () => {
   library.value = await getLibrary(libraryId);
@@ -158,29 +173,14 @@ onActivated(async () => {
   width: 100%;
   height: 100%;
 
-
   .scene-content {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 48px;
+    bottom: 0;
     overflow-y: auto;
     padding: 8px;
-  }
-
-  .pagination-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    height: 48px;
-    padding-left: 8px;
-    padding-right: 8px;
-    background-color: var(--td-bg-color-container);
-    border-top: 1px solid var(--td-border-level-1-color);
   }
 }
 
@@ -207,5 +207,21 @@ onActivated(async () => {
   justify-content: center;
   align-items: center;
   min-height: 200px;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--td-text-color-secondary);
+}
+
+.no-more {
+  text-align: center;
+  padding: 16px;
+  color: var(--td-text-color-placeholder);
+  font-size: 14px;
 }
 </style>

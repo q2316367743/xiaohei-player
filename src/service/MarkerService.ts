@@ -20,3 +20,8 @@ export function addMarker(form: MarkerAddForm) {
     updated_at: now
   })
 }
+
+export function removeMarker(videoId:string) {
+  return useSql().query<Marker>('marker').eq('video_id', videoId).delete();
+
+}

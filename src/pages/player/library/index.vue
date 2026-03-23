@@ -21,6 +21,12 @@
             </template>
             扫描
           </t-dropdown-item>
+          <t-dropdown-item theme="error" @click="handleDelete">
+            <template #prefix-icon>
+              <delete-icon />
+            </template>
+            删除
+          </t-dropdown-item>
         </t-dropdown-menu>
       </t-dropdown>
     </template>
@@ -41,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import {EditIcon, MoreIcon, ScanIcon} from 'tdesign-icons-vue-next';
+import {DeleteIcon, EditIcon, MoreIcon, ScanIcon} from 'tdesign-icons-vue-next';
 import type {VideoView} from '@/entity/domain/Video.ts';
 import {getVideoInfoById, listMarker, updateVideoStatus} from '@/service';
 import {openLibraryVideoEdit} from "@/pages/player/library/func/LibraryVideoEdit.tsx";
@@ -49,8 +55,9 @@ import VideoInfoPanel from './components/VideoInfoPanel.vue';
 import VideoPlayer from './components/VideoPlayer.vue';
 import type {Marker} from "@/entity/domain/Marker.ts";
 import {openAddVideoMarker} from "@/pages/player/library/func/LibraryMarkerEdit.tsx";
-import {scanOneLibrary} from "@/module/library";
+import {deleteVideoService, scanOneLibrary} from "@/module/library";
 import MessageUtil from "@/util/model/MessageUtil.ts";
+import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 
 defineOptions({
   name: 'PlayerLibrary'
@@ -121,6 +128,17 @@ const handleAddMarker = () => {
 const handleClickMarker = (marker: Marker) => {
   if (!videoPlayerRef.value) return;
   videoPlayerRef.value.seekTo(marker.time);
+}
+const handleDelete = () => {
+  MessageBoxUtil.confirm('确定要删除吗？', '删除视频')
+    .then(() => {
+      deleteVideoService(videoId).then(() => {
+        MessageUtil.success('删除成功');
+        router.back();
+      }).catch(e => {
+        MessageUtil.error('删除失败', e);
+      })
+    })
 }
 </script>
 
