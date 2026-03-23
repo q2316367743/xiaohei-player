@@ -10,16 +10,14 @@ export interface InterfaceSetting {
    * 视频一定从头开始播放
    */
   videoFromStart: boolean;
-  /**
-   * 启用短片播放历史记录
-   */
-  enableShortVideoHistory: boolean;
+  // 视频是否自动播放
+  videoAutoPlay: boolean;
 }
 
 export function getInterfaceSetting(): InterfaceSetting {
   return {
     showPreviewAxis: true,
     videoFromStart: false,
-    enableShortVideoHistory: true
+    videoAutoPlay: false,
   }
 }

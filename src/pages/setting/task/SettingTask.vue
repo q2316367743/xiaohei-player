@@ -42,6 +42,12 @@
             <t-switch v-model="data.reScanFile" @change="onChange('reScanFile', $event)"/>
           </template>
         </t-list-item>
+        <t-list-item>
+          线程数
+          <template #action>
+            <t-input-number v-model="data.threadNum" @change="onChange('threadNum', $event)"/>
+          </template>
+        </t-list-item>
       </t-list>
     </t-card>
     <sub-title title="生成的内容"/>

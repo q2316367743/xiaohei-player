@@ -47,6 +47,7 @@ const duration = ref(0);
 const spriteUrl = ref('');
 
 const showPreviewAxis = computed(() => useInterfaceSettingStore().showPreviewAxis);
+const videoAutoPlay = computed(() => useInterfaceSettingStore().videoAutoPlay);
 const videoUrl = computed(() => convertFileSrcToUrl(props.video.file_path));
 const posterUrl = computed(() => props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined);
 
@@ -349,6 +350,9 @@ function initPlayer() {
     if (props.video.caption.length > 0) {
       // 显示第一个字幕
       art.plugins.multipleSubtitles?.tracks([props.video.caption[0]!.label])
+    }
+    if (videoAutoPlay.value) {
+      art.play();
     }
     art.on('video:timeupdate', () => {
       currentTime.value = art.currentTime;

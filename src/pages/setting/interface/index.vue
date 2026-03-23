@@ -31,9 +31,9 @@
           </template>
         </t-list-item>
         <t-list-item>
-          启用短片播放历史记录
+          自动播放
           <template #action>
-            <t-switch :value="data.enableShortVideoHistory" @change="onChange('enableShortVideoHistory', $event)"/>
+            <t-switch :value="data.videoAutoPlay" @change="onChange('videoAutoPlay', $event)"/>
           </template>
         </t-list-item>
       </t-list>
