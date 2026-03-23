@@ -134,7 +134,7 @@ export async function pageVideo(
   type: SortOrder = 'ASC'
 ): Promise<PageResponse<VideoPageResult>> {
   return useSql().query<Video>('video')
-    .select('file_size', 'file_birthtime', 'cover_path', 'screenshot_path',
+    .select('id', 'created_at', 'updated_at', 'file_size', 'file_birthtime', 'cover_path', 'screenshot_path',
       'title', 'duration_ms', 'last_played_at', 'play_count', 'resume_time', 'is_deleted', 'is_liked')
     .eq('is_deleted', '0')
     .eq('library_id', libraryId)

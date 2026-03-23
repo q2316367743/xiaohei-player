@@ -43,7 +43,7 @@
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
       <router-view v-slot="{ Component, route }">
-        <keep-alive :include="['FolderDetail', 'PlayerFolder', 'PlayerLibrary', 'LibraryDetail']">
+        <keep-alive :include="['FolderDetail', 'LibraryDetail']">
           <component :is="Component" :key="route.fullPath"/>
         </keep-alive>
       </router-view>
