@@ -2,7 +2,7 @@ import type {BaseEntity} from "@/entity/BaseEntity.ts";
 import type {Studio} from "@/entity/domain/Studio.ts";
 import type {VideoActorView} from "@/entity/domain/VideoActor.ts";
 import type {VideoTagView} from "@/entity/domain/VideoTag.ts";
-import type {YesOrNo} from "@/global/CommonType.ts";
+import type {CommonOption, YesOrNo} from "@/global/CommonType.ts";
 
 export interface VideoOriginalFile {
   library_id: string;       // 所属收藏库
@@ -17,6 +17,11 @@ export interface VideoGenerateFile {
   sprite_path: string;      // 分割文件路径
   vtt_path: string;         // vtt文件路径
   cover_path: string;       // 封面文件路径
+  /**
+   * 字幕，json 数组，形如 [{label: '中文字幕', value: '/User/admin/aaa.ast'}]
+   * @see CommonOption
+   */
+  caption: string;
 }
 
 // 文件信息
@@ -58,6 +63,9 @@ export interface VideoCore extends VideoFile, VideoInfo, VideoMetadata, VideoSta
 
 }
 
+/**
+ * 视频文件
+ */
 export interface Video extends BaseEntity, VideoCore {
 }
 
@@ -84,10 +92,12 @@ export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadat
   sprite_path?: string;      // 分割文件路径
   vtt_path?: string;         // vtt文件路径
   cover_path?: string;       // 封面文件路径
+  caption: Array<CommonOption>;
 }
 
-export interface VideoView extends Video {
+export interface VideoView extends Omit<Video, 'caption'> {
   studio?: Studio;
   actors: Array<VideoActorView>;
   tags: Array<VideoTagView>;
+  caption: Array<CommonOption>;
 }

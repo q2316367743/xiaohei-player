@@ -31,6 +31,7 @@ export async function saveVideo(form: VideoAddForm, hash: string) {
   await useSql().mapper<Video>('video').insertSelf({
     ...video,
     studio_id,
+    caption: JSON.stringify(form.caption),
     id: hash,
     created_at: now,
     updated_at: now,
@@ -59,6 +60,7 @@ export async function updateVideo(id: string, form: Partial<VideoAddForm>) {
 
   await useSql().mapper<Video>('video').updateById(id, {
     ...video,
+    caption: form.caption ? JSON.stringify(form.caption) : undefined,
     studio_id,
     updated_at: now
   });
@@ -152,6 +154,10 @@ export async function listVideoFile() {
     .eq('is_deleted', '0').list();
 }
 
+/**
+ * 获取视频信息
+ * @param id 视频ID
+ */
 export async function getVideoById(id: string) {
   return useSql().query<Video>('video')
     .eq('id', id)
@@ -168,6 +174,10 @@ interface VideoMetadataFormWrap extends VideoMetadataForm {
   library_id: string
 }
 
+/**
+ * 获取视频元数据
+ * @param id 视频ID
+ */
 export async function getVideoMetadataById(id: string): Promise<VideoMetadataFormWrap | undefined> {
   const video = await useSql().query<Video>('video')
     .eq('id', id)
@@ -191,6 +201,10 @@ export async function getVideoMetadataById(id: string): Promise<VideoMetadataFor
   }
 }
 
+/**
+ * 获取视频详细信息
+ * @param id
+ */
 export async function getVideoInfoById(id: string): Promise<VideoView | undefined> {
   const video = await getVideoById(id);
   if (!video) return undefined;
@@ -203,6 +217,8 @@ export async function getVideoInfoById(id: string): Promise<VideoView | undefine
 
   return {
     ...video,
+    // JSON 解析字幕
+    caption: video.caption ? JSON.parse(video.caption) : [],
     actors,
     tags,
     studio

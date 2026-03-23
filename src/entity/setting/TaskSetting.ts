@@ -25,10 +25,10 @@ export interface TaskSetting {
 export function getTaskSetting(): TaskSetting {
   return {
     reScanFile: false,
-    preview: false,
-    timelinePreviewThumbnail: false,
-    markPreview: false,
-    markScreenshot: false,
+    preview: true,
+    timelinePreviewThumbnail: true,
+    markPreview: true,
+    markScreenshot: true,
     overwriteExistingFile: false
   }
 }
