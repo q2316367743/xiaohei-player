@@ -47,6 +47,8 @@ const duration = ref(0);
 const spriteUrl = ref('');
 
 const showPreviewAxis = computed(() => useInterfaceSettingStore().showPreviewAxis);
+const videoUrl = computed(() => convertFileSrcToUrl(props.video.file_path));
+const posterUrl = computed(() => props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined);
 
 async function loadVtt() {
   if (!props.video?.vtt_path) {
@@ -96,14 +98,11 @@ const updateResumeTime = debounce(async rt => {
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
 
-  const videoUrl = convertFileSrcToUrl(props.video.file_path);
-  const posterUrl = props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined;
-
   const p = new Artplayer({
     container: playerRef.value,
-    url: videoUrl,
-    poster: posterUrl,
-    type: getVideoType(videoUrl),
+    url: videoUrl.value,
+    poster: posterUrl.value,
+    type: getVideoType(videoUrl.value),
     fullscreen: !isTauri(),
     fullscreenWeb: !isTauri(),
     volume: 0.7,

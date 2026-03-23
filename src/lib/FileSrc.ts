@@ -13,7 +13,9 @@ export async function initServerPort(): Promise<void> {
 }
 
 export function convertFileSrcToUrl(filePath: string): string {
-  const filename = filePath.split(/[/\\]/).pop() || 'file';
+  const filename = encodeURIComponent(
+    (filePath.split(/[/\\]/).pop() || 'file').replace(/[():\s]/g, "_")
+  );
   const encodedPath = encodeURIComponent(filePath);
   return `http://127.0.0.1:${serverPort}/file/${filename}?path=${encodedPath}`;
 }
