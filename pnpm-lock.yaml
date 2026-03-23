@@ -65,6 +65,9 @@ importers:
       artplayer:
         specifier: ^5.3.0
         version: 5.3.0
+      artplayer-plugin-multiple-subtitles:
+        specifier: ^1.2.0
+        version: 1.2.0
       axios:
         specifier: 1.13.5
         version: 1.13.5
@@ -1365,6 +1368,9 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  artplayer-plugin-multiple-subtitles@1.2.0:
+    resolution: {integrity: sha512-3mzoHkgKx3KVdxKQBwLkjetPF6WjJtro5uQNdse8FqUeiV0afbywLnP6H8lcDN/Fwgp2VlBknrs2+COiyFdV8g==}
 
   artplayer@5.3.0:
     resolution: {integrity: sha512-yExO39MpEg4P+bxgChxx1eJfiUPE4q1QQRLCmqGhlsj+ANuaoEkR8hF93LdI5ZyrAcIbJkuEndxEiUoKobifDw==}
@@ -3710,6 +3716,8 @@ snapshots:
       picomatch: 2.3.1
 
   argparse@2.0.1: {}
+
+  artplayer-plugin-multiple-subtitles@1.2.0: {}
 
   artplayer@5.3.0:
     dependencies:

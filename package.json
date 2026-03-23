@@ -41,6 +41,7 @@
     "@vueuse/integrations": "^14.1.0",
     "@zumer/snapdom": "^2.0.1",
     "artplayer": "^5.3.0",
+    "artplayer-plugin-multiple-subtitles": "^1.2.0",
     "axios": "1.13.5",
     "cheerio": "^1.1.2",
     "dayjs": "^1.11.19",
@@ -77,5 +78,6 @@
     "unplugin-vue-components": "^30.0.0",
     "vite": "^6.0.3",
     "vue-tsc": "^3.1.4"
-  }
+  },
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

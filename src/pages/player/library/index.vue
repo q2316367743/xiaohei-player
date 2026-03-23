@@ -33,7 +33,7 @@
                           @click-marker="handleClickMarker"/>
         </div>
         <div class="video-content-container">
-          <VideoPlayer v-if="video" :video="video" :markers ref="videoPlayerRef"/>
+          <VideoPlayer v-if="video" :video :markers ref="videoPlayerRef"/>
         </div>
       </div>
     </div>

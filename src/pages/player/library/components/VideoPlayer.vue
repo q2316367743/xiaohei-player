@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import Artplayer from 'artplayer';
-import type {Video} from '@/entity/domain/Video.ts';
+import type {VideoView} from '@/entity/domain/Video.ts';
 import {readTextFile} from '@tauri-apps/plugin-fs';
 import {parseVtt, type VttCue} from "@/util/file/VttParser.ts";
 import {getCurrentWindow} from "@tauri-apps/api/window";
@@ -27,13 +27,14 @@ import KeyframesTimeline from "./KeyframesTimeline.vue";
 import type {Marker} from "@/entity/domain/Marker.ts";
 import {useInterfaceSettingStore} from "@/store";
 import {isTauri} from "@tauri-apps/api/core";
+import artplayerPluginMultipleSubtitles from "artplayer-plugin-multiple-subtitles";
 
 defineOptions({
   name: 'VideoPlayer'
 });
 
 const props = defineProps<{
-  video?: Video;
+  video: VideoView;
   markers: Array<Marker>;
 }>();
 
@@ -98,7 +99,7 @@ function initPlayer() {
   const videoUrl = convertFileSrcToUrl(props.video.file_path);
   const posterUrl = props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined;
 
-  player.value = new Artplayer({
+  const p = new Artplayer({
     container: playerRef.value,
     url: videoUrl,
     poster: posterUrl,
@@ -121,6 +122,15 @@ function initPlayer() {
     miniProgressBar: true,
     theme: '#23ade5',
     lang: 'zh-cn',
+    plugins: [
+      // 全部字幕
+      artplayerPluginMultipleSubtitles({
+        subtitles: props.video.caption.map(caption => ({
+          name: caption.label,
+          url: convertFileSrcToUrl(caption.value),
+        })),
+      }),
+    ],
     moreVideoAttr: {
       crossOrigin: 'anonymous',
       playsInline: true,
@@ -292,6 +302,41 @@ function initPlayer() {
           })
         }
       }] : [])
+    ],
+    settings: [
+      {
+        width: 200,
+        html: '字幕',
+        tooltip: '字幕选项',
+        // icon: '<img width="22" height="22" src="/assets/img/subtitle.svg">',
+        selector: [
+          {
+            html: '显示',
+            tooltip: '是否显示字幕',
+            switch: true,
+            onSwitch(item) {
+              item.tooltip = item.switch ? '隐藏' : '显示'
+              // 显示/隐藏字幕
+              // Show/hide subtitles
+              player.value!.subtitle.show = !item.switch
+              return !item.switch
+            },
+          },
+          ...props.video.caption.map((caption, index) => ({
+            default: index === 0,
+            html: caption.label,
+            name: caption.label,
+          })),
+        ],
+        onSelect(item) {
+          // 显示单个字幕
+          // Show single subtitle
+          console.log('显示指定弹幕', item.name);
+          console.log(player.value!.plugins)
+          player.value!.plugins.multipleSubtitles?.tracks([item.name])
+          return item.html
+        },
+      },
     ]
   }, art => {
     console.log('Player is ready');
@@ -301,6 +346,10 @@ function initPlayer() {
     }
     if (player.value?.video) {
       duration.value = player.value.video.duration || 0;
+    }
+    if (props.video.caption.length > 0) {
+      // 显示第一个字幕
+      art.plugins.multipleSubtitles?.tracks([props.video.caption[0]!.label])
     }
     art.on('video:timeupdate', () => {
       currentTime.value = art.currentTime;
@@ -315,6 +364,7 @@ function initPlayer() {
       console.error('Player error:', error);
     });
   });
+  player.value = markRaw(p);
 }
 
 function seekToTime(time: number) {

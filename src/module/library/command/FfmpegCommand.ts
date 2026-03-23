@@ -1,30 +1,21 @@
 // import {invoke} from "@tauri-apps/api/core";
-import {mkdir, writeFile, remove} from '@tauri-apps/plugin-fs';
+import {mkdir, remove, writeFile} from '@tauri-apps/plugin-fs';
 import {dirname, join, tempDir} from "@tauri-apps/api/path";
 import type {VideoInfo} from "@/entity/domain/Video.ts";
 import type {SystemPreviewSetting} from "@/entity/setting/SystemSetting.ts";
 import {Command} from "@tauri-apps/plugin-shell";
+import {logDebug} from "@/lib/log.ts";
+
 // import {invoke} from "@tauri-apps/api/core";
 
-function execFfmepgCommand(args: Array<string>, timeoutMs: number = 60000) {
-
+async function execFfmepgCommand(args: Array<string>) {
   const command = Command.sidecar("binaries/ffmpeg", args);
-  const commandPromise = command.execute().then(r => {
-    if (r.code !== 0) return Promise.reject(r.stderr);
-    return r.stdout || r.stderr;
-  });
-
-  if (!timeoutMs) {
-    return commandPromise
-  }
-
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
-      reject(`FFmpeg command timed out after ${timeoutMs}ms`);
-    }, timeoutMs);
-  });
-
-  return Promise.race([commandPromise, timeoutPromise]);
+  const start = Date.now();
+  const r = await command.execute();
+  const end = Date.now();
+  logDebug(`FFmpeg command ${args.join(" ")} completed in ${end - start}ms`)
+  if (r.code !== 0) return Promise.reject(r.stderr);
+  return r.stdout || r.stderr;
 }
 
 function escapePath(path: string): string {
@@ -224,7 +215,7 @@ export async function generatePreview(prop: GeneratePreviewProp) {
     "128k",
     "-y",
     escapePath(preview)
-  ], 120000);
+  ]);
 
   for (const tempFile of tempFiles) {
     try {
