@@ -37,7 +37,7 @@ export class SqlBase<N extends string> {
   async getDb(): Promise<Database> {
     // 将新的 SQL 调用追加到 Promise 链尾部
     if (this.db) return this.db;
-    const path = await APP_DATA_DB_PATH(this.fileName);
+    const path = APP_DATA_DB_PATH(this.fileName);
     logInfo("[sql] db path: ", path)
     this.db = await Database.load(`sqlite:${path}`);
     logInfo("[sql] db init success", this.db);

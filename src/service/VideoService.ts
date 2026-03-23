@@ -31,7 +31,7 @@ export async function saveVideo(form: VideoAddForm, hash: string) {
   await useSql().mapper<Video>('video').insertSelf({
     ...video,
     studio_id,
-    caption: JSON.stringify(form.caption),
+    caption: form.caption ? JSON.stringify(form.caption) : '[]',
     id: hash,
     created_at: now,
     updated_at: now,

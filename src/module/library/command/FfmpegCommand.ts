@@ -6,7 +6,7 @@ import type {SystemPreviewSetting} from "@/entity/setting/SystemSetting.ts";
 import {Command} from "@tauri-apps/plugin-shell";
 // import {invoke} from "@tauri-apps/api/core";
 
-function execFfmepgCommand(args: Array<string>, timeoutMs: number = 30000) {
+function execFfmepgCommand(args: Array<string>, timeoutMs: number = 60000) {
 
   const command = Command.sidecar("binaries/ffmpeg", args);
   const commandPromise = command.execute().then(r => {

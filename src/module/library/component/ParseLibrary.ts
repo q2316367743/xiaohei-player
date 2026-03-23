@@ -1,6 +1,6 @@
-import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
 import {exists, readTextFile} from "@tauri-apps/plugin-fs";
 import {XMLParser} from "fast-xml-parser";
+import type {VideoEdit, VideoMetadata} from "@/entity/domain/Video.ts";
 import type {ScanVideoFile} from "@/module/library/types.ts";
 
 interface ParseLibraryResult extends VideoMetadata, VideoEdit {

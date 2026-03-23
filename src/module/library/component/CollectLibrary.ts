@@ -5,8 +5,28 @@ import {readDir, type DirEntry} from "@tauri-apps/plugin-fs";
 import type {ScanVideoFile} from "@/module/library/types.ts";
 import {getFilename, isFilenameMatch, parseFilename} from "@/util/lang/FileUtil.ts";
 import {joinPath} from "@/util/lang/FileUtil.ts";
+import type {CommonOption} from "@/global/CommonType.ts";
 
 const IMAGE_EXTENSIONS = [/\.jpg$/, /\.jpeg$/, /\.png$/, /\.gif$/, /\.webp$/, /\.bmp$/];
+const CAPTION_EXTENSIONS = [/\.srt$/, /\.ass$/, /\.ssa$/, /\.sub$/, /\.vtt$/];
+
+const LANGUAGE_MAP: Record<string, string> = {
+  'zh': '中文',
+  'zh-cn': '简体中文',
+  'zh-tw': '繁体中文',
+  'chs': '简体中文',
+  'cht': '繁体中文',
+  'chinese': '中文',
+  'en': '英文',
+  'eng': '英文',
+  'english': '英文',
+  'ja': '日文',
+  'jpn': '日文',
+  'japanese': '日文',
+  'ko': '韩文',
+  'kor': '韩文',
+  'korean': '韩文',
+};
 
 function findFileWrap(filename: string, dir: string, fileMap: Map<string, Array<DirEntry>>) {
   if (fileMap.has(filename)) {
@@ -19,7 +39,7 @@ function findFileWrap(filename: string, dir: string, fileMap: Map<string, Array<
   }
 }
 
-async function findCoverFile(dir: string, filename: string, fileMap: Map<string, Array<DirEntry>>): Promise<string> {
+export function findCoverFile(dir: string, filename: string, fileMap: Map<string, Array<DirEntry>>): string {
 
   // 1. cover的图片
   const cover1 = findFileWrap('cover', dir, fileMap);
@@ -37,7 +57,7 @@ async function findCoverFile(dir: string, filename: string, fileMap: Map<string,
   return '';
 }
 
-async function findNfoFile(dir: string, fileName: string,  fileMap: Map<string, Array<DirEntry>>): Promise<string> {
+export async function findNfoFile(dir: string, fileName: string, fileMap: Map<string, Array<DirEntry>>): Promise<string> {
 
   // movie.nfo
   if (fileMap.has('movie')) {
@@ -65,7 +85,7 @@ async function findNfoFile(dir: string, fileName: string,  fileMap: Map<string, 
  * 构建 文件名=>同文件名的文件 映射
  * @param files
  */
-function buildDirEntryMap(files: Array<DirEntry>): Map<string, Array<DirEntry>> {
+export function buildDirEntryMap(files: Array<DirEntry>): Map<string, Array<DirEntry>> {
   const map = new Map<string, Array<DirEntry>>();
   for (const file of files) {
     const nameWithoutExt = getFilename(file.name)
@@ -76,6 +96,47 @@ function buildDirEntryMap(files: Array<DirEntry>): Map<string, Array<DirEntry>> 
     }
   }
   return map;
+}
+
+function parseCaptionLabel(videoFilename: string, captionFilename: string): string {
+  if (videoFilename === captionFilename) {
+    return '默认';
+  }
+
+  const suffix = captionFilename.substring(videoFilename.length);
+  const langCode = suffix.replace(/^[._-]/, '').toLowerCase();
+
+  if (LANGUAGE_MAP[langCode]) {
+    return LANGUAGE_MAP[langCode];
+  }
+
+  return langCode || '默认';
+}
+
+/**
+ * 寻找字幕文件
+ * @param dir 所在目录
+ * @param filename 视频文件名（不包含扩展名）
+ * @param files 目录下的所有文件
+ */
+export function findCaption(dir: string, filename: string, files: Array<DirEntry>): Array<CommonOption> {
+  const captions: Array<CommonOption> = [];
+
+  for (const file of files) {
+    if (!file.isFile) continue;
+    if (!isFilenameMatch(file.name, CAPTION_EXTENSIONS)) continue;
+
+    const captionFilename = getFilename(file.name);
+    if (!captionFilename.includes(filename)) continue;
+
+    const label = parseCaptionLabel(filename, captionFilename);
+    captions.push({
+      label,
+      value: joinPath(dir, file.name)
+    });
+  }
+
+  return captions;
 }
 
 /**
@@ -114,7 +175,8 @@ export async function collectVideoFiles(
           fileDir: path,
           filePath: newPath,
           fileName: file.name,
-          cover: await findCoverFile(path, filename, fileMap),
+          caption: findCaption(path, filename, files),
+          cover: findCoverFile(path, filename, fileMap),
           nfo: await findNfoFile(path, filename, fileMap)
         });
         logTrace("发现视频文件:", file.name);

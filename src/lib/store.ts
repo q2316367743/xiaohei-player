@@ -33,7 +33,7 @@ class StoreWrapper {
 
   private async _getStore() {
     if (!this.store) {
-      this.store = await Store.load(await APP_DATA_STORE_PATH(this.storeName));
+      this.store = await Store.load(APP_DATA_STORE_PATH(this.storeName));
     }
     return this.store;
   }
@@ -105,7 +105,7 @@ export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
       if (typeof target !== 'object' || target === null || Array.isArray(target)) {
         return source;
       }
-      const result = { ...target };
+      const result = {...target};
       for (const key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
           result[key] = deepMerge(result[key], source[key]);

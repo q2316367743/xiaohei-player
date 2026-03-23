@@ -35,7 +35,7 @@
     </div>
     <t-empty v-else title="暂无收藏库，请在设置中添加">
       <template #action>
-        <t-button theme="primary" @click="goSetting">设置</t-button>
+        <t-button theme="primary" @click="goSetting">添加媒体库</t-button>
       </template>
     </t-empty>
   </div>

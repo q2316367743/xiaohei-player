@@ -31,7 +31,7 @@ export function openAddVideoMarker(video: VideoView, time: number, onUpdate: () 
     onConfirm: async () => {
       try {
         // 处理标记目录
-        const dataPath = await APP_DATA_GENERATE_DIR();
+        const dataPath = APP_DATA_GENERATE_DIR();
         const markerDir = await join(dataPath, "marker", video.id);
         if (!(await exists(markerDir))) {
           await mkdir(markerDir, {recursive: true});

@@ -1,12 +1,19 @@
 import {logError, logInfo, logWarning} from "@/lib/log.ts";
 import {useLibrarySettingStore, useSystemSettingStore, useTaskSettingStore} from "@/lib/store.ts";
 import {generatePath} from "@/module/library/util.ts";
-import type {Video, VideoAddForm} from "@/entity/domain/Video.ts";
-import {listLibrary, updateLibraryCover} from "@/service";
+import type {Video, VideoAddForm, VideoView} from "@/entity/domain/Video.ts";
+import {getLibrary, listLibrary, updateLibraryCover} from "@/service";
 import {draw, group} from "@/util";
 import type {ScanVideoFile} from "@/module/library/types.ts";
-import {collectVideoFiles} from "@/module/library/component/CollectLibrary.ts";
+import {
+  buildDirEntryMap,
+  collectVideoFiles,
+  findCaption,
+  findCoverFile, findNfoFile
+} from "@/module/library/component/CollectLibrary.ts";
 import {processVideoFile} from "@/module/library/component/ProcessVideoFile.ts";
+import {dirname, parseFilename} from "@/util/lang/FileUtil.ts";
+import {readDir} from "@tauri-apps/plugin-fs";
 
 
 /**
@@ -43,7 +50,7 @@ export async function scanLibrary(
   onProgress(0, foundFiles.size, "扫描完成，共发现" + foundFiles.size + "个视频文件");
 
   // 生成指定目录
-  const generatePathResult = await generatePath();
+  const generatePathResult = generatePath();
 
   let processedCount = 0;
   const processVideos = new Array<Video | VideoAddForm>();
@@ -74,5 +81,38 @@ export async function scanLibrary(
     if (!target.cover_path) continue;
     await updateLibraryCover(libraryId, target.cover_path);
   }
+
+}
+
+export async function scanOneLibrary(video: VideoView) {
+  const system = await useSystemSettingStore().get();
+  const task = await useTaskSettingStore().get();
+  const generatePathResult = generatePath();
+
+  const dir = dirname(video.file_path);
+  const library = await getLibrary(video.library_id);
+  const files = await readDir(dir)
+  const [filename] = parseFilename(video.file_name);
+
+
+  const fileMap = buildDirEntryMap(files.filter(e => e.isFile));
+
+
+  await processVideoFile({
+    file: {
+      item: library!,
+      fileDir: dir,
+      filePath: video.file_path,
+      fileName: video.file_name,
+      caption: findCaption(dir, filename, files),
+      cover: findCoverFile(dir, filename, fileMap),
+      nfo: await findNfoFile(dir, filename, fileMap)
+    },
+    system,
+    task,
+    onProgress: () => {
+    },
+    generatePath: generatePathResult
+  });
 
 }

@@ -55,7 +55,7 @@ export function convertSmbToUrl(
   url: string,
   clientId: string
 ): string {
-  const filename = url.split("\\").pop();
+  const filename = encodeURIComponent(url.split("\\").pop() || 'video.mp4');
   const encodedUrl = encodeURIComponent(url);
 
   return `http://127.0.0.1:${serverPort}/smb/${filename}?clientId=${clientId}&url=${encodedUrl}`;

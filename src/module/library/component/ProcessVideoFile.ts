@@ -60,6 +60,7 @@ export async function processVideoFile(prop: ProcessVideoFileProp) {
     file_path: filePath,
     file_size: fileStat.size,
     file_birthtime: fileStat.birthtime?.getTime() || 0,
+    caption: file.caption,
     // 核心信息
     ...videoMetadata,
     // 视频信息

@@ -132,7 +132,7 @@ class StrongholdWrapper {
 
   private async getStore() {
     if (!this.store) {
-      this.store = await Store.load(await APP_DATA_VAULT_PATH(this.vaultName));
+      this.store = await Store.load(APP_DATA_VAULT_PATH(this.vaultName));
     }
     return this.store;
   }

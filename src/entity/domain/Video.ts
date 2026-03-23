@@ -92,7 +92,7 @@ export interface VideoAddForm extends VideoOriginalFile, VideoInfo, VideoMetadat
   sprite_path?: string;      // 分割文件路径
   vtt_path?: string;         // vtt文件路径
   cover_path?: string;       // 封面文件路径
-  caption: Array<CommonOption>;
+  caption?: Array<CommonOption>;
 }
 
 export interface VideoView extends Omit<Video, 'caption'> {

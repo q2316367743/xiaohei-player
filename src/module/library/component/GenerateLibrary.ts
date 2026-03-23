@@ -68,7 +68,6 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, vide
 
   const vttPrefixPath = await join(vttPrefixDir, hash);
 
-  logDebug("生成字幕文件:", vttPrefixPath);
   const sprite = vttPrefixPath + "_sprite.jpg";
   const vtt = vttPrefixPath + "_thumbs.vtt";
 
@@ -88,6 +87,7 @@ async function handleVtt(props: GenerateLibraryOneProp, durationMs: number, vide
     // 覆盖或者文件不全
     if (existSprite) await remove(sprite);
     if (existVtt) await remove(vtt);
+    logDebug("生成字幕文件:", file.fileName);
     // 生成预览小图
     await generateVtt({
       durationMs: durationMs,
@@ -174,6 +174,7 @@ async function handleCover(props: GenerateLibraryOneProp): Promise<string | unde
 
 export async function generatorLibrary(props: GenerateLibraryOneProp): Promise<GenerateLibraryOneResult> {
 
+  // 此处其实可以跳过
   const videoInfo = await handleVideoInfo(props);
   const [{vtt_path, sprite_path}, screenshot_path, cover_path] = await Promise.all([
     handleVtt(props, videoInfo.duration_ms, videoInfo),

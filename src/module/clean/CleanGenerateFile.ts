@@ -37,7 +37,7 @@ export async function cleanGenerateFile(
   const videoNames = videos.map(v => v.id);
 
   // 获取生成目录
-  const generateDir = await APP_DATA_GENERATE_DIR();
+  const generateDir = APP_DATA_GENERATE_DIR();
 
   const coverDir = await join(generateDir, "cover");
   const screenshotDir = await join(generateDir, "screenshot");

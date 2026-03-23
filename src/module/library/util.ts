@@ -1,6 +1,5 @@
-import {join} from "@tauri-apps/api/path";
-import {exists, mkdir} from "@tauri-apps/plugin-fs";
 import {APP_DATA_GENERATE_DIR} from "@/global/Constants.ts";
+import {joinPath} from "@/util/lang/FileUtil.ts";
 
 export interface GeneratePathResult {
   vttPrefixDir: string;
@@ -8,15 +7,11 @@ export interface GeneratePathResult {
   coverDir: string;
 }
 
-export async function generatePath(): Promise<GeneratePathResult> {
-
-  const dataPath = await APP_DATA_GENERATE_DIR();
-  const vttPrefixDir = await join(dataPath, "vtt");
-  const screenshotDir = await join(dataPath, "screenshot");
-  const coverDir = await join(dataPath, "cover");
-  if (!await exists(vttPrefixDir)) await mkdir(vttPrefixDir, {recursive: true});
-  if (!await exists(screenshotDir)) await mkdir(screenshotDir, {recursive: true});
-  if (!await exists(coverDir)) await mkdir(coverDir, {recursive: true});
+export function generatePath(): GeneratePathResult {
+  const dataPath = APP_DATA_GENERATE_DIR();
+  const vttPrefixDir = joinPath(dataPath, "vtt");
+  const screenshotDir = joinPath(dataPath, "screenshot");
+  const coverDir = joinPath(dataPath, "cover");
   return {
     vttPrefixDir,
     screenshotDir,
