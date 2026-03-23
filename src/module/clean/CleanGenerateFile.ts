@@ -1,4 +1,4 @@
-import {listAllVideo} from "@/service";
+import {listAllVideoId} from "@/service";
 import {join} from "@tauri-apps/api/path";
 import {exists, readDir, remove} from "@tauri-apps/plugin-fs";
 import {logDebug, logError} from "@/lib/log.ts";
@@ -33,7 +33,7 @@ export async function cleanGenerateFile(
 ) {
 
   // 获取全部视频
-  const videos = await listAllVideo();
+  const videos = await listAllVideoId();
   const videoNames = videos.map(v => v.id);
 
   // 获取生成目录

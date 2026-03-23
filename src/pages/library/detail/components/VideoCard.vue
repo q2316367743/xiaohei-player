@@ -28,15 +28,15 @@
 </template>
 
 <script lang="ts" setup>
-import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import type {VideoPageResult} from "@/service";
 
 const router = useRouter();
 
 
 const props = defineProps({
   video: {
-    type: Object as PropType<Video>,
+    type: Object as PropType<VideoPageResult>,
     required: true
   },
   width: {

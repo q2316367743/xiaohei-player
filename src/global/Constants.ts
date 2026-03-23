@@ -56,6 +56,9 @@ export const MAIN_MIGRATE_FILES = [{
 }, {
   file: 'lib/migrate/0001_folder.sql',
   version: 1
+}, {
+  file: 'lib/migrate/0002_media.sql',
+  version: 2
 }];
 
 export const {colorMode, isDark} = useColorMode();

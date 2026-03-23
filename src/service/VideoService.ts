@@ -13,6 +13,8 @@ import {listTagView, saveOrUpdateTag, saveVideoTag} from "@/service/TagService.t
 import {getStudio, saveOrUpdateStudio} from "@/service/StudioService.ts";
 import {useSnowflake} from "@/util";
 import type {Marker} from "@/entity/domain/Marker.ts";
+import type {BaseEntity} from "@/entity/BaseEntity.ts";
+import type {PageResponse, YesOrNo} from "@/global/CommonType.ts";
 
 
 export async function saveVideo(form: VideoAddForm, hash: string) {
@@ -106,26 +108,48 @@ export type VideoSortField = 'file_name'
   | 'file_birthtime';
 export type SortOrder = 'ASC' | 'DESC';
 
+export interface VideoPageResult extends BaseEntity {
+  file_size: number;        // 文件大小 (字节)
+  file_birthtime: number;   // 文件创建时间
+
+  cover_path: string;       // 封面文件路径
+  screenshot_path: string;  // 预览视频文件路径
+
+  title: string;            // 视频标题 (可手动覆盖)
+  duration_ms: number;      // 视频时长
+
+  last_played_at: number;   // 最后播放时间
+  play_count: number;       // 播放次数
+  resume_time: number;      // 恢复播放时间
+  is_deleted: string;       // 软删除标记 (0:正常, 1:已删除)
+  is_liked: YesOrNo;        // 是否喜欢
+
+}
+
 export async function pageVideo(
   libraryId: string,
   page: number = 1,
   size: number = 20,
   order: VideoSortField = 'file_name',
   type: SortOrder = 'ASC'
-) {
+): Promise<PageResponse<VideoPageResult>> {
   return useSql().query<Video>('video')
+    .select('file_size', 'file_birthtime', 'cover_path', 'screenshot_path',
+      'title', 'duration_ms', 'last_played_at', 'play_count', 'resume_time', 'is_deleted', 'is_liked')
     .eq('is_deleted', '0')
     .eq('library_id', libraryId)
     .order(order, type)
     .page(page, size);
 }
 
-export async function listAllVideo() {
-  return await useSql().query<Video>('video').list();
+export async function listAllVideoId() {
+  return await useSql().query<Video>('video').select('id').list();
 }
 
-export async function listVideo() {
-  return await useSql().query<Video>('video').eq('is_deleted', '0').list();
+export async function listVideoFile() {
+  return await useSql().query<Video>('video')
+    .select('file_name', 'file_path', 'id')
+    .eq('is_deleted', '0').list();
 }
 
 export async function getVideoById(id: string) {

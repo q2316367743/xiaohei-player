@@ -1,6 +1,6 @@
 import {exists} from "@tauri-apps/plugin-fs";
 
-import {deleteVideo, listVideo} from "@/service";
+import {deleteVideo, listVideoFile} from "@/service";
 import {logError} from "@/lib/log.ts";
 
 /**
@@ -11,7 +11,7 @@ export async function cleanDeletedVideo(
   onProgress: (progress: number, total: number, message: string) => void
 ) {
   // 获取全部视频
-  const videos = await listVideo();
+  const videos = await listVideoFile();
   for (let i = 0; i < videos.length; i++) {
     const video = videos[i]!;
     onProgress(i, videos.length, `正在清理 ${video.file_name}`);

@@ -46,14 +46,14 @@
 </template>
 
 <script lang="ts" setup>
-import type {Video} from '@/entity/domain/Video.ts';
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {AddRectangleIcon, FileAddIcon, FileIcon, PlayCircleIcon, TimeIcon} from "tdesign-icons-vue-next";
+import type {VideoPageResult} from "@/service";
 
 const router = useRouter();
 
 interface Props {
-  video: Video;
+  video: VideoPageResult;
 }
 
 const props = defineProps<Props>();

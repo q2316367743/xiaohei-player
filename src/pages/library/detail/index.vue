@@ -82,8 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import {pageVideo, type VideoSortField, type SortOrder} from '@/service/VideoService.ts';
-import type {Video} from '@/entity/domain/Video.ts';
+import {pageVideo, type VideoSortField, type SortOrder, type VideoPageResult} from '@/service/VideoService.ts';
 import {ChevronUpIcon, ChevronDownIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
 import VideoCard from './components/VideoCard.vue';
@@ -105,7 +104,7 @@ const sortField = useLocalStorage<VideoSortField>(LocalName.PAGE_LIBRARY_DETAIL_
 const sortOrder = useLocalStorage<SortOrder>(LocalName.PAGE_LIBRARY_DETAIL_SORT_ORDER(libraryId), 'ASC');
 
 const library = ref<LibraryEntity>()
-const videos = ref<Video[]>([]);
+const videos = ref<Array<VideoPageResult>>([]);
 const loading = ref(true);
 const currentPage = ref(1);
 const pageSize = ref(15);
