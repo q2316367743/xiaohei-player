@@ -7,7 +7,7 @@ import {remove} from "@tauri-apps/plugin-fs";
  * 删除视频
  * @param id 视频ID
  */
-export async function deleteVideoService(id: string) {
+export async function deleteVideoService(id: string, file = false) {
   const old = await getVideoById(id);
   if (!old) {
     return Promise.reject(Error("视频不存在"));
@@ -21,33 +21,33 @@ export async function deleteVideoService(id: string) {
   // 删除 marker / cover / vtt / preview
   const generateDir = APP_DATA_GENERATE_DIR();
   const coverDir = joinPath(generateDir, "cover");
-  const screenshotDir = joinPath(generateDir, "screenshot");
-  const vttDir = joinPath(generateDir, "vtt");
   const markerDir = joinPath(generateDir, "marker");
   const [filename] = parseFilename(old.file_name);
-  // 没有该文件，删除
+  if (file) {
+    await remove(old.file_path);
+  }
   try {
     await remove(joinPath(coverDir, filename + '.jpg'));
   } catch (e) {
     console.error(e)
   }
   try {
-    await remove(joinPath(markerDir, filename + '.jpg'));
+    await remove(joinPath(markerDir, filename));
   } catch (e) {
     console.error(e)
   }
   try {
-    await remove(joinPath(screenshotDir, filename + '.mp4'));
+    await remove(old.screenshot_path);
   } catch (e) {
     console.error(e)
   }
   try {
-    await remove(joinPath(vttDir, filename + '_sprite.jpg'));
+    await remove(old.vtt_path);
   } catch (e) {
     console.error(e)
   }
   try {
-    await remove(joinPath(vttDir, filename + '_thumbs.vtt'));
+    await remove(old.sprite_path);
   } catch (e) {
     console.error(e)
   }

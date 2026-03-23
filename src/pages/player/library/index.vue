@@ -27,6 +27,12 @@
             </template>
             删除
           </t-dropdown-item>
+          <t-dropdown-item theme="error" @click="handleDeleteFile">
+            <template #prefix-icon>
+              <delete-icon />
+            </template>
+            删除及文件
+          </t-dropdown-item>
         </t-dropdown-menu>
       </t-dropdown>
     </template>
@@ -139,6 +145,18 @@ const handleDelete = () => {
         MessageUtil.error('删除失败', e);
       })
     })
+}
+const handleDeleteFile = () => {
+  MessageBoxUtil.confirm('确定要删除吗？删除后文件也会删除。', '删除视频')
+    .then(() => {
+      deleteVideoService(videoId, true).then(() => {
+        MessageUtil.success('删除成功');
+        router.back();
+      }).catch(e => {
+        MessageUtil.error('删除失败', e);
+      })
+    })
+
 }
 </script>
 
