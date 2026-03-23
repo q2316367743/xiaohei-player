@@ -54,22 +54,37 @@ export async function scanLibrary(
 
   let processedCount = 0;
   const processVideos = new Array<Video | VideoAddForm>();
-  for (const file of foundFiles.values()) {
-    try {
-      const res = await processVideoFile({
-        file,
-        system,
-        task,
-        onProgress,
-        generatePath: generatePathResult
-      });
-      processVideos.push(res);
-    } catch (e) {
-      logError("处理视频文件出错:", file.filePath, e);
+
+  const {threadNum} = task;
+  const files = Array.from(foundFiles.values());
+  let nextIndex = 0;
+
+  async function processNext() {
+    while (true) {
+      const index = nextIndex++;
+      const file = files[index];
+      if (!file) break;
+      try {
+        const res = await processVideoFile({
+          file,
+          system,
+          task,
+          onProgress,
+          generatePath: generatePathResult
+        });
+        processVideos.push(res);
+      } catch (e) {
+        logError("处理视频文件出错:", file.filePath, e);
+      }
+      processedCount++;
+      onProgress(processedCount, files.length, `正在处理: ${file.fileName}`);
     }
-    processedCount++;
-    onProgress(processedCount, foundFiles.size, `正在处理: ${file.fileName}`);
   }
+
+  const workers = Array(Math.min(threadNum, files.length))
+    .fill(null)
+    .map(() => processNext());
+  await Promise.all(workers);
 
   onProgress(foundFiles.size, foundFiles.size, "正在处理封面...");
 

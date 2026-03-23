@@ -6,6 +6,9 @@ export interface TaskSetting {
   // 重新扫描文件（如果关闭，如果存在文件，则会跳过）
   reScanFile: boolean;
 
+  // 线程数
+  threadNum: number;
+
   // =============
   // ==== 生成 ====
   // =============
@@ -25,6 +28,7 @@ export interface TaskSetting {
 export function getTaskSetting(): TaskSetting {
   return {
     reScanFile: false,
+    threadNum: 3,
     preview: true,
     timelinePreviewThumbnail: true,
     markPreview: true,
