@@ -333,6 +333,8 @@ function initPlayer() {
           // Show single subtitle
           console.log('显示指定弹幕', item.name);
           console.log(player.value!.plugins)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           player.value!.plugins.multipleSubtitles?.tracks([item.name])
           return item.html
         },
@@ -349,6 +351,8 @@ function initPlayer() {
     }
     if (props.video.caption.length > 0) {
       // 显示第一个字幕
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       art.plugins.multipleSubtitles?.tracks([props.video.caption[0]!.label])
     }
     if (videoAutoPlay.value) {

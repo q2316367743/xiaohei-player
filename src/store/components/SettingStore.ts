@@ -8,6 +8,7 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
 
   const showPreviewAxis = computed(() => interfaceSetting.value.showPreviewAxis);
   const videoFromStart = computed(() => interfaceSetting.value.videoFromStart);
+  const videoAutoPlay = computed(() => interfaceSetting.value.videoAutoPlay);
 
   const init = async () => {
     interfaceSetting.value = await interfaceSettingStore.get();
@@ -19,7 +20,7 @@ export const useInterfaceSettingStore = defineStore('interfaceSetting', () => {
   }
 
   return {
-    interfaceSetting, showPreviewAxis, videoFromStart,
+    interfaceSetting, showPreviewAxis, videoFromStart, videoAutoPlay,
     init,
     setItem
   }
