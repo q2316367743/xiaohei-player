@@ -6,39 +6,20 @@
       </template>
     </sub-title>
     <t-card>
-      <div v-if="list.length > 0" class="flex gap-8px flex-wrap">
-        <t-card v-for="item in list" :key="item.id" theme="poster2" :style="{ width: '320px' }">
-          <template #footer>
-            <div class="flex items-center gap-8px">
-              <lock-on-icon v-if="item.password" style="color: var(--td-error-color)"/>
-              <div>{{ item.name }}</div>
-            </div>
-          </template>
-          <template #actions>
-            <t-dropdown :min-column-width="112" trigger="click">
-              <t-button variant="text" shape="square">
-                <more-icon/>
-              </t-button>
-              <t-dropdown-menu>
-                <t-dropdown-item @click="updateLibraryPsd(item)">
-                  <template #prefix-icon>
-                    <lock-on-icon v-if="item.password"/>
-                    <lock-off-icon v-else/>
-                  </template>
-                  {{ item.password ? '修改密码' : '设置密码' }}
-                </t-dropdown-item>
-                <t-dropdown-item theme="error" @click="removeLibraryWrap(item)">
-                  <template #prefix-icon>
-                    <delete-icon/>
-                  </template>
-                  删除
-                </t-dropdown-item>
-              </t-dropdown-menu>
-            </t-dropdown>
-          </template>
-        </t-card>
-      </div>
-      <t-empty v-else title="空空如也"/>
+      <t-table :data="list" :columns="columns" row-key="id" size="small">
+        <template #encrypted="{ row }">
+          <lock-on-icon v-if="row.password" style="color: var(--td-error-color)"/>
+          <lock-off-icon v-else style="color: var(--td-text-color-placeholder)"/>
+        </template>
+        <template #operation="{ row }">
+          <t-space>
+            <t-link theme="primary" @click="updateLibraryPsd(row)">
+              {{ row.password ? '修改密码' : '设置密码' }}
+            </t-link>
+            <t-link theme="danger" @click="removeLibraryWrap(row)">删除</t-link>
+          </t-space>
+        </template>
+      </t-table>
     </t-card>
     <sub-title title="媒体的文件拓展名"/>
     <t-card>
@@ -82,11 +63,17 @@ import {logDebug} from "@/lib/log.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
 import {listLibrary} from "@/service";
-import {DeleteIcon, LockOffIcon, LockOnIcon, MoreIcon} from "tdesign-icons-vue-next";
+import {LockOffIcon, LockOnIcon} from "tdesign-icons-vue-next";
 import {addLibraryDialog, openDeleteFolderLocal, openUpdateLibraryPassword} from "@/pages/setting/library/edit.tsx";
 
 const data = ref<LibrarySetting>(getLibrarySetting());
 const list = ref(new Array<LibraryEntity>());
+
+const columns = [
+  { colKey: 'name', title: '名称', ellipsis: true },
+  { colKey: 'encrypted', title: '是否加密', width: 120, cell: 'encrypted' },
+  { colKey: 'operation', title: '操作', width: 160, cell: 'operation' },
+];
 
 const initList = async () => {
   list.value = await listLibrary();
