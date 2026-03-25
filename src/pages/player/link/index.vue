@@ -136,15 +136,6 @@ const crypto = ref((route.query.crypto as string) === '1');
 // 播放链接
 const url = ref('');
 
-onMounted(() => {
-  if (type.value === 'file') {
-    url.value = convertFileSrcToUrl(src.value);
-  } else {
-    url.value = convertProxyToUrl(src.value);
-  }
-  initPlayer();
-});
-
 // 切换侧边栏
 const toggleSidebar = async () => {
   showSidebar.value = !showSidebar.value;
@@ -275,6 +266,15 @@ const initPlayer = () => {
     MessagePlugin.error('播放出错，请检查链接是否有效');
   });
 };
+
+onMounted(() => {
+  if (type.value === 'file') {
+    url.value = convertFileSrcToUrl(src.value);
+  } else {
+    url.value = convertProxyToUrl(src.value);
+  }
+  initPlayer();
+});
 
 onBeforeUnmount(() => {
   if (player.value) {

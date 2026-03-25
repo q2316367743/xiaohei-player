@@ -115,6 +115,7 @@
 <script lang="ts" setup>
 import type {VideoView} from '@/entity/domain/Video.ts';
 import type {Marker} from "@/entity/domain/Marker.ts";
+import {formatDate} from "@/util/lang/FormatUtil.ts";
 
 const router = useRouter();
 
@@ -143,13 +144,9 @@ const tags = computed(() => {
   return props.video.tags.map(item => item.tag).filter(tag => tag);
 });
 
-function formatDate(timestamp?: number): string {
-  if (!timestamp) return '-';
-  const date = new Date(timestamp);
-  return date.toLocaleDateString('zh-CN');
-}
 
-function formatDuration(seconds: number): string {
+function formatDuration(timestamp: number): string {
+  const seconds = Math.floor(timestamp / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
 

@@ -19,19 +19,19 @@
             <template #prefix-icon>
               <scan-icon/>
             </template>
-            扫描
+            重新扫描
           </t-dropdown-item>
           <t-dropdown-item theme="error" @click="handleDelete">
             <template #prefix-icon>
               <delete-icon />
             </template>
-            删除
+            删除记录
           </t-dropdown-item>
           <t-dropdown-item theme="error" @click="handleDeleteFile">
             <template #prefix-icon>
               <delete-icon />
             </template>
-            删除及文件
+            删除文件
           </t-dropdown-item>
         </t-dropdown-menu>
       </t-dropdown>

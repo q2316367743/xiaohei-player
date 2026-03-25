@@ -311,6 +311,11 @@ export async function getVideoInfo(path: string): Promise<VideoInfo> {
       videoCodec = videoStreamMatch[1];
     }
 
+    const videoFpsMatch = line.match(/Video:.*?,\s*(\d+(?:\.\d+)?)\s*fps/);
+    if (videoFpsMatch && videoFpsMatch[1]) {
+      fps = parseFloat(videoFpsMatch[1]);
+    }
+
     const audioStreamMatch = line.match(/Stream\s+#\d+:\d+.*Audio:\s+(\w+)/);
     if (audioStreamMatch && audioStreamMatch[1]) {
       audioCodec = audioStreamMatch[1];
@@ -320,11 +325,6 @@ export async function getVideoInfo(path: string): Promise<VideoInfo> {
     if (resolutionMatch && resolutionMatch[1] && resolutionMatch[2]) {
       width = parseInt(resolutionMatch[1]);
       height = parseInt(resolutionMatch[2]);
-    }
-
-    const fpsMatch = line.match(/(\d+(?:\.\d+)?)\s*fps/);
-    if (fpsMatch && fpsMatch[1]) {
-      fps = parseFloat(fpsMatch[1]);
     }
 
     const bitRateMatch = line.match(/(\d+)\s*kb\/s/);
