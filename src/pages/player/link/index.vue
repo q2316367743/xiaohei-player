@@ -43,7 +43,7 @@
             <div class="url-label">播放链接:</div>
             <div class="url-value" @click="copyLink">{{ src }}</div>
           </div>
-          <div class="ml-auto">
+          <div class="ml-auto" v-if="type === 'file'">
             <t-button
               theme="primary"
               shape="square"
