@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import type {Video} from '@/entity/domain/Video.ts';
-import {listLastPlayedVideo} from "@/service/VideoService.ts";
+import {listLastPlayedVideo} from "@/service/video/VideoService.ts";
 import VideoCard from "@/pages/library/detail/components/VideoCard.vue";
 import { ChevronLeftIcon, ChevronRightIcon } from 'tdesign-icons-vue-next';
 

@@ -8,9 +8,9 @@ import type {
 } from "@/entity/domain/Video.ts";
 import type {VideoActor} from "@/entity/domain/VideoActor.ts";
 import type {VideoTag} from "@/entity/domain/VideoTag.ts";
-import {listActorView, saveOrUpdateActor, saveVideoActor} from "@/service/ActorService.ts";
-import {listTagView, saveOrUpdateTag, saveVideoTag} from "@/service/TagService.ts";
-import {getStudio, saveOrUpdateStudio} from "@/service/StudioService.ts";
+import {listActorView, saveOrUpdateActor, saveVideoActor} from "@/service/video/ActorService.ts";
+import {listTagView, saveOrUpdateTag, saveVideoTag} from "@/service/video/TagService.ts";
+import {getStudio, saveOrUpdateStudio} from "@/service/video/StudioService.ts";
 import {useSnowflake} from "@/util";
 import type {Marker} from "@/entity/domain/Marker.ts";
 import type {BaseEntity} from "@/entity/BaseEntity.ts";
@@ -255,4 +255,44 @@ export async function listLastAddVideo() {
         and l.password = ''
       order by v.created_at desc
       limit 10`)
+}
+
+export interface VideoStatisticsOverview {
+  total_videos: number;
+  total_size: number;
+  total_duration: number;
+  liked_videos: number;
+  total_actors: number;
+  total_tags: number;
+  total_studios: number;
+  total_libraries: number;
+}
+
+export async function getVideoStatisticsOverview(): Promise<VideoStatisticsOverview> {
+  const [videoStats, actorCount, tagCount, studioCount, libraryCount] = await Promise.all([
+    useSql().select<Array<{ count: number; size: number; duration: number; liked: number }>>(`
+      SELECT 
+        COUNT(*) as count, 
+        COALESCE(SUM(file_size), 0) as size, 
+        COALESCE(SUM(duration_ms), 0) as duration,
+        COALESCE(SUM(CASE WHEN is_liked = 1 THEN 1 ELSE 0 END), 0) as liked
+      FROM video 
+      WHERE is_deleted = '0'
+    `),
+    useSql().select<Array<{ count: number }>>(`SELECT COUNT(*) as count FROM actor`),
+    useSql().select<Array<{ count: number }>>(`SELECT COUNT(*) as count FROM tag`),
+    useSql().select<Array<{ count: number }>>(`SELECT COUNT(*) as count FROM studio`),
+    useSql().select<Array<{ count: number }>>(`SELECT COUNT(*) as count FROM library`)
+  ]);
+
+  return {
+    total_videos: videoStats[0]?.count || 0,
+    total_size: videoStats[0]?.size || 0,
+    total_duration: videoStats[0]?.duration || 0,
+    liked_videos: videoStats[0]?.liked || 0,
+    total_actors: actorCount[0]?.count || 0,
+    total_tags: tagCount[0]?.count || 0,
+    total_studios: studioCount[0]?.count || 0,
+    total_libraries: libraryCount[0]?.count || 0
+  };
 }

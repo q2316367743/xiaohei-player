@@ -45,6 +45,7 @@
     "axios": "1.13.5",
     "cheerio": "^1.1.2",
     "dayjs": "^1.11.19",
+    "echarts": "^6.0.0",
     "es-toolkit": "^1.43.0",
     "fast-xml-parser": "5.5.7",
     "flv.js": "^1.6.2",
@@ -57,6 +58,7 @@
     "tdesign-icons-vue-next": "^0.4.1",
     "tdesign-vue-next": "^1.17.6",
     "vue": "^3.5.24",
+    "vue-echarts": "^8.0.1",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {

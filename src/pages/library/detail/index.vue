@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import {pageVideo, type VideoSortField, type SortOrder, type VideoPageResult} from '@/service/VideoService.ts';
+import {pageVideo, type VideoSortField, type SortOrder, type VideoPageResult} from '@/service/video/VideoService.ts';
 import {ChevronUpIcon, ChevronDownIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
 import VideoCard from './components/VideoCard.vue';

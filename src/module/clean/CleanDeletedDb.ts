@@ -1,4 +1,4 @@
-import {cleanDeletedVideo} from "@/service/VideoService.ts";
+import {cleanDeletedVideo} from "@/service/video/VideoService.ts";
 
 /**
  * 优化数据库

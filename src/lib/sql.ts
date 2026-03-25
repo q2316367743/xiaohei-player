@@ -22,6 +22,9 @@ type TableName =
 
   | 'download_plugin'
   | 'history'
+
+  | 'play_history'
+  | 'daily_statistics'
   ;
 
 
