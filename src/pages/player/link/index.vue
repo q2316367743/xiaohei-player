@@ -41,7 +41,9 @@
         <div class="player-footer flex">
           <div class="url-display" v-if="url">
             <div class="url-label">播放链接:</div>
-            <div class="url-value" @click="copyLink">{{ src }}</div>
+            <t-tooltip :content="src">
+              <div class="url-value" @click="copyLink">{{ filename }}</div>
+            </t-tooltip>
           </div>
           <div class="ml-auto" v-if="type === 'file'">
             <t-button
@@ -59,7 +61,7 @@
     </div>
 
     <!-- 侧边栏 -->
-    <div v-if="showSidebar" class="sidebar">
+    <div v-if="showSidebar && type === 'file'" class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-title">文件列表</div>
         <t-button
@@ -135,6 +137,8 @@ const src = ref(route.query.src as string);
 const crypto = ref((route.query.crypto as string) === '1');
 // 播放链接
 const url = ref('');
+
+const filename = computed(() => src.value.split(/[/\\]/).pop());
 
 // 切换侧边栏
 const toggleSidebar = async () => {
