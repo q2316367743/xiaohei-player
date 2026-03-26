@@ -95,6 +95,7 @@ onMounted(async () => {
     // 处理数据
     video.value = videoData;
 
+
     await initMarker();
 
     // 更新播放状态

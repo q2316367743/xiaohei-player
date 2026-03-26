@@ -2,7 +2,7 @@ import {logError, logInfo, logWarning} from "@/lib/log.ts";
 import {useLibrarySettingStore, useSystemSettingStore, useTaskSettingStore} from "@/lib/store.ts";
 import {generatePath} from "@/module/library/util.ts";
 import type {Video, VideoAddForm, VideoView} from "@/entity/domain/Video.ts";
-import {getLibrary, listLibrary, updateLibraryCover} from "@/service";
+import {getLibrary, updateLibraryCover} from "@/service";
 import {draw, group} from "@/util";
 import type {ScanVideoFile} from "@/module/library/types.ts";
 import {
@@ -14,6 +14,7 @@ import {
 import {processVideoFile} from "@/module/library/component/ProcessVideoFile.ts";
 import {dirname, parseFilename} from "@/util/lang/FileUtil.ts";
 import {readDir} from "@tauri-apps/plugin-fs";
+import {useLibraryStore} from "@/store";
 
 
 /**
@@ -27,7 +28,7 @@ export async function scanLibrary(
   const library = await useLibrarySettingStore().get();
   const system = await useSystemSettingStore().get();
   const task = await useTaskSettingStore().get();
-  let items = await listLibrary();
+  let items = useLibraryStore().libraries;
 
   if (filterIds) {
     items = items.filter(item => filterIds.includes(item.id));

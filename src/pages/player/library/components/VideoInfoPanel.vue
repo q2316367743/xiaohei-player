@@ -105,9 +105,6 @@
         </div>
       </t-tab-panel>
 
-      <t-tab-panel label="队列" value="list">
-      </t-tab-panel>
-
     </t-tabs>
   </div>
 </template>

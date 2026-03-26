@@ -1,9 +1,9 @@
 import {DialogPlugin, Transfer} from "tdesign-vue-next";
-import {listLibrary} from "@/service";
+import {useLibraryStore} from "@/store";
 
 export function openFilterScan(): Promise<Array<string>> {
   return new Promise(async resolve => {
-    const libraries = await listLibrary();
+    const libraries = useLibraryStore().libraries;
     const libraryIds = ref(new Array<string>());
 
     const options = libraries.map(e => ({

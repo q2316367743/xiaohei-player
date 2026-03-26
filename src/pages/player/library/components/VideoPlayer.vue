@@ -22,7 +22,7 @@ import {getCurrentWindow} from "@tauri-apps/api/window";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import {getVideoType, playFlv, playM3u8, playTs} from "@/lib/artplayer.ts";
 import {debounce} from "es-toolkit";
-import {updateVideoStatus} from "@/service";
+import {savePlayHistory, updatePlayHistory, updateVideoStatus} from "@/service";
 import KeyframesTimeline from "./KeyframesTimeline.vue";
 import type {Marker} from "@/entity/domain/Marker.ts";
 import {useInterfaceSettingStore} from "@/store";
@@ -90,11 +90,7 @@ function findCueByTime(time: number): VttCue | null {
   ) || null;
 }
 
-
-const updateResumeTime = debounce(async rt => {
-  if (!props.video) return;
-  await updateVideoStatus(props.video.id, {resume_time: rt})
-}, 300);
+let durationPlayedTimeout: undefined | ReturnType<typeof setInterval> = undefined;
 
 function initPlayer() {
   if (!playerRef.value || !props.video) return;
@@ -340,7 +336,7 @@ function initPlayer() {
         },
       },
     ]
-  }, art => {
+  }, async art => {
     console.log('Player is ready');
     // 存在恢复时间，并且未设置从恢复时间开始播放
     if (props.video?.resume_time && !useInterfaceSettingStore().videoFromStart) {
@@ -355,9 +351,26 @@ function initPlayer() {
       // @ts-ignore
       art.plugins.multipleSubtitles?.tracks([props.video.caption[0]!.label])
     }
-    if (videoAutoPlay.value) {
-      art.play();
-    }
+
+    const id = await savePlayHistory({
+      video_id: props.video.id,
+      library_id: props.video.library_id,
+      duration_played: 0,
+      progress_percent: 0,
+      completed: 0
+    });
+
+
+    const updateResumeTime = debounce(async rt => {
+      if (!props.video) return;
+      await updateVideoStatus(props.video.id, {resume_time: rt})
+      // 更新日志
+      await updatePlayHistory(id, {
+        played_at: rt,
+        progress_percent: Number(((rt / duration.value) * 100).toFixed(0)),
+      });
+    }, 300);
+
     art.on('video:timeupdate', () => {
       currentTime.value = art.currentTime;
       updateResumeTime(currentTime.value);
@@ -370,7 +383,23 @@ function initPlayer() {
     art.on('error', (error) => {
       console.error('Player error:', error);
     });
+    art.on('video:ended', () => {
+      updatePlayHistory(id, {
+        completed: 1
+      });
+    });
+    // 此时，已经开始播放了
+    let durationPlayer = 0;
+    durationPlayedTimeout = setInterval(() => {
+      durationPlayer += 1;
+      updatePlayHistory(id, {
+        duration_played: durationPlayer * 1000
+      });
+    }, 1000);
   });
+  if (videoAutoPlay.value) {
+    p.play();
+  }
   player.value = markRaw(p);
 }
 
@@ -396,6 +425,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (player.value) {
     player.value.destroy();
+  }
+  if (durationPlayedTimeout) {
+    clearTimeout(durationPlayedTimeout);
   }
 });
 defineExpose({

@@ -44,19 +44,16 @@
 <script lang="ts" setup>
 import {LockOnIcon, VideoIcon} from "tdesign-icons-vue-next";
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
-import {listLibrary} from "@/service";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {checkMd5Password} from "@/util/lang/CryptoUtil.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
+import {useLibraryStore} from "@/store";
 
 const router = useRouter();
 
-const list = ref(new Array<LibraryEntity>());
+const list = computed(() => useLibraryStore().libraries);
 
-const initList = async () => {
-  list.value = await listLibrary();
-}
 
 const handleClick = (item: LibraryEntity) => {
   if (item.password) {
@@ -88,9 +85,6 @@ const goSetting = () => {
 }
 
 
-onMounted(() => {
-  initList();
-})
 </script>
 
 <style scoped lang="less">

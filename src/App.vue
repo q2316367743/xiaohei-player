@@ -59,7 +59,7 @@ import {
   ViewListIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
-import {useInterfaceSettingStore} from "@/store";
+import {useInterfaceSettingStore, useLibraryStore} from "@/store";
 
 const route = useRoute();
 
@@ -78,6 +78,7 @@ watch(() => route.path, val => {
 
 onMounted(() => {
   useInterfaceSettingStore().init();
+  useLibraryStore().init();
 })
 </script>
 <style scoped lang="less">

@@ -236,6 +236,7 @@ import {
 import {getStatisticsForLastDays, type DailyStatisticsView} from "@/service/statistics/DailyStatisticsService.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import dayjs from "dayjs";
+import {formatDuration} from "@/util/lang/FormatUtil.ts";
 
 use([CanvasRenderer, LineChart, GridComponent, TooltipComponent]);
 
@@ -363,15 +364,6 @@ const handleVideoClick = (videoId: string) => {
   router.push(`/player/library/${videoId}`);
 };
 
-const formatDuration = (ms: number): string => {
-  if (!ms) return '0分钟';
-  const hours = Math.floor(ms / 3600000);
-  const minutes = Math.floor((ms % 3600000) / 60000);
-  if (hours > 0) {
-    return `${hours}小时${minutes}分钟`;
-  }
-  return `${minutes}分钟`;
-};
 
 const formatSize = (bytes: number): string => {
   if (!bytes) return '0 B';

@@ -55,29 +55,25 @@
   </t-card>
 </template>
 <script lang="tsx" setup>
+import {LockOffIcon, LockOnIcon} from "tdesign-icons-vue-next";
 import SubTitle from "@/components/PageTitle/SubTitle.vue";
-import {getLibrarySetting, type LibrarySetting} from "@/entity/setting/LibrarySetting.ts";
+import {getLibrarySetting, type LibrarySetting} from "@/entity";
 import {useLibrarySettingStore} from "@/lib/store.ts";
-import MessageUtil from "@/util/model/MessageUtil.ts";
 import {logDebug} from "@/lib/log.ts";
+import MessageUtil from "@/util/model/MessageUtil.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 import type {LibraryEntity} from "@/entity/main/LibraryEntity.ts";
-import {listLibrary} from "@/service";
-import {LockOffIcon, LockOnIcon} from "tdesign-icons-vue-next";
 import {addLibraryDialog, openDeleteFolderLocal, openUpdateLibraryPassword} from "@/pages/setting/library/edit.tsx";
+import {useLibraryStore} from "@/store";
 
 const data = ref<LibrarySetting>(getLibrarySetting());
-const list = ref(new Array<LibraryEntity>());
+const list = computed(() => useLibraryStore().libraries);
 
 const columns = [
   { colKey: 'name', title: '名称', ellipsis: true },
   { colKey: 'encrypted', title: '是否加密', width: 120, cell: 'encrypted' },
   { colKey: 'operation', title: '操作', width: 160, cell: 'operation' },
 ];
-
-const initList = async () => {
-  list.value = await listLibrary();
-}
 
 onMounted(() => {
   useLibrarySettingStore().get()
@@ -86,7 +82,6 @@ onMounted(() => {
       data.value = res;
     })
     .catch(e => MessageUtil.error("获取数据失败", e));
-  initList()
 })
 
 function onChange<K extends keyof LibrarySetting>(key: K, value: any) {
@@ -115,13 +110,13 @@ const onImageExtnameEdit = () => {
 }
 
 const addLibraryItemAdd = () => {
-  addLibraryDialog(initList);
+  addLibraryDialog(() => useLibraryStore().init());
 }
 const updateLibraryPsd = (item: LibraryEntity) => {
-  openUpdateLibraryPassword(item, initList);
+  openUpdateLibraryPassword(item, () => useLibraryStore().init());
 }
 const removeLibraryWrap = (item: LibraryEntity) => {
-  openDeleteFolderLocal(item, initList);
+  openDeleteFolderLocal(item, () => useLibraryStore().init());
 }
 </script>
 <style scoped lang="less">

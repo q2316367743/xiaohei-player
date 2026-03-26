@@ -10,28 +10,20 @@ export function formatDate(date: Date | string | number, format: string = 'YYYY-
 }
 
 /**
- * 美化时间差
- * - 刚刚
- * - 几分钟前
- * - 几小时前
- * - 几天前
- * @param timestamp 时间戳
+ * 格式化时间长度
+ * @param duration 持续毫秒数
  */
-export const prettyBetweenTime = (timestamp: string | number | Date) => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return '刚刚';
-  if (minutes < 60) return `${minutes}分钟前`;
-  if (hours < 24) return `${hours}小时前`;
-  if (days < 7) return `${days}天前`;
-
-  return date.toLocaleDateString();
-};
+export function formatDuration(duration: number) {
+  // 几秒钟
+  if (duration < 60_000) {
+    return `${Math.floor(duration / 1000)}秒`;
+  } else if (duration < 3600_000) {
+    return `${Math.floor(duration / 60_000)}分钟${Math.floor(duration / 1000) % 60}秒`;
+  } else if (duration < 86400_000) {
+    return `${Math.floor(duration / 3600_000)}小时 ${Math.floor(duration / 60_000) % 60}分钟 ${Math.floor(duration / 1000) % 60}秒`;
+  }
+  return `${Math.floor(duration / 86400_000)}天 ${Math.floor(duration / 3600_000) % 24}小时 ${Math.floor(duration / 60_000) % 60}分钟 ${Math.floor(duration / 1000) % 60}秒`;
+}
 
 
 /**
