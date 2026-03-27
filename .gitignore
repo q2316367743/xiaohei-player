@@ -1,9 +1,10 @@
 /node_modules/
 /src-tauri/target/
-/src-utools/node_modules
-.idea
-.DS_store
-dist
 /src-tauri/binaries/*
 !/src-tauri/binaries/.gitkeep
 /src-tauri/xiaohei-player.provisionprofile
+/src-utools/node_modules
+/src-utools/dist
+.idea
+.DS_store
+dist
