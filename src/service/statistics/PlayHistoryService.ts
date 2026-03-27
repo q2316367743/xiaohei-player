@@ -42,10 +42,10 @@ export async function listRecentPlayHistory(limit: number = 10): Promise<Array<P
         AND ph.id = (
           SELECT id FROM play_history ph2
           WHERE ph2.video_id = ph.video_id
-          ORDER BY ph2.played_at DESC
+          ORDER BY ph2.created_at DESC
           LIMIT 1
         )
-      ORDER BY ph.played_at DESC
+      ORDER BY ph.created_at DESC
       LIMIT ?
   `, [limit]);
 }
@@ -57,10 +57,10 @@ export interface PlayCountByDate {
 
 export async function getPlayCountByDateRange(startDate: string, endDate: string): Promise<Array<PlayCountByDate>> {
   return useSql().select<Array<PlayCountByDate>>(`
-      SELECT date(datetime(played_at / 1000, 'unixepoch')) as date, COUNT(*) as count
+      SELECT date(datetime(created_at / 1000, 'unixepoch')) as date, COUNT(*) as count
       FROM play_history
-      WHERE played_at >= ?
-        AND played_at <= ?
+      WHERE created_at >= ?
+        AND created_at <= ?
       GROUP BY date
       ORDER BY date ASC
   `, [
@@ -76,10 +76,10 @@ export interface PlayDurationByDate {
 
 export async function getPlayDurationByDateRange(startDate: string, endDate: string): Promise<Array<PlayDurationByDate>> {
   return useSql().select<Array<PlayDurationByDate>>(`
-      SELECT date(datetime(played_at / 1000, 'unixepoch')) as date, SUM(duration_played) as duration
+      SELECT date(datetime(created_at / 1000, 'unixepoch')) as date, SUM(duration_played) as duration
       FROM play_history
-      WHERE played_at >= ?
-        AND played_at <= ?
+      WHERE created_at >= ?
+        AND created_at <= ?
       GROUP BY date
       ORDER BY date ASC
   `, [
@@ -138,16 +138,17 @@ export async function getPlayStatisticsSummary(): Promise<PlayStatisticsSummary>
     useSql().select<Array<{ count: number; duration: number }>>(`
         SELECT COUNT(*) as count, COALESCE(SUM(duration_played), 0) as duration
         FROM play_history
-        WHERE played_at >= ?
-          AND played_at <= ?
+        WHERE created_at >= ?
+          AND created_at <= ?
     `, [todayStart, todayEnd]),
     useSql().select<Array<{ count: number; duration: number }>>(`
         SELECT COUNT(*) as count, COALESCE(SUM(duration_played), 0) as duration
         FROM play_history
-        WHERE played_at >= ?
+        WHERE created_at >= ?
     `, [weekStart])
   ]);
 
+  console.log(total, today, week)
   return {
     total_play_count: total[0]?.count || 0,
     total_play_duration: total[0]?.duration || 0,
@@ -159,8 +160,8 @@ export async function getPlayStatisticsSummary(): Promise<PlayStatisticsSummary>
 }
 
 export interface PlayHistoryUpdateForm {
-  played_at: number;       // 播放时间戳
-  duration_played: number; // 本次播放时长
+  played_at: number;       // 播放时间戳，本次播放到了的进度，是指观看这个视频到哪里了
+  duration_played: number; // 本次播放时长，代表了本次观看时间，单位豪秒，与视频长度无关
   progress_percent: number; // 播放进度百分比
   completed: YesOrNo;       // 是否播放完成 0/1
 }
@@ -171,4 +172,43 @@ export function updatePlayHistory(id: string, form: Partial<PlayHistoryUpdateFor
       ...form,
       updated_at: Date.now()
     })
+}
+
+export interface PlayTrendView {
+  date: string;
+  play_count: number;
+  play_duration: number;
+}
+
+export async function getPlayTrendForLastDays(days: number = 7): Promise<Array<PlayTrendView>> {
+  const result: Array<PlayTrendView> = [];
+  const today = dayjs();
+
+  const startDate = today.subtract(days - 1, 'day').startOf('day').valueOf();
+  const endDate = today.endOf('day').valueOf();
+
+  const statistics = await useSql().select<Array<{ date: string; count: number; duration: number }>>(`
+    SELECT 
+      date(datetime(created_at / 1000, 'unixepoch')) as date, 
+      COUNT(*) as count, 
+      COALESCE(SUM(duration_played), 0) as duration
+    FROM play_history
+    WHERE created_at >= ? AND created_at <= ?
+    GROUP BY date
+    ORDER BY date ASC
+  `, [startDate, endDate]);
+
+  const statisticsMap = new Map(statistics.map(s => [s.date, s]));
+
+  for (let i = days - 1; i >= 0; i--) {
+    const date = today.subtract(i, 'day').format('YYYY-MM-DD');
+    const stat = statisticsMap.get(date);
+    result.push({
+      date,
+      play_count: stat?.count || 0,
+      play_duration: stat?.duration || 0
+    });
+  }
+
+  return result;
 }

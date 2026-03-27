@@ -229,11 +229,12 @@ import {
   getPlayStatisticsSummary,
   getTopPlayedVideos,
   listRecentPlayHistory,
+  getPlayTrendForLastDays,
   type PlayStatisticsSummary,
   type TopPlayedVideo,
-  type PlayHistoryView
+  type PlayHistoryView,
+  type PlayTrendView
 } from "@/service/statistics/PlayHistoryService.ts";
-import {getStatisticsForLastDays, type DailyStatisticsView} from "@/service/statistics/DailyStatisticsService.ts";
 import {convertFileSrcToUrl} from "@/lib/FileSrc.ts";
 import dayjs from "dayjs";
 import {formatDuration} from "@/util/lang/FormatUtil.ts";
@@ -244,7 +245,7 @@ const router = useRouter();
 
 const overview = ref<VideoStatisticsOverview | null>(null);
 const playSummary = ref<PlayStatisticsSummary | null>(null);
-const dailyStats = ref<Array<DailyStatisticsView>>([]);
+const dailyStats = ref<Array<PlayTrendView>>([]);
 const topVideos = ref<Array<TopPlayedVideo>>([]);
 const recentVideos = ref<Array<PlayHistoryView>>([]);
 
@@ -395,7 +396,7 @@ const loadStatistics = async () => {
   const [overviewData, playData, statsData, topData, recentData] = await Promise.all([
     getVideoStatisticsOverview(),
     getPlayStatisticsSummary(),
-    getStatisticsForLastDays(7),
+    getPlayTrendForLastDays(7),
     getTopPlayedVideos(5),
     listRecentPlayHistory(5)
   ]);
