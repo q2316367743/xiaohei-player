@@ -39,6 +39,12 @@ export async function listRecentPlayHistory(limit: number = 10): Promise<Array<P
                LEFT JOIN video v ON ph.video_id = v.id
                LEFT JOIN library l ON ph.library_id = l.id
       WHERE l.password = ''
+        AND ph.id = (
+          SELECT id FROM play_history ph2
+          WHERE ph2.video_id = ph.video_id
+          ORDER BY ph2.played_at DESC
+          LIMIT 1
+        )
       ORDER BY ph.played_at DESC
       LIMIT ?
   `, [limit]);
