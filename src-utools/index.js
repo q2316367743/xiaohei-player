@@ -1,5 +1,5 @@
 const inject = require("./inject");
-const registerMcp = require('./mcp');
+// const registerMcp = require('./mcp');
 const {setupServer, getServerPort} = require("./server");
 
 // 启动服务器
@@ -11,4 +11,4 @@ window.__TAURI_INTERNALS__ = inject('main', {
   }
 });
 // 注册 mcp
-registerMcp(window.__TAURI_INTERNALS__.invoke);
+// registerMcp(window.__TAURI_INTERNALS__.invoke);
