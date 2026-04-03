@@ -6,9 +6,13 @@ import {map} from "@/util";
 
 export async function saveOrUpdateTag(tags: VideoAddForm['tags'], videoId: string, libraryId: string) {
   if (!tags) return;
-  await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
+
+  tags = tags.filter(Boolean);
 
   if (tags.length === 0) return;
+
+  await useSql().query<VideoTag>('video_tag').eq('video_id', videoId).delete();
+
 
   const oldTags = await useSql().query<Tag>('tag').in('name', tags).list();
   const oldTagMap = map(oldTags, 'name');

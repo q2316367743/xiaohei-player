@@ -33,6 +33,12 @@
           </template>
           媒体库
         </t-menu-item>
+        <t-menu-item to="/stream/list" value="/library/list">
+          <template #icon>
+            <internet-icon />
+          </template>
+          流媒体
+        </t-menu-item>
         <t-menu-item to="/setting" value="/setting">
           <template #icon>
             <setting-icon/>
@@ -53,7 +59,7 @@
 <script lang="ts" setup>
 import {
   FolderOpenIcon,
-  HomeIcon,
+  HomeIcon, InternetIcon,
   SettingIcon,
   VideoIcon,
   ViewListIcon

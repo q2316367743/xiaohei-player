@@ -6,6 +6,9 @@ import {map} from "@/util";
 
 export async function saveOrUpdateActor(actors: VideoAddForm['actors'], videoId: string, libraryId: string) {
   if (!actors) return;
+  // 演员名一定有
+  actors = actors.filter(e => Boolean(e.name));
+  if (actors.length === 0) return;
   // 删除旧的
   await useSql().query<VideoActor>('video_actor').eq('video_id', videoId).delete();
   const actorNames = actors.map(actor => actor.name);

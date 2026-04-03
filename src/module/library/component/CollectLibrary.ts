@@ -175,6 +175,7 @@ export async function collectVideoFiles(
           fileDir: path,
           filePath: newPath,
           fileName: file.name,
+          // 字幕
           caption: findCaption(path, filename, files),
           cover: findCoverFile(path, filename, fileMap),
           nfo: await findNfoFile(path, filename, fileMap)
