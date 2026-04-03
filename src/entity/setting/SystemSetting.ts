@@ -25,41 +25,18 @@ export interface SystemPreviewSetting {
 }
 
 export interface SystemSetting {
-  /**
-   * 刮削器路径
-   * 含有刮削器配置文件的路径
-   */
-  scraperPath: string;
-  /**
-   * 插件文件路径
-   * 插件配置文件目录
-   */
-  pluginPath: string;
-  /**
-   * 元数据存储路径
-   * 整体导出或者导入时使用的路径
-   */
-  metaPath: string;
-  /**
-   * 自定义演员图像路径
-   * 默认演员图像的自定义路径。 留空以使用内置默认值
-   */
-  customActorImagePath: string;
-  /**
-   * Python 可执行文件路径
-   * Python 执行程序的路径。（不限于文件夹）给网页挖掘器和插件的源文件使用。如果没有，python会从环境变量找到
-   */
-  pythonPath: string;
-  /**
-   * 备份用的路径
-   * 备份SQLite 数据库文件的目录路径
-   */
-  backupPath: string;
-  /**
-   * 回收站路径
-   * 删除的文件将被移动到的路径，而不是永久删除。留空将永久删除文件。
-   */
-  trashPath: string;
+
+  // ---------------------------------- 网络相关 ----------------------------------
+
+  proxy_enabled: boolean;
+  // 代理协议
+  proxy_protocol: 'http' | 'https' | 'socks5';
+  proxy_host: string;
+  proxy_port: number;
+  proxy_username: string;
+  proxy_password: string;
+
+  // ---------------------------------- 转码 ----------------------------------
 
   /**
    * 转码生成的串流的最大清晰度
@@ -95,10 +72,15 @@ export interface SystemSetting {
    * @default true
    */
   transcoderIncludeAudio: boolean;
+
+  // ---------------------------------- 预览视频 ----------------------------------
+
   /**
    * 预览生成选项
    */
   preview: SystemPreviewSetting;
+
+  // ---------------------------------- 日志相关 ----------------------------------
 
   /**
    * 日志文件
@@ -132,14 +114,13 @@ export interface SystemSetting {
 
 export function getSystemSetting(): SystemSetting {
   return {
+    proxy_enabled: false,
+    proxy_protocol: 'http',
+    proxy_host: '127.0.0.1',
+    proxy_port: 7890,
+    proxy_username: '',
+    proxy_password: '',
     // 这些目录都是相对于$APPDATA 的
-    scraperPath: '/root/.stash/scrapers',
-    pluginPath: '/root/.stash/plugins',
-    metaPath: '/metadata/',
-    customActorImagePath: '',
-    pythonPath: '',
-    backupPath: '',
-    trashPath: '',
     transcoderMaxResolution: 'original',
     transcoderHardwareEncoding: false,
     transcoderParallelTasks: 0,
@@ -160,13 +141,12 @@ export function getSystemSetting(): SystemSetting {
 }
 
 export const SystemSettingTitle: Record<keyof SystemSetting, string> = {
-  scraperPath: '刮削器路径',
-  pluginPath: '插件文件路径',
-  metaPath: '元数据存储路径',
-  customActorImagePath: '自定义演员图像路径',
-  pythonPath: 'Python 可执行文件路径',
-  backupPath: '备份用的路径',
-  trashPath: '回收站路径',
+  proxy_enabled: '代理启用',
+  proxy_protocol: '代理协议',
+  proxy_host: '代理主机',
+  proxy_port: '代理端口',
+  proxy_username: '代理用户名',
+  proxy_password: '代理密码',
   transcoderMaxResolution: '转码生成的串流的最大清晰度',
   transcoderHardwareEncoding: 'FFmpeg 硬件编码',
   transcoderParallelTasks: '扫描/生成的并行任务数量',

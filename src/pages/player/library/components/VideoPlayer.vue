@@ -25,7 +25,7 @@ import {debounce} from "es-toolkit";
 import {savePlayHistory, updatePlayHistory, updateVideoStatus} from "@/service";
 import KeyframesTimeline from "./KeyframesTimeline.vue";
 import type {Marker} from "@/entity/domain/Marker.ts";
-import {useInterfaceSettingStore} from "@/store";
+import {useSettingStore} from "@/store";
 import {isTauri} from "@tauri-apps/api/core";
 import artplayerPluginMultipleSubtitles from "artplayer-plugin-multiple-subtitles";
 
@@ -46,8 +46,8 @@ const currentTime = ref(0);
 const duration = ref(0);
 const spriteUrl = ref('');
 
-const showPreviewAxis = computed(() => useInterfaceSettingStore().showPreviewAxis);
-const videoAutoPlay = computed(() => useInterfaceSettingStore().videoAutoPlay);
+const showPreviewAxis = computed(() => useSettingStore().showPreviewAxis);
+const videoAutoPlay = computed(() => useSettingStore().videoAutoPlay);
 const videoUrl = computed(() => convertFileSrcToUrl(props.video.file_path));
 const posterUrl = computed(() => props.video.cover_path ? convertFileSrcToUrl(props.video.cover_path) : undefined);
 
@@ -339,7 +339,7 @@ function initPlayer() {
   }, async art => {
     console.log('Player is ready');
     // 存在恢复时间，并且未设置从恢复时间开始播放
-    if (props.video?.resume_time && !useInterfaceSettingStore().videoFromStart) {
+    if (props.video?.resume_time && !useSettingStore().videoFromStart) {
       seekToTime(props.video.resume_time);
     }
     if (player.value?.video) {

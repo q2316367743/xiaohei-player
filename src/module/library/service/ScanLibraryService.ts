@@ -1,5 +1,5 @@
 import {logError, logInfo, logWarning} from "@/lib/log.ts";
-import {useLibrarySettingStore, useSystemSettingStore, useTaskSettingStore} from "@/lib/store.ts";
+import {useLibrarySettingStore, useTaskSettingStore} from "@/lib/store.ts";
 import {generatePath} from "@/module/library/util.ts";
 import type {Video, VideoAddForm, VideoView} from "@/entity/domain/Video.ts";
 import {getLibrary, updateLibraryCover} from "@/service";
@@ -14,7 +14,7 @@ import {
 import {processVideoFile} from "@/module/library/component/ProcessVideoFile.ts";
 import {dirname, parseFilename} from "@/util/lang/FileUtil.ts";
 import {readDir} from "@tauri-apps/plugin-fs";
-import {useLibraryStore} from "@/store";
+import {useLibraryStore, useSettingStore} from "@/store";
 
 
 /**
@@ -26,7 +26,7 @@ export async function scanLibrary(
 ) {
   logInfo("开始扫描收藏库");
   const library = await useLibrarySettingStore().get();
-  const system = await useSystemSettingStore().get();
+  const system = useSettingStore().systemSetting;
   const task = await useTaskSettingStore().get();
   let items = useLibraryStore().libraries;
 
@@ -101,7 +101,7 @@ export async function scanLibrary(
 }
 
 export async function scanOneLibrary(video: VideoView) {
-  const system = await useSystemSettingStore().get();
+  const system = useSettingStore().systemSetting;
   const task = await useTaskSettingStore().get();
   const generatePathResult = generatePath();
 

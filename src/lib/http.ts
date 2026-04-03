@@ -1,9 +1,25 @@
 import axios, {type AxiosRequestConfig} from "axios";
 import {isTauri} from "@tauri-apps/api/core";
-import {fetch} from '@tauri-apps/plugin-http'
+import {type ClientOptions, fetch} from '@tauri-apps/plugin-http'
+import {useSettingStore} from "@/store";
 
 function getTauriFetch() {
-  return isTauri() ? fetch : undefined;
+  return isTauri() ? async (input: URL | Request | string, init?: RequestInit) => {
+    const c: RequestInit & ClientOptions = init || {};
+    const {systemSetting} = useSettingStore();
+    if (systemSetting.proxy_enabled) {
+      c.proxy = {
+        all: {
+          url: `${systemSetting.proxy_protocol}://${systemSetting.proxy_host}:${systemSetting.proxy_port}`,
+          basicAuth: {
+            username: systemSetting.proxy_username,
+            password: systemSetting.proxy_password
+          }
+        }
+      }
+    }
+    return fetch(input, init);
+  } : undefined;
 }
 
 export type Method =
@@ -27,8 +43,13 @@ export const instance = axios.create({
   // 配置代理等信息
 });
 
+instance.interceptors.request.use(c => {
+  if (isTauri()) console.debug(c)
+  return c;
+})
+
 instance.interceptors.response.use(e => {
-  if(isTauri())  console.debug(e)
+  if (isTauri()) console.debug(e);
   return e;
 }, e => {
   if (isTauri()) console.error(e);

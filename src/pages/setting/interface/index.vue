@@ -43,13 +43,13 @@
 <script lang="ts" setup>
 import SubTitle from "@/components/PageTitle/SubTitle.vue";
 import {colorMode} from "@/global/Constants.ts";
-import {useInterfaceSettingStore} from "@/store";
+import {useSettingStore} from "@/store";
 import type {InterfaceSetting} from "@/entity/setting/InterfaceSetting.ts";
 
-const data = computed(() => useInterfaceSettingStore().interfaceSetting);
+const data = computed(() => useSettingStore().interfaceSetting);
 
 function onChange<K extends keyof InterfaceSetting>(key: K, value: any) {
-  useInterfaceSettingStore().setItem(key, value);
+  useSettingStore().setInterfaceItem(key, value);
 }
 </script>
 <style scoped lang="less">

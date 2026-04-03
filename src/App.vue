@@ -37,13 +37,13 @@
           <template #icon>
             <video-icon/>
           </template>
-          <t-menu-item to="/network/list" value="/network/list" replace>
+          <t-menu-item to="/stream/list" value="/stream/list" replace>
             <template #icon>
               <app-icon />
             </template>
             发现
           </t-menu-item>
-          <t-menu-item to="/network/search" value="/network/search" replace>
+          <t-menu-item to="/stream/search" value="/stream/search" replace>
             <template #icon>
               <search-icon/>
             </template>
@@ -120,7 +120,7 @@ import {
   ViewListIcon, WifiIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
-import {useInterfaceSettingStore, useLibraryStore} from "@/store";
+import {useSettingStore, useLibraryStore} from "@/store";
 
 const route = useRoute();
 
@@ -138,7 +138,7 @@ watch(() => route.path, val => {
 })
 
 onMounted(() => {
-  useInterfaceSettingStore().init();
+  useSettingStore().init();
   useLibraryStore().init();
 })
 </script>

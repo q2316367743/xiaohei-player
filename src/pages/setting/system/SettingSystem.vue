@@ -8,75 +8,49 @@
     <t-card>
       <t-list size="small" split>
         <t-list-item>
-          <t-list-item-meta title="刮削器路径">
-            <template #description>
-              含有刮削器配置文件的路径
-              <br/>
-              <t-link theme="primary">{{ data.scraperPath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="是否启用代理">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('scraperPath')">编辑</t-button>
+            <t-switch v-model="data.proxy_enabled" @change="onChange('proxy_enabled', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="插件文件路径">
-            <template #description>
-              插件配置文件目录
-              <br/>
-              <t-link theme="primary">{{ data.pluginPath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="代理协议">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('pluginPath')">编辑</t-button>
+            <t-radio-group v-model="data.proxy_protocol" @change="onChange('proxy_protocol', $event)">
+              <t-radio value="http">http</t-radio>
+              <t-radio value="https">https</t-radio>
+              <t-radio value="socks5">socks5</t-radio>
+            </t-radio-group>
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="元数据存储路径">
-            <template #description>
-              整体导出或者导入时使用的路径
-              <br/>
-              <t-link theme="primary">{{ data.metaPath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="代理主机">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('metaPath')">编辑</t-button>
+            <t-input v-model="data.proxy_host" @change="onChange('proxy_host', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="自定义演员图像路径">
-            <template #description>
-              默认演员图像的自定义路径。留空以使用内置默认值
-              <br/>
-              <t-link theme="primary">{{ data.customActorImagePath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="代理主机端口">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('customActorImagePath')">编辑</t-button>
+            <t-input-number v-model="data.proxy_port" @change="onChange('proxy_port', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="备份用的路径">
-            <template #description>
-              备份SQLite 数据库文件的目录路径
-              <br/>
-              <t-link theme="primary">{{ data.backupPath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="代理用户名">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('backupPath')">编辑</t-button>
+            <t-input v-model="data.proxy_username" @change="onChange('proxy_username', $event)"/>
           </template>
         </t-list-item>
         <t-list-item>
-          <t-list-item-meta title="回收站路径">
-            <template #description>
-              删除的文件将被移动到的路径，而不是永久删除。留空将永久删除文件。
-              <br/>
-              <t-link theme="primary">{{ data.trashPath || '未设置' }}</t-link>
-            </template>
+          <t-list-item-meta title="代理密码">
           </t-list-item-meta>
           <template #action>
-            <t-button theme="primary" @click="onPathEdit('trashPath')">编辑</t-button>
+            <t-input type="password" v-model="data.proxy_password" @change="onChange('proxy_password', $event)"/>
           </template>
         </t-list-item>
       </t-list>
@@ -221,33 +195,27 @@
 </template>
 <script lang="ts" setup>
 import SubTitle from "@/components/PageTitle/SubTitle.vue";
-import {getSystemSetting, type SystemSetting, SystemSettingTitle} from "@/entity/setting/SystemSetting.ts";
-import {useSystemSettingStore} from "@/lib/store.ts";
+import {type SystemSetting, SystemSettingTitle} from "@/entity/setting/SystemSetting.ts";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {logDebug} from "@/lib/log.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
+import {useSettingStore} from "@/store";
+import {storeToRefs} from "pinia";
 
-const data = ref<SystemSetting>(getSystemSetting());
+const {systemSetting: data} = storeToRefs(useSettingStore());
 
-onMounted(() => {
-  useSystemSettingStore().get()
-    .then((res) => {
-      data.value = res;
-    })
-    .catch(e => MessageUtil.error("获取数据失败", e))
-});
 
 function onChange<K extends keyof SystemSetting>(key: K, value: any) {
-  useSystemSettingStore()
-    .setItem(key, value)
+  useSettingStore()
+    .setSystemItem(key, value)
     .then(() => logDebug("保存成功"))
     .catch(e => MessageUtil.error("保存失败", e));
 }
 
 function onChangePreview<K extends keyof SystemSetting['preview']>(key: K, value: any) {
   data.value.preview[key] = value;
-  useSystemSettingStore()
-    .setItem('preview', data.value.preview)
+  useSettingStore()
+    .setSystemItem('preview', data.value.preview)
     .then(() => logDebug("保存成功"))
     .catch(e => MessageUtil.error("保存失败", e));
 }

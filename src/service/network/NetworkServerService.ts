@@ -1,5 +1,9 @@
 import type {NetworkServer, NetworkServerEdit} from "@/entity";
 import {useSql} from "@/lib/sql.ts";
+import type {INetworkServer} from "@/module/network/INetworkServer.ts";
+import {createNetworkServer} from "@/module/network/factory.ts";
+
+const streamServiceMap = new Map<string, INetworkServer>();
 
 export const listNetworkServer = () => {
   return useSql().query<NetworkServer>('network_server')
@@ -16,15 +20,29 @@ export const addNetworkServer = (data: NetworkServerEdit) => {
     })
 }
 
-export const updateNetworkServer = (id: string, data: Partial<NetworkServerEdit>) => {
+export const updateNetworkServer = async (id: string, data: Partial<NetworkServerEdit>) => {
   const now = Date.now();
-  return useSql().mapper<NetworkServer>('network_server')
+  await useSql().mapper<NetworkServer>('network_server')
     .updateById(id, {
       ...data,
       updated_at: now
     })
+  streamServiceMap.delete(id);
 }
 
-export const deleteNetworkServer = (id: string) => {
-  return useSql().mapper<NetworkServer>('network_server').deleteById(id)
+export const deleteNetworkServer = async (id: string) => {
+  await useSql().mapper<NetworkServer>('network_server').deleteById(id)
+  streamServiceMap.delete(id);
+}
+
+export const getNetworkServerClient = async (id: string) => {
+  const cache = streamServiceMap.get(id);
+  if (cache) {
+    return cache;
+  }
+  const item = await useSql().query<NetworkServer>('network_server').eq('id', id).get();
+  if (!item) return undefined;
+  const client = createNetworkServer(item);
+  streamServiceMap.set(id, client);
+  return client;
 }

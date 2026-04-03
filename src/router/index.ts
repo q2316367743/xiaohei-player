@@ -1,5 +1,8 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 // 引入路由
+import {settingRouter} from "@/router/components/setting.ts";
+import {streamRouter} from "@/router/components/stream.ts";
+
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -34,40 +37,8 @@ export const router = createRouter({
       path: '/library/actor/:id',
       component: () => import('@/pages/library/actor/actor.vue'),
     },
-    {
-      name: "Setting",
-      path: '/setting',
-      component: () => import('@/pages/setting/Setting.vue'),
-      children: [{
-        name: 'SettingTask',
-        path: 'task',
-        component: () => import('@/pages/setting/task/SettingTask.vue'),
-      }, {
-        name: 'SettingLibrary',
-        path: 'library',
-        component: () => import('@/pages/setting/library/SettingLibrary.vue'),
-      }, {
-        name: "SettingNetwork",
-        path: 'network',
-        component: () => import('@/pages/setting/stream/SettingStream.vue'),
-      }, {
-        name: 'SettingInterface',
-        path: 'interface',
-        component: () => import('@/pages/setting/interface/index.vue'),
-      }, {
-        name: "SettingSystem",
-        path: 'system',
-        component: () => import('@/pages/setting/system/SettingSystem.vue'),
-      }, {
-        name: "SettingLog",
-        path: 'log',
-        component: () => import('@/pages/setting/log/index.vue'),
-      }, {
-        name: "SettingAbout",
-        path: 'about',
-        component: () => import('@/pages/setting/about/index.vue'),
-      }]
-    },
+    streamRouter,
+    settingRouter,
     {
       name: "PlayerLibrary",
       path: '/player/library/:id',

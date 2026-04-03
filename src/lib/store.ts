@@ -153,7 +153,7 @@ export class StoreEntry<T extends Record<string, any> = Record<string, any>> {
 
 const taskSettingStore = new StoreEntry<TaskSetting>("task", getTaskSetting());
 const librarySettingStore = new StoreEntry<LibrarySetting>("library", getLibrarySetting());
-const systemSettingStore = new StoreEntry<SystemSetting>("system", getSystemSetting());
+export const systemSettingStore = new StoreEntry<SystemSetting>("system", getSystemSetting());
 export const interfaceSettingStore = new StoreEntry<InterfaceSetting>("interface", getInterfaceSetting());
 
 // 任务设置
