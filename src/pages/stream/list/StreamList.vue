@@ -8,14 +8,16 @@
   </div>
 </template>
 <script lang="ts" setup>
-
 import type {NetworkServer} from "@/entity";
 import {listNetworkServer} from "@/service";
 import StreamListLayout from "@/pages/stream/list/components/StreamListLayout.vue";
 
+defineOptions({
+  name: 'StreamList',
+})
+
 const active = ref('');
 const list = ref(new Array<NetworkServer>());
-
 
 onMounted(async () => {
   list.value = await listNetworkServer();

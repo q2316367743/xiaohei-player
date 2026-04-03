@@ -1,7 +1,7 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 // 引入路由
 import {settingRouter} from "@/router/components/setting.ts";
-import {streamRouter} from "@/router/components/stream.ts";
+import {streamRouters} from "@/router/components/stream.ts";
 
 
 export const router = createRouter({
@@ -37,7 +37,7 @@ export const router = createRouter({
       path: '/library/actor/:id',
       component: () => import('@/pages/library/actor/actor.vue'),
     },
-    streamRouter,
+    ...streamRouters,
     settingRouter,
     {
       name: "PlayerLibrary",
