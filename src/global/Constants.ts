@@ -71,6 +71,9 @@ export const MAIN_MIGRATE_FILES = [{
 }, {
   file: 'lib/migrate/0003_statistics.sql',
   version: 3
+}, {
+  file: 'lib/migrate/0004_network.sql',
+  version: 4
 }];
 
 export const {colorMode, isDark} = useColorMode();

@@ -76,12 +76,7 @@ const handleImageError = (item: LibraryEntity) => {
 }
 
 const goSetting = () => {
-  router.push({
-    path: "/setting",
-    query: {
-      active: "library"
-    }
-  });
+  router.push("/setting/library");
 }
 
 

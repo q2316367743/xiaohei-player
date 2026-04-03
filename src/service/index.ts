@@ -8,3 +8,5 @@ export * from "./main/FolderService.ts";
 export * from "./main/LibraryService.ts";
 
 export * from "./statistics/PlayHistoryService.ts"
+
+export * from "./network";

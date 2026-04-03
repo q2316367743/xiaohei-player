@@ -29,22 +29,74 @@
         </t-menu-item>
         <t-menu-item to="/library/list" value="/library/list">
           <template #icon>
-            <video-icon/>
+            <internet-icon/>
           </template>
           媒体库
         </t-menu-item>
-        <t-menu-item to="/stream/list" value="/library/list">
+        <t-submenu title="流媒体" value="/network">
           <template #icon>
-            <internet-icon />
+            <video-icon/>
           </template>
-          流媒体
-        </t-menu-item>
-        <t-menu-item to="/setting" value="/setting">
+          <t-menu-item to="/network/list" value="/network/list" replace>
+            <template #icon>
+              <app-icon />
+            </template>
+            发现
+          </t-menu-item>
+          <t-menu-item to="/network/search" value="/network/search" replace>
+            <template #icon>
+              <search-icon/>
+            </template>
+            搜索
+          </t-menu-item>
+        </t-submenu>
+        <t-submenu title="设置" value="/setting">
           <template #icon>
             <setting-icon/>
           </template>
-          设置
-        </t-menu-item>
+          <t-menu-item value="/setting/task" :to="{ name: 'SettingTask' }" replace>
+            <template #icon>
+              <task-icon/>
+            </template>
+            任务设置
+          </t-menu-item>
+          <t-menu-item value="/setting/library" :to="{ name: 'SettingLibrary' }" replace>
+            <template #icon>
+              <folder-icon/>
+            </template>
+            库设置
+          </t-menu-item>
+          <t-menu-item value="/setting/network" :to="{ name: 'SettingNetwork' }" replace>
+            <template #icon>
+              <wifi-icon/>
+            </template>
+            流媒体
+          </t-menu-item>
+          <t-menu-item value="/setting/interface" :to="{ name: 'SettingInterface' }" replace>
+            <template #icon>
+              <palette-icon/>
+            </template>
+            界面设置
+          </t-menu-item>
+          <t-menu-item value="/setting/system" :to="{ name: 'SettingSystem' }" replace>
+            <template #icon>
+              <desktop-icon/>
+            </template>
+            系统设置
+          </t-menu-item>
+          <t-menu-item value="/setting/log" :to="{ name: 'SettingLog' }" replace>
+            <template #icon>
+              <file-icon/>
+            </template>
+            日志
+          </t-menu-item>
+          <t-menu-item value="/setting/about" :to="{ name: 'SettingAbout' }" replace>
+            <template #icon>
+              <info-circle-icon/>
+            </template>
+            关于
+          </t-menu-item>
+        </t-submenu>
       </t-menu>
     </t-aside>
     <t-content class="h-100vh overflow-hidden app-content">
@@ -58,11 +110,14 @@
 </template>
 <script lang="ts" setup>
 import {
+  AppIcon,
+  DesktopIcon, FileIcon,
+  FolderIcon,
   FolderOpenIcon,
-  HomeIcon, InternetIcon,
-  SettingIcon,
+  HomeIcon, InfoCircleIcon, InternetIcon, PaletteIcon, SearchIcon,
+  SettingIcon, TaskIcon,
   VideoIcon,
-  ViewListIcon
+  ViewListIcon, WifiIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
 import {useInterfaceSettingStore, useLibraryStore} from "@/store";

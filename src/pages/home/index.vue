@@ -348,7 +348,7 @@ const handleOpenUrl = () => {
   MessageBoxUtil.prompt("请输入您要播放的资源链接地址，一次仅可以识别1个链接", "打开链接", {
     confirmButtonText: '播放',
     cancelButtonText: '取消',
-    inputPlaceholder: '支持HTTP、HTTPS链接'
+    inputPlaceholder: '支持HTTP、HTTPS链接，支持m3u8协议'
   }).then(url => {
     if (!url) return;
     router.push({

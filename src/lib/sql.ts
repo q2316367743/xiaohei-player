@@ -25,6 +25,8 @@ type TableName =
 
   | 'play_history'
   | 'daily_statistics'
+
+  | 'network_server'
   ;
 
 
