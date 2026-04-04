@@ -83,7 +83,6 @@ export class NetworkServerMc10Json implements INetworkServer {
   }
 
   async getDetail(video: NetworkListItem): Promise<NetworkDetail> {
-    // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&ids=48327
     const results = await this.cToL({
       ac: 'videolist',
       ids: video.id
@@ -122,7 +121,6 @@ export class NetworkServerMc10Json implements INetworkServer {
   }
 
   async getVideos(categoryId: string, page: number): Promise<NetworkCategoryResult> {
-    // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&t=&pg=
     return this.cToL({
       ac: 'videolist',
       t: categoryId,

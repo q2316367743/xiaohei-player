@@ -5,12 +5,13 @@ import {createNetworkServer} from "@/module/network/factory.ts";
 
 const streamServiceMap = new Map<string, INetworkServer>();
 
-export const listNetworkServer = () => {
+export const listStreamServer = () => {
   return useSql().query<NetworkServer>('network_server')
+    .orderByAsc('sequence')
     .list();
 }
 
-export const addNetworkServer = (data: NetworkServerEdit) => {
+export const addStreamServer = (data: NetworkServerEdit) => {
   const now = Date.now();
   return useSql().mapper<NetworkServer>('network_server')
     .insert({
@@ -20,7 +21,7 @@ export const addNetworkServer = (data: NetworkServerEdit) => {
     })
 }
 
-export const updateNetworkServer = async (id: string, data: Partial<NetworkServerEdit>) => {
+export const updateStreamServer = async (id: string, data: Partial<NetworkServerEdit>) => {
   const now = Date.now();
   await useSql().mapper<NetworkServer>('network_server')
     .updateById(id, {
@@ -30,12 +31,12 @@ export const updateNetworkServer = async (id: string, data: Partial<NetworkServe
   streamServiceMap.delete(id);
 }
 
-export const deleteNetworkServer = async (id: string) => {
+export const deleteStreamServer = async (id: string) => {
   await useSql().mapper<NetworkServer>('network_server').deleteById(id)
   streamServiceMap.delete(id);
 }
 
-export const getNetworkServerClient = async (id: string) => {
+export const getStreamServerClient = async (id: string) => {
   const cache = streamServiceMap.get(id);
   if (cache) {
     return cache;

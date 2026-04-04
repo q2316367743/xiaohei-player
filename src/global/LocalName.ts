@@ -7,6 +7,8 @@ export const LocalName = {
 
   PAGE_FOLDER_DETAIL_LAYOUT: (id: string)  => `/page/folder/detail/${id}/layout`,
 
-  PAGE_DOWNLOAD_PLATFORM: '/page/download/platform',
-  PAGE_DOWNLOAD_PLUGIN: '/page/download/plugin'
+  PAGE_STREAM_ACTIVE: '/page/stream/active',
+
+  PAGE_STREAM_MENU: (id: string)  => `/page/stream/detail/${id}`,
+
 }

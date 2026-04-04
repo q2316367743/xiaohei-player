@@ -40,7 +40,7 @@
 <script lang="ts" setup>
 import SubTitle from "@/components/PageTitle/SubTitle.vue";
 import {AddIcon} from "tdesign-icons-vue-next";
-import {listNetworkServer} from "@/service";
+import {listStreamServer} from "@/service";
 import type {NetworkServer} from "@/entity";
 import {NetworkServerTypeLabel} from "@/entity";
 import {
@@ -64,7 +64,7 @@ const columns = [
 const loadData = async () => {
   loading.value = true;
   try {
-    dataList.value = await listNetworkServer();
+    dataList.value = await listStreamServer();
   } catch (e) {
     console.error('加载数据失败', e);
   } finally {

@@ -1,6 +1,6 @@
 import {buildNetworkServerEdit, NetworkServerTypeOptions, type NetworkServerEdit, type NetworkServer} from "@/entity";
 import {Form, FormItem, Input, Select, InputNumber, Switch} from "tdesign-vue-next";
-import {addNetworkServer, deleteNetworkServer, updateNetworkServer} from "@/service";
+import {addStreamServer, deleteStreamServer, updateStreamServer} from "@/service";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
 
@@ -47,7 +47,7 @@ export function openAddNetworkServerDrawer(onUpdate: () => void) {
     size: '600px',
     default: buildForm(data),
     onConfirm: () => {
-      addNetworkServer(data.value).then(() => {
+      addStreamServer(data.value).then(() => {
         MessageUtil.success('新增成功');
         onUpdate();
         dp.destroy?.();
@@ -66,7 +66,7 @@ export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit, 
     size: '600px',
     default: buildForm(data),
     onConfirm: () => {
-      updateNetworkServer(id, data.value).then(() => {
+      updateStreamServer(id, data.value).then(() => {
         MessageUtil.success('更新成功');
         onUpdate();
         dp.destroy?.();
@@ -79,7 +79,7 @@ export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit, 
 
 export function openDeleteNetworkServer(id: string, onUpdate: () => void) {
   MessageBoxUtil.confirm("确认要删除该流媒体服务器吗？", "删除流媒体服务器").then(() => {
-    deleteNetworkServer(id).then(() => {
+    deleteStreamServer(id).then(() => {
       MessageUtil.success('删除成功');
       onUpdate();
     }).catch(e => {

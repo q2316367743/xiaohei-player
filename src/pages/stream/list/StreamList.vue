@@ -9,18 +9,19 @@
 </template>
 <script lang="ts" setup>
 import type {NetworkServer} from "@/entity";
-import {listNetworkServer} from "@/service";
+import {listStreamServer} from "@/service";
 import StreamListLayout from "@/pages/stream/list/components/StreamListLayout.vue";
+import {LocalName} from "@/global/LocalName.ts";
 
 defineOptions({
   name: 'StreamList',
 })
 
-const active = ref('');
+const active = useLocalStorage(LocalName.PAGE_STREAM_ACTIVE, '');
 const list = ref(new Array<NetworkServer>());
 
 onMounted(async () => {
-  list.value = await listNetworkServer();
+  list.value = await listStreamServer();
   if (list.value.length > 0) {
     active.value = list.value[0]!.id;
   }
