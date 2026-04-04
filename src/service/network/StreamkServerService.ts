@@ -36,14 +36,27 @@ export const deleteStreamServer = async (id: string) => {
   streamServiceMap.delete(id);
 }
 
+function getSsClient(item: NetworkServer): INetworkServer {
+  const cache = streamServiceMap.get(item.id);
+  if (cache) return cache;
+  const client = createNetworkServer(item);
+  streamServiceMap.set(item.id, client);
+  return client;
+}
+
 export const getStreamServerClient = async (id: string) => {
   const cache = streamServiceMap.get(id);
-  if (cache) {
-    return cache;
-  }
+  if (cache) return cache;
   const item = await useSql().query<NetworkServer>('network_server').eq('id', id).get();
   if (!item) return undefined;
-  const client = createNetworkServer(item);
-  streamServiceMap.set(id, client);
-  return client;
+  return getSsClient(item);
+}
+
+export const getStreamServerForSearch = async () => {
+  // 搜索全部可搜索的
+  const list = await useSql().query<NetworkServer>('network_server')
+    .eq('is_aggregate_search', 1)
+    .orderByAsc('sequence')
+    .list();
+  return list.map(getSsClient);
 }

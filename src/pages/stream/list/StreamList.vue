@@ -1,7 +1,7 @@
 <template>
   <div class="stream-list">
     <t-tabs v-model="active" class="mt-8px">
-      <t-tab-panel v-for="item in list" :key="item.id" :value="item.id" :label="item.name" :destroy-on-hide="false">
+      <t-tab-panel v-for="item in list" :key="item.id" :value="item.id" :label="item.name">
         <stream-list-layout :stream-id="item.id"/>
       </t-tab-panel>
     </t-tabs>
