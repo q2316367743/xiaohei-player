@@ -39,7 +39,7 @@
           </template>
           <t-menu-item to="/stream/list" value="/stream/list" replace>
             <template #icon>
-              <app-icon />
+              <app-icon/>
             </template>
             发现
           </t-menu-item>
@@ -120,7 +120,7 @@ import {
   ViewListIcon, WifiIcon
 } from "tdesign-icons-vue-next";
 import {collapsed, toggleCollapsed} from "@/global/Constants.ts";
-import {useSettingStore, useLibraryStore} from "@/store";
+import {useSettingStore, useLibraryStore, useStreamStore} from "@/store";
 
 const route = useRoute();
 
@@ -140,6 +140,7 @@ watch(() => route.path, val => {
 onMounted(() => {
   useSettingStore().init();
   useLibraryStore().init();
+  useStreamStore().init();
 })
 </script>
 <style scoped lang="less">

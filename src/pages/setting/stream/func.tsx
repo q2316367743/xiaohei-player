@@ -1,8 +1,8 @@
 import {buildNetworkServerEdit, NetworkServerTypeOptions, type NetworkServerEdit, type NetworkServer} from "@/entity";
 import {Form, FormItem, Input, Select, InputNumber, Switch} from "tdesign-vue-next";
-import {addStreamServer, deleteStreamServer, updateStreamServer} from "@/service";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import MessageBoxUtil from "@/util/model/MessageBoxUtil.tsx";
+import {useStreamStore} from "@/store";
 
 function buildForm(data: Ref<NetworkServerEdit>) {
   return () => <Form data={data.value} labelAlign="top">
@@ -39,7 +39,7 @@ function buildForm(data: Ref<NetworkServerEdit>) {
   </Form>
 }
 
-export function openAddNetworkServerDrawer(onUpdate: () => void) {
+export function openAddNetworkServerDrawer() {
   const data = ref<NetworkServerEdit>(buildNetworkServerEdit());
 
   const dp = DrawerPlugin({
@@ -47,9 +47,9 @@ export function openAddNetworkServerDrawer(onUpdate: () => void) {
     size: '600px',
     default: buildForm(data),
     onConfirm: () => {
-      addStreamServer(data.value).then(() => {
+      useStreamStore().add(data.value).then(() => {
         MessageUtil.success('新增成功');
-        onUpdate();
+
         dp.destroy?.();
       }).catch(e => {
         MessageUtil.error("新增失败", e);
@@ -58,7 +58,7 @@ export function openAddNetworkServerDrawer(onUpdate: () => void) {
   })
 }
 
-export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit, onUpdate: () => void) {
+export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit) {
   const data = ref<NetworkServerEdit>(old);
 
   const dp = DrawerPlugin({
@@ -66,9 +66,9 @@ export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit, 
     size: '600px',
     default: buildForm(data),
     onConfirm: () => {
-      updateStreamServer(id, data.value).then(() => {
+      useStreamStore().update(id, data.value).then(() => {
         MessageUtil.success('更新成功');
-        onUpdate();
+
         dp.destroy?.();
       }).catch(e => {
         MessageUtil.error("更新失败", e);
@@ -77,17 +77,17 @@ export function openEditNetworkServerDrawer(id: string, old: NetworkServerEdit, 
   })
 }
 
-export function openDeleteNetworkServer(id: string, onUpdate: () => void) {
+export function openDeleteNetworkServer(id: string) {
   MessageBoxUtil.confirm("确认要删除该流媒体服务器吗？", "删除流媒体服务器").then(() => {
-    deleteStreamServer(id).then(() => {
+    useStreamStore().remove(id).then(() => {
       MessageUtil.success('删除成功');
-      onUpdate();
+
     }).catch(e => {
       MessageUtil.error("删除失败", e);
     })
   })
 }
 
-export function openEditNetworkServerDrawerFromServer(server: NetworkServer, onUpdate: () => void) {
-  openEditNetworkServerDrawer(server.id, server, onUpdate);
+export function openEditNetworkServerDrawerFromServer(server: NetworkServer) {
+  openEditNetworkServerDrawer(server.id, server);
 }

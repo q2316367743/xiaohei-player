@@ -121,12 +121,12 @@
 
 <script lang="ts" setup>
 import type {INetworkServer} from "@/module/network/INetworkServer.ts";
-import {getStreamServerClient} from "@/service";
 import type {NetworkCategory} from "@/module/network/types/NetworkCategory.ts";
 import type {NetworkListItem} from "@/module/network/types/NetworkListItem.ts";
 import MessageUtil from "@/util/model/MessageUtil.ts";
 import {AppIcon, FolderIcon, VideoIcon} from "tdesign-icons-vue-next";
 import {LocalName} from "@/global/LocalName.ts";
+import {useStreamStore} from "@/store";
 
 const props = defineProps({
   streamId: {
@@ -203,7 +203,7 @@ const handleVideoClick = (item: NetworkListItem) => {
 
 onMounted(async () => {
   try {
-    client.value = await getStreamServerClient(props.streamId);
+    client.value = await useStreamStore().getStreamServerClient(props.streamId);
     if (client.value) {
       const [res1] = await Promise.all([
         client.value.home(1),

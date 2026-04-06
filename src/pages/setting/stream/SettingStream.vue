@@ -38,7 +38,6 @@
 </template>
 <script lang="ts" setup>
 import {AddIcon} from "tdesign-icons-vue-next";
-import {listStreamServer} from "@/service";
 import type {NetworkServer} from "@/entity";
 import {NetworkServerTypeLabel} from "@/entity";
 import {
@@ -46,9 +45,10 @@ import {
   openDeleteNetworkServer,
   openEditNetworkServerDrawerFromServer
 } from "./func.tsx";
+import {useStreamStore} from "@/store";
 
 const loading = ref(false);
-const dataList = ref<NetworkServer[]>([]);
+const dataList = computed(() => useStreamStore().streamServers);
 
 const columns = [
   {colKey: 'name', title: '名称'},
@@ -59,32 +59,19 @@ const columns = [
   {colKey: 'operation', title: '操作', width: 150, align: 'center' as const}
 ];
 
-const loadData = async () => {
-  loading.value = true;
-  try {
-    dataList.value = await listStreamServer();
-  } catch (e) {
-    console.error('加载数据失败', e);
-  } finally {
-    loading.value = false;
-  }
-};
 
 const handleAdd = () => {
-  openAddNetworkServerDrawer(loadData);
+  openAddNetworkServerDrawer();
 };
 
 const handleEdit = (row: NetworkServer) => {
-  openEditNetworkServerDrawerFromServer(row, loadData);
+  openEditNetworkServerDrawerFromServer(row);
 };
 
 const handleDelete = (id: string) => {
-  openDeleteNetworkServer(id, loadData);
+  openDeleteNetworkServer(id);
 };
 
-onMounted(() => {
-  loadData();
-});
 </script>
 <style scoped lang="less">
 .setting-card {

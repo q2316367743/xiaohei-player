@@ -233,10 +233,10 @@
 </template>
 
 <script lang="ts" setup>
-import {getStreamServerForSearch} from "@/service";
 import type {INetworkServer} from "@/module/network/INetworkServer.ts";
 import type {NetworkListItem} from "@/module/network/types/NetworkListItem.ts";
 import {VideoIcon} from "tdesign-icons-vue-next";
+import {useStreamStore} from "@/store";
 
 interface SearchResultItem {
   sourceId: string;
@@ -340,7 +340,7 @@ const handleSourceChange = (value: unknown) => {
 };
 
 onMounted(async () => {
-  clients.value = await getStreamServerForSearch();
+  clients.value = await useStreamStore().getStreamServerForSearch();
 });
 </script>
 
